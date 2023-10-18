@@ -136,6 +136,17 @@ namespace QGXUN0_HFT_2023241.Repository
                 );
 
             #endregion
+
+            #region Database loading
+
+            modelBuilder.Entity<Book>().HasData(DbSeed.Books);
+            modelBuilder.Entity<Author>().HasData(DbSeed.Authors);
+            modelBuilder.Entity<Collection>().HasData(DbSeed.Collections);
+            modelBuilder.Entity<Publisher>().HasData(DbSeed.Publishers);
+            modelBuilder.Entity<BookAuthorConnector>().HasData(DbSeed.BookAuthorConnectors);
+            modelBuilder.Entity<BookCollectionConnector>().HasData(DbSeed.BookCollectionConnectors);
+
+            #endregion
         }
     }
 }
