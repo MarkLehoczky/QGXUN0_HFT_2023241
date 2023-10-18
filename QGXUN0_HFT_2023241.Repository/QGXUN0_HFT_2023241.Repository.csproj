@@ -6,6 +6,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\QGXUN0_HFT_2023241.Models\QGXUN0_HFT_2023241.Models.csproj" />
+
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.17" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.17" />
   </ItemGroup>
 
 </Project>
