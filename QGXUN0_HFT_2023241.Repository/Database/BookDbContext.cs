@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QGXUN0_HFT_2023241.Models;
 
-namespace QGXUN0_HFT_2023241.Repository
+namespace QGXUN0_HFT_2023241.Repository.Database
 {
     /// <summary>
     /// Database context for the <see cref="Book"/>, <see cref="Author"/>, <see cref="Collection"/>, <see cref="Publisher"/>, and their connection

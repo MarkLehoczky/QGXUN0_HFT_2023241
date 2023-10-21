@@ -1,6 +1,6 @@
 ﻿using QGXUN0_HFT_2023241.Models;
 
-namespace QGXUN0_HFT_2023241.Repository
+namespace QGXUN0_HFT_2023241.Repository.Database
 {
     /// <summary>
     /// Seeds the default data for the <see cref="BookDbContext"/>
