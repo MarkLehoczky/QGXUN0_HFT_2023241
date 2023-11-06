@@ -1,6 +1,7 @@
 ﻿using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -409,6 +410,91 @@ namespace QGXUN0_HFT_2023241.Logic
         public bool ContainsAll(params Book[] book)
         {
             return book.All(t => Contains(t));
+        }
+
+
+        /// <summary>
+        /// Determines whether a <paramref name="book"/> is in a series
+        /// </summary>
+        /// <param name="book">book</param>
+        /// <returns><see langword="true"/> if the book is in a series, otherwise <see langword="false"/></returns>
+        public bool IsBookSeries(Book book)
+        {
+            if (book == null || book.Collections == null)
+                return false;
+            return book.Collections.Any(t => t.IsSeries.HasValue && t.IsSeries.Value == true);
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Book"/> instances which <see cref="Book.Title"/> contains the given <paramref name="text"/>
+        /// </summary>
+        /// <param name="text">text in the title</param>
+        /// <returns>books with the given <paramref name="text"/> in the title</returns>
+        public IEnumerable<Book> GetBooksWithTitle(string text)
+        {
+            if (text == null) return Enumerable.Empty<Book>();
+            return ReadAll().Where(t => t.Title.ToLower().Contains(text)).ToList();
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Book"/> instances which <see cref="Book.Title"/> contains the given <paramref name="texts"/>
+        /// </summary>
+        /// <param name="texts">texts in the title</param>
+        /// <returns>books and texts as an <c><see cref="IDictionary"/></c></returns>
+        public IDictionary<string, IEnumerable<Book>> GetBooksWithTitles(IEnumerable<string> texts)
+        {
+            IDictionary<string, IEnumerable<Book>> dict = new Dictionary<string, IEnumerable<Book>>();
+            texts.Where(t => t != null).ToList().ForEach(t => dict.Add(t, GetBooksWithTitle(t)));
+            return dict;
+        }
+        /// <summary>
+        /// Returns the <see cref="Book"/> instances which <see cref="Book.Title"/> contains the given <paramref name="texts"/>
+        /// </summary>
+        /// <param name="texts">texts in the title</param>
+        /// <returns>books and texts as an <c><see cref="IDictionary"/></c></returns>
+        public IDictionary<string, IEnumerable<Book>> GetBooksWithTitles(params string[] texts)
+        {
+            return GetBooksWithTitles(texts.AsEnumerable());
+        }
+
+        /// <summary>
+        /// Returns all <see cref="Book"/> from an <paramref name="author"/>
+        /// </summary>
+        /// <param name="author">author</param>
+        /// <returns>all book from the <paramref name="author"/></returns>
+        public IEnumerable<Book> GetBooksFromAuthor(Author author)
+        {
+            return ReadAll().Where(t => t.Authors.Any(u => u == author)).ToList();
+        }
+
+        /// <summary>
+        /// Returns all <see cref="Book"/> with the given <paramref name="year"/>
+        /// </summary>
+        /// <param name="year">value of the <see cref="Book.Year"/></param>
+        /// <returns>all book in the given <paramref name="year"/></returns>
+        public IEnumerable<Book> GetBooksInYear(int year)
+        {
+            return ReadAll().Where(t => t.Year == year).ToList();
+        }
+
+        /// <summary>
+        /// Returns all <see cref="Book"/> between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
+        /// </summary>
+        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
+        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
+        /// <returns>all book in the given interval</returns>
+        public IEnumerable<Book> GetBooksBetweenYears(int minimumYear, int maximumYear)
+        {
+            return ReadAll().Where(t => t.Year >= minimumYear && t.Year <= maximumYear).ToList();
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Book"/> instances grouped by their number of <see cref="Book.Authors"/>
+        /// </summary>
+        /// <returns>grouped books</returns>
+        public IEnumerable<IGrouping<int, Book>> GroupByNumberOfAuthors()
+        {
+            return ReadAll().Where(t => t.Authors.Count != 0).OrderBy(t => t.Authors.Count).ToList().GroupBy(u => u.Authors.Count);
         }
 
 

@@ -496,5 +496,107 @@ namespace QGXUN0_HFT_2023241.Logic
         {
             return RemoveBooksFromCollection(collection, collection.Books);
         }
+
+
+        /// <summary>
+        /// Returns all <see cref="Collection"/> which is a series
+        /// </summary>
+        /// <returns>all series collections</returns>
+        public IEnumerable<Collection> GetAllSeries()
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries.Value == true).ToList();
+        }
+        /// <summary>
+        /// Returns all <see cref="Collection"/> which is not a series
+        /// </summary>
+        /// <returns>all non-series collections</returns>
+        public IEnumerable<Collection> GetAllNonSeries()
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false).ToList();
+        }
+
+        /// <summary>
+        /// Returns all <see cref="Collection"/> which is a series with at least one <see cref="Book"/> released in the given <paramref name="year"/>
+        /// </summary>
+        /// <param name="year">value of the <see cref="Book.Year"/></param>
+        /// <returns>all series in the given <paramref name="year"/></returns>
+        public IEnumerable<Collection> GetSeriesInYear(int year)
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue && t.IsSeries.Value == true)
+                .Intersect(ReadAll().Where(t => t.Books.Any(u => u.Year == year)))
+                .ToList();
+        }
+        /// <summary>
+        /// Returns all <see cref="Collection"/> which is not a series with at least one <see cref="Book"/> released in the given <paramref name="year"/>
+        /// </summary>
+        /// <param name="year">value of the <see cref="Book.Year"/></param>
+        /// <returns>all series in the given <paramref name="year"/></returns>
+        public IEnumerable<Collection> GetNonSeriesInYear(int year)
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false)
+                .Intersect(ReadAll().Where(t => t.Books.Any(u => u.Year == year)))
+                .ToList();
+        }
+        /// <summary>
+        /// Returns all <see cref="Collection"/> with at least one <see cref="Book"/> released in the given <paramref name="year"/>
+        /// </summary>
+        /// <param name="year">value of the <see cref="Book.Year"/></param>
+        /// <returns>all collection in the given <paramref name="year"/></returns>
+        public IEnumerable<Collection> GetCollectionsInYear(int year)
+        {
+            return ReadAll().Where(t => t.Books.Count != 0 && t.Books.Any(u => u.Year == year)).ToList();
+        }
+
+        /// <summary>
+        /// Returns all <see cref="Collection"/> which is a series between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
+        /// </summary>
+        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
+        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
+        /// <returns>all series in the given interval</returns>
+        public IEnumerable<Collection> GetSeriesBetweenYears(int minimumYear, int maximumYear)
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue && t.IsSeries.Value == true)
+                .Intersect(ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear))
+                .ToList();
+        }
+        /// <summary>
+        /// Returns all <see cref="Collection"/> which is not a series between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
+        /// </summary>
+        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
+        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
+        /// <returns>all series in the given interval</returns>
+        public IEnumerable<Collection> GetNonSeriesBetweenYears(int minimumYear, int maximumYear)
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false)
+                .Intersect(ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear))
+                .ToList();
+        }
+        /// <summary>
+        /// Returns all <see cref="Collection"/> between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
+        /// </summary>
+        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
+        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
+        /// <returns>all collection in the given interval</returns>
+        public IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear)
+        {
+            return ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear).ToList();
+        }
+
+        /// <summary>
+        /// Creates <see cref="Collection"/> instances from the <see cref="Publisher"/> values
+        /// </summary>
+        public void CreatePublisherCollections()
+        {
+            bookRepository.ReadAll().Select(t => t.Publisher).Where(u => u != null).Distinct().ToList().ForEach(v => Create(new Collection(1, v.PublisherName), v.Books));
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Collection"/> instances grouped by their number of <see cref="Collection.Books"/>
+        /// </summary>
+        /// <returns>grouped collections</returns>
+        public IEnumerable<IGrouping<int, Collection>> GroupByNumberOfBooks()
+        {
+            return ReadAll().Where(t => t.Books.Count != 0).OrderBy(t => t.Books.Count).ToList().GroupBy(u => u.Books.Count);
+        }
     }
 }
