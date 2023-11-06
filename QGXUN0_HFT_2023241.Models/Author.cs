@@ -117,7 +117,9 @@ namespace QGXUN0_HFT_2023241.Models
         public override bool Equals(object obj)
         {
             if (obj == null || obj is not Author) return false;
-            return AuthorName == (obj as Author).AuthorName;
+            else if (AuthorName != (obj as Author).AuthorName) return false;
+            else if (Books != (obj as Author).Books) return false;
+            else return true;
         }
 
         ///<inheritdoc/>

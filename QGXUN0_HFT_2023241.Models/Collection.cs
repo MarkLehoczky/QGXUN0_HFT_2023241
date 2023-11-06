@@ -136,14 +136,21 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override string ToString()
         {
-            return $"[#{CollectionID}]{CollectionName}";
+            if (IsSeries.HasValue)
+                return $"[#{CollectionID}]{CollectionName} ({IsSeries.Value})";
+            else
+                return $"[#{CollectionID}]{CollectionName}";
         }
 
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj == null || obj is not Collection) return false;
-            return CollectionName == (obj as Collection).CollectionName;
+            else if (CollectionName != (obj as Collection).CollectionName) return false;
+            else if (Books != (obj as Collection).Books) return false;
+            else if (IsSeries.HasValue != (obj as Collection).IsSeries.HasValue) return false;
+            else if (IsSeries.Value != (obj as Collection).IsSeries.Value) return false;
+            else return true;
         }
 
         ///<inheritdoc/>

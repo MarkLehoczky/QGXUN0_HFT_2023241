@@ -56,14 +56,16 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override string ToString()
         {
-            return $"{Book};{Author}";
+            return $"[#{BookAuthorConnectorID}] {Book} - {Author}";
         }
 
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj == null || obj is not BookAuthorConnector) return false;
-            return Book == (obj as BookAuthorConnector).Book && Author == (obj as BookAuthorConnector).Author;
+            else if (Book != (obj as BookAuthorConnector).Book) return false;
+            else if (Author != (obj as BookAuthorConnector).Author) return false;
+            else return true;
         }
 
         ///<inheritdoc/>

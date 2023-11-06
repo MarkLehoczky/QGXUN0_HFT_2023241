@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace QGXUN0_HFT_2023241.Models
 {
@@ -142,7 +143,7 @@ namespace QGXUN0_HFT_2023241.Models
         public override string ToString()
         {
             if (Website != null)
-                return $"[#{PublisherID}]{PublisherName}({Website})";
+                return $"[#{PublisherID}]{PublisherName} ({Website})";
             else
                 return $"[#{PublisherID}]{PublisherName}";
         }
@@ -151,7 +152,10 @@ namespace QGXUN0_HFT_2023241.Models
         public override bool Equals(object obj)
         {
             if (obj == null || obj is not Publisher) return false;
-            return PublisherName == (obj as Publisher).PublisherName;
+            else if (PublisherName != (obj as Publisher).PublisherName) return false;
+            else if (Books != (obj as Publisher).Books) return false;
+            else if (Website != (obj as Publisher).Website) return false;
+            else return true;
         }
 
         ///<inheritdoc/>

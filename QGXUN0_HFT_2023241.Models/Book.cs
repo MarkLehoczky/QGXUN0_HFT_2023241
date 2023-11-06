@@ -201,19 +201,25 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override string ToString()
         {
-            if (PublisherID != null && ISBN != null)
-                return $"[#{BookID}]{Title}({ISBN}) - [#{PublisherID}]";
-            else if (PublisherID != null)
-                return $"[#{BookID}]{Title} - [#{PublisherID}]";
+            if (PublisherID.HasValue && ISBN.HasValue)
+                return $"[#{BookID}]{Title}({Year}) - [#{PublisherID.Value}]({ISBN.Value})";
+            else if (PublisherID.HasValue)
+                return $"[#{BookID}]{Title}({Year}) - [#{PublisherID.Value}]";
             else
-                return $"[#{BookID}]{Title}";
+                return $"[#{BookID}]{Title}({Year})";
         }
 
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj == null || obj is not Book) return false;
-            return Title == (obj as Book).Title;
+            else if (Title != (obj as Book).Title) return false;
+            else if (Authors != (obj as Book).Authors) return false;
+            else if (Year != (obj as Book).Year) return false;
+            else if (Publisher != (obj as Book).Publisher) return false;
+            else if (ISBN.HasValue != (obj as Book).ISBN.HasValue) return false;
+            else if (ISBN.Value != (obj as Book).ISBN.Value) return false;
+            else return true;
         }
 
         ///<inheritdoc/>

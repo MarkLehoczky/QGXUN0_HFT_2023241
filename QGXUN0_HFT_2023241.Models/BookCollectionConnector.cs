@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace QGXUN0_HFT_2023241.Models
 {
@@ -56,14 +58,16 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override string ToString()
         {
-            return $"{Book};{Collection}";
+            return $"[#{BookCollectionConnectorID}] {Book} - {Collection}";
         }
 
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
             if (obj == null || obj is not BookCollectionConnector) return false;
-            return Book == (obj as BookCollectionConnector).Book && Collection == (obj as BookCollectionConnector).Collection;
+            else if (Book != (obj as BookCollectionConnector).Book) return false;
+            else if (Collection != (obj as BookCollectionConnector).Collection) return false;
+            else return true;
         }
 
         ///<inheritdoc/>
