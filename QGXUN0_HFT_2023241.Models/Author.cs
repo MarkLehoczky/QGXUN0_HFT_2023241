@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,7 @@ namespace QGXUN0_HFT_2023241.Models
     /// <summary>
     /// Contains a author's name and books
     /// </summary>
-    public class Author
+    public class Author : IComparable<Author>, IComparable<string>, IComparable
     {
         /// <summary>
         /// Unique key value
@@ -126,6 +127,35 @@ namespace QGXUN0_HFT_2023241.Models
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+
+        /// <inheritdoc/>
+        public int CompareTo(Author other)
+        {
+            int comparer = Comparer.Default.Compare(AuthorName, other.AuthorName);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Books, other.Books);
+            return comparer;
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(string other)
+        {
+            if (!TryParse(other, out var otherBook))
+                return Comparer.Default.Compare(ToString(), other.ToString());
+            else
+                return CompareTo(otherBook);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(object obj)
+        {
+            if (obj is not Book)
+                return Comparer.Default.Compare(ToString(), obj.ToString());
+            else
+                return CompareTo(obj as Book);
         }
     }
 }

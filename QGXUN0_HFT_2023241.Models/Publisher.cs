@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace QGXUN0_HFT_2023241.Models
 {
     /// <summary>
     /// Contains a publisher's name, books, and optionally website
     /// </summary>
-    public class Publisher
+    public class Publisher : IComparable<Publisher>, IComparable<string>, IComparable
     {
         /// <summary>
         /// Unique key value
@@ -162,6 +162,38 @@ namespace QGXUN0_HFT_2023241.Models
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+
+        /// <inheritdoc/>
+        public int CompareTo(Publisher other)
+        {
+            int comparer = Comparer.Default.Compare(PublisherName, other.PublisherName);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Books, other.Books);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Website, other.Website);
+            return comparer;
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(string other)
+        {
+            if (!TryParse(other, out var otherBook))
+                return Comparer.Default.Compare(ToString(), other.ToString());
+            else
+                return CompareTo(otherBook);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(object obj)
+        {
+            if (obj is not Book)
+                return Comparer.Default.Compare(ToString(), obj.ToString());
+            else
+                return CompareTo(obj as Book);
         }
     }
 }

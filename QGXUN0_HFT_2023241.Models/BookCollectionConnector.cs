@@ -1,14 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace QGXUN0_HFT_2023241.Models
 {
     /// <summary>
     /// Connector for the <see cref="Models.Book"></see> and <see cref="Models.Collection"></see> instances
     /// </summary>
-    public class BookCollectionConnector
+    public class BookCollectionConnector : IComparable<BookCollectionConnector>, IComparable<string>, IComparable
     {
         /// <summary>
         /// Unique key value
@@ -74,6 +74,32 @@ namespace QGXUN0_HFT_2023241.Models
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+
+        /// <inheritdoc/>
+        public int CompareTo(BookCollectionConnector other)
+        {
+            int comparer = Comparer.Default.Compare(Book, other.Book);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Collection, other.Collection);
+            return comparer;
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(string other)
+        {
+            return CompareTo(other as object);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(object obj)
+        {
+            if (obj is not BookCollectionConnector)
+                return Comparer.Default.Compare(ToString(), obj.ToString());
+            else
+                return CompareTo(obj as BookCollectionConnector);
         }
     }
 }

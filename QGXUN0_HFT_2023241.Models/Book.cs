@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,7 +11,7 @@ namespace QGXUN0_HFT_2023241.Models
     /// <summary>
     /// Contains a book's title, authors, release year, and optionally the publisher, collections, ISBN number
     /// </summary>
-    public class Book
+    public class Book : IComparable<Book>, IComparable<string>, IComparable
     {
         /// <summary>
         /// Unique key value
@@ -123,7 +124,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// Collection b2 = Collection.Parse("2$Title$2015$5", "$");
         /// Collection b3 = Collection.Parse("3;Title;2015;5;9785705329110", ";", true);
         /// </code></example>
-        public static Book Parse(string data, string splitString, bool restrictionCheck)
+        public static Book Parse(string data, string splitString = ";", bool restrictionCheck = false)
         {
             string[] splitData = data.Split(splitString);
 
@@ -189,7 +190,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// Book b2 = null; Book.TryParse("2$Title$2015$5", out b2, "$");
         /// if (!Book.TryParse("3;Title;2015;5;9785705329110", out Book b3, ";", true)) { }
         /// </code></example>
-        public static bool TryParse(string data, out Book book, string splitString, bool restrictionCheck)
+        public static bool TryParse(string data, out Book book, string splitString = ";", bool restrictionCheck = false)
         {
             book = null;
 
@@ -226,6 +227,44 @@ namespace QGXUN0_HFT_2023241.Models
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
+        }
+
+
+        /// <inheritdoc/>
+        public int CompareTo(Book other)
+        {
+            int comparer = Comparer.Default.Compare(Title, other.Title);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Year, other.Year);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Authors, other.Authors);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Publisher, other.Publisher);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(ISBN, other.ISBN);
+            return comparer;
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(string other)
+        {
+            if (!TryParse(other, out var otherBook))
+                return Comparer.Default.Compare(ToString(), other.ToString());
+            else
+                return CompareTo(otherBook);
+        }
+
+        /// <inheritdoc/>
+        public int CompareTo(object obj)
+        {
+            if (obj is not Book)
+                return Comparer.Default.Compare(ToString(), obj.ToString());
+            else
+                return CompareTo(obj as Book);
         }
     }
 }
