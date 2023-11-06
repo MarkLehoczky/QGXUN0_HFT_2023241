@@ -16,7 +16,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int CollectionID { get; set; }
+        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int CollectionID { get; set; }
 
         /// <summary>
         /// Name of the collection
@@ -26,11 +26,11 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Books of the collection
         /// </summary>
-        [Required] public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Collection"></see> instances
         /// </summary>
-        [Required] public virtual ICollection<BookCollectionConnector> BookConnector { get; set; }
+        public virtual ICollection<BookCollectionConnector> BookConnector { get; set; }
 
         /// <summary>
         /// <see langword="true"/> if the collection is a book series, otherwise <see langword="false"/>

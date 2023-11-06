@@ -16,7 +16,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookID { get; set; }
+        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookID { get; set; }
 
         /// <summary>
         /// Title of the book
@@ -30,7 +30,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Author"></see> instances
         /// </summary>
-        [Required] public virtual ICollection<BookAuthorConnector> AuthorConnector { get; set; }
+        public virtual ICollection<BookAuthorConnector> AuthorConnector { get; set; }
 
         /// <summary>
         /// Release year of the book

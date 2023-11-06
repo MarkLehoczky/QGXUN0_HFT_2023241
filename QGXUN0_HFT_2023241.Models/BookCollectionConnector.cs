@@ -12,7 +12,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookCollectionConnectorID { get; set; }
+        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookCollectionConnectorID { get; set; }
 
         /// <summary>
         /// ID of the <see cref="Models.Book"/>

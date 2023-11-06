@@ -16,7 +16,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int PublisherID { get; set; }
+        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int PublisherID { get; set; }
 
         /// <summary>
         /// Name of the publisher
@@ -26,7 +26,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Books of the publisher
         /// </summary>
-        [Required] public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
 
         /// <summary>
         /// Website of the publisher
