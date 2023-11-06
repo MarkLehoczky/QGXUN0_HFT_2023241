@@ -1,4 +1,5 @@
-﻿using QGXUN0_HFT_2023241.Models;
+﻿using QGXUN0_HFT_2023241.Logic.Interface;
+using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections;
@@ -10,7 +11,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
     /// <summary>
     /// Implements all CRUD and non-crud methods for the <see cref="Book"/> model
     /// </summary>
-    public class BookLogic
+    public class BookLogic : IBookLogic
     {
         /// <summary>
         /// Repository for the <see cref="Book"/> database context

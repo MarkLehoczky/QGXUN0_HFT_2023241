@@ -1,4 +1,5 @@
-﻿using QGXUN0_HFT_2023241.Models;
+﻿using QGXUN0_HFT_2023241.Logic.Interface;
+using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
     /// <summary>
     /// Implements all CRUD and non-crud methods for the <see cref="Collection"/> model
     /// </summary>
-    public class CollectionLogic
+    public class CollectionLogic : ICollectionLogic
     {
         /// <summary>
         /// Repository for the <see cref="Collection"/> database context
