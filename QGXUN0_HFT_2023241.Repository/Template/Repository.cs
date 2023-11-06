@@ -50,5 +50,11 @@ namespace QGXUN0_HFT_2023241.Repository.Template
 
         /// <inheritdoc/>
         public abstract void Update(T element);
+
+        /// <inheritdoc/>
+        public void SaveChanges()
+        {
+            context.SaveChanges();
+        }
     }
 }

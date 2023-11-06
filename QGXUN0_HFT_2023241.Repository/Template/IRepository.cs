@@ -38,5 +38,10 @@ namespace QGXUN0_HFT_2023241.Repository.Template
         /// </summary>
         /// <returns>all <see langword="element"/></returns>
         IQueryable<T> ReadAll();
+
+        /// <summary>
+        /// Saves the changes of the database
+        /// </summary>
+        void SaveChanges();
     }
 }
