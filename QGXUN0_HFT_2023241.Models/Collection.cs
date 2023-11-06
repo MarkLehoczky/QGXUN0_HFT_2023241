@@ -97,19 +97,17 @@ namespace QGXUN0_HFT_2023241.Models
             if (hasIsSeries && !bool.TryParse(splitData[2], out isSeries))
                 throw new ArgumentException("The 'IsSeries' property cannot be parsed to an 'bool' type", nameof(data));
 
-            if (restrictionCheck)
-            {
-                StringLengthAttribute collectionNameAttribute = typeof(Collection).GetProperty("CollectionName").GetCustomAttributes<StringLengthAttribute>(false).FirstOrDefault();
-                if (collectionName.Length == 0)
-                    throw new ArgumentException("The 'CollectionName' property is empty", nameof(data));
-                else if (collectionName.Length > collectionNameAttribute.MaximumLength)
-                    throw new ArgumentException("The 'CollectionName' property's length is longer than the maximum length attribute", nameof(data));
-            }
+            Collection collection;
 
             if (hasIsSeries)
-                return new Collection(collectionID, collectionName, isSeries);
+                collection = new Collection(collectionID, collectionName, isSeries);
             else
-                return new Collection(collectionID, collectionName);
+                collection = new Collection(collectionID, collectionName);
+
+            if (restrictionCheck)
+                collection.Validate();
+
+            return collection;
         }
 
         /// <summary>

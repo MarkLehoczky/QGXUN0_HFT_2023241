@@ -149,31 +149,19 @@ namespace QGXUN0_HFT_2023241.Models
             if (hasISBN && !ulong.TryParse(splitData[4], out isbn))
                 throw new ArgumentException("The 'ISBN' property cannot be parsed to an 'ulong' type", nameof(data));
 
-            if (restrictionCheck)
-            {
-                StringLengthAttribute titleAttribute = typeof(Book).GetProperty("Title").GetCustomAttributes<StringLengthAttribute>(false).FirstOrDefault();
-                if (title.Length == 0)
-                    throw new ArgumentException("The 'Title' property is empty", nameof(data));
-                else if (title.Length > titleAttribute.MaximumLength)
-                    throw new ArgumentException("The 'Title' property's length is longer than the maximum length attribute", nameof(data));
-
-                RangeAttribute yearAttribute = typeof(Book).GetProperty("Year").GetCustomAttributes<RangeAttribute>(false).FirstOrDefault();
-                if (year > DateTime.Today.Year)
-                    throw new ArgumentException("The 'Year' property's value must be less or equal to the current year", nameof(data));
-                else if (year < (int)yearAttribute.Minimum || year > (int)yearAttribute.Maximum)
-                    throw new ArgumentException("The 'Year' property's value is out of the range attribute", nameof(data));
-
-                RangeAttribute isbnAttribute = typeof(Book).GetProperty("ISBN").GetCustomAttributes<RangeAttribute>(false).FirstOrDefault();
-                if (hasISBN && (isbn < ulong.Parse((string)isbnAttribute.Minimum) || isbn > ulong.Parse((string)isbnAttribute.Maximum)))
-                    throw new ArgumentException("The 'ISBN' property's value is out of the range attribute", nameof(data));
-            }
+            Book book;
 
             if (hasISBN && hasPublisher)
-                return new Book(bookID, title, year, publisherID, isbn);
+                book = new Book(bookID, title, year, publisherID, isbn);
             else if (hasPublisher)
-                return new Book(bookID, title, year, publisherID);
+                book = new Book(bookID, title, year, publisherID);
             else
-                return new Book(bookID, title, year);
+                book = new Book(bookID, title, year);
+
+            if (restrictionCheck)
+                book.Validate();
+
+            return book;
 
         }
 

@@ -74,16 +74,12 @@ namespace QGXUN0_HFT_2023241.Models
 
             string authorName = splitData[1];
 
-            if (restrictionCheck)
-            {
-                StringLengthAttribute authorNameAttribute = typeof(Author).GetProperty("AuthorName").GetCustomAttributes<StringLengthAttribute>(false).FirstOrDefault();
-                if (authorName.Length == 0)
-                    throw new ArgumentException("The 'AuthorName' property is empty", nameof(data));
-                else if (authorName.Length > authorNameAttribute.MaximumLength)
-                    throw new ArgumentException("The 'AuthorName' property's length is longer than the maximum length attribute", nameof(data));
-            }
+            Author author = new Author(authorID, authorName);
 
-            return new Author(authorID, authorName);
+            if (restrictionCheck)
+                author.Validate();
+
+            return author;
         }
 
         /// <summary>

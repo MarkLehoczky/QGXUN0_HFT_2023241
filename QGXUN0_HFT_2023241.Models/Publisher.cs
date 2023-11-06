@@ -93,28 +93,17 @@ namespace QGXUN0_HFT_2023241.Models
             bool hasWebsite = splitData.Length > 2;
             string website = hasWebsite ? splitData[2] : "";
 
-            if (restrictionCheck)
-            {
-                StringLengthAttribute publisherNameAttribute = typeof(Publisher).GetProperty("PublisherName").GetCustomAttributes<StringLengthAttribute>(false).FirstOrDefault();
-                if (publisherName.Length == 0)
-                    throw new ArgumentException("The 'PublisherName' property is empty", nameof(data));
-                else if (publisherName.Length > publisherNameAttribute.MaximumLength)
-                    throw new ArgumentException("The 'PublisherName' property's length is longer than the maximum length attribute", nameof(data));
-
-                if (hasWebsite)
-                {
-                    StringLengthAttribute websiteAttribute = typeof(Publisher).GetProperty("Address").GetCustomAttributes<StringLengthAttribute>(false).FirstOrDefault();
-                    if (website.Length == 0)
-                        throw new ArgumentException("The 'Website' property is empty", nameof(data));
-                    else if (website.Length > websiteAttribute.MaximumLength)
-                        throw new ArgumentException("The 'Website' property's length is longer than the maximum length attribute", nameof(data));
-                }
-            }
+            Publisher publisher;
 
             if (hasWebsite)
-                return new Publisher(publisherID, publisherName, website);
+                publisher = new Publisher(publisherID, publisherName, website);
             else
-                return new Publisher(publisherID, publisherName);
+                publisher = new Publisher(publisherID, publisherName);
+
+            if (restrictionCheck)
+                publisher.Validate();
+
+            return publisher;
         }
 
         /// <summary>
