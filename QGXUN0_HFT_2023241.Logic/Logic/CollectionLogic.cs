@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace QGXUN0_HFT_2023241.Logic
+namespace QGXUN0_HFT_2023241.Logic.Logic
 {
     /// <summary>
     /// Implements all CRUD and non-crud methods for the <see cref="Collection"/> model
