@@ -36,6 +36,11 @@ namespace QGXUN0_HFT_2023241.Models
         /// </summary>
         public virtual Collection Collection { get; private set; }
 
+        /// <summary>
+        /// Position of the book in a series
+        /// </summary>
+        public int? PositionInSeries { get; set; }
+
 
         /// <summary>
         /// Empty constructor
@@ -52,6 +57,20 @@ namespace QGXUN0_HFT_2023241.Models
             BookCollectionConnectorID = bookCollectionConnectorID;
             BookID = bookID;
             CollectionID = collectionID;
+        }
+        /// <summary>
+        /// Constructor with required and optional property values
+        /// </summary>
+        /// <param name="bookCollectionConnectorID">Unique key</param>
+        /// <param name="bookID">ID of the book</param>
+        /// <param name="collectionID">ID of the collection</param>
+        /// <param name="positionInSeries">position of the book in the series</param>
+        public BookCollectionConnector(int bookCollectionConnectorID, int bookID, int collectionID, int positionInSeries)
+        {
+            BookCollectionConnectorID = bookCollectionConnectorID;
+            BookID = bookID;
+            CollectionID = collectionID;
+            PositionInSeries = positionInSeries;
         }
 
 

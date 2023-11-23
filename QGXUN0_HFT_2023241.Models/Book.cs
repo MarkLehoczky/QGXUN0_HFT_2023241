@@ -58,9 +58,14 @@ namespace QGXUN0_HFT_2023241.Models
         public virtual ICollection<BookCollectionConnector> CollectionConnector { get; set; }
 
         /// <summary>
-        /// ISBN number
+        /// Price of the book
         /// </summary>
-        [Range(typeof(ulong), "9780000000000", "9799999999999")] public ulong? ISBN { get; set; }
+        public double? Price { get; set; }
+
+        /// <summary>
+        /// Rating of the book
+        /// </summary>
+        [Range(1.0, 5.0)] public double? Rating { get; set; }
 
 
         /// <summary>
@@ -100,14 +105,32 @@ namespace QGXUN0_HFT_2023241.Models
         /// <param name="title">Title</param>
         /// <param name="year">Release year</param>
         /// <param name="publisherID">ID of the <see cref="Models.Publisher"></see></param>
-        /// <param name="isbn">ISBN number</param>
-        public Book(int bookID, string title, int year, int publisherID, ulong isbn)
+        /// <param name="price">price</param>
+        public Book(int bookID, string title, int year, int publisherID, double price)
         {
             BookID = bookID;
             Title = title;
             Year = year;
             PublisherID = publisherID;
-            ISBN = isbn;
+            Price = price;
+        }
+        /// <summary>
+        /// Constructor with required and optional property values
+        /// </summary>
+        /// <param name="bookID">Unique bookID key</param>
+        /// <param name="title">Title</param>
+        /// <param name="year">Release year</param>
+        /// <param name="publisherID">ID of the <see cref="Models.Publisher"></see></param>
+        /// <param name="price">price</param>
+        /// <param name="rating">rating</param>
+        public Book(int bookID, string title, int year, int publisherID, double price, double rating)
+        {
+            BookID = bookID;
+            Title = title;
+            Year = year;
+            PublisherID = publisherID;
+            Price = price;
+            Rating = rating;
         }
 
 
@@ -122,7 +145,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <example><code>
         /// Collection b1 = Collection.Parse("1;Title;2015");
         /// Collection b2 = Collection.Parse("2$Title$2015$5", "$");
-        /// Collection b3 = Collection.Parse("3;Title;2015;5;9785705329110", ";", true);
+        /// Collection b3 = Collection.Parse("3;Title;2015;5;15.99", ";", true);
         /// </code></example>
         public static Book Parse(string data, string splitString = ";", bool restrictionCheck = false)
         {
@@ -144,15 +167,22 @@ namespace QGXUN0_HFT_2023241.Models
             if (hasPublisher && !int.TryParse(splitData[3], out publisherID))
                 throw new ArgumentException("The 'PublisherID' property cannot be parsed to an 'int' type", nameof(data));
 
-            bool hasISBN = splitData.Length > 4;
-            ulong isbn = 0;
-            if (hasISBN && !ulong.TryParse(splitData[4], out isbn))
-                throw new ArgumentException("The 'ISBN' property cannot be parsed to an 'ulong' type", nameof(data));
+            bool hasPrice = splitData.Length > 4;
+            double price = 0;
+            if (hasPrice && !double.TryParse(splitData[4], out price))
+                throw new ArgumentException("The 'Price' property cannot be parsed to an 'double' type", nameof(data));
+
+            bool hasRating = splitData.Length > 5;
+            double rating = 0;
+            if (hasRating && !double.TryParse(splitData[5], out rating))
+                throw new ArgumentException("The 'Rating' property cannot be parsed to an 'double' type", nameof(data));
 
             Book book;
 
-            if (hasISBN && hasPublisher)
-                book = new Book(bookID, title, year, publisherID, isbn);
+            if (hasRating && hasPrice && hasPublisher)
+                book = new Book(bookID, title, year, publisherID, price, rating);
+            else if (hasPrice && hasPublisher)
+                book = new Book(bookID, title, year, publisherID, price);
             else if (hasPublisher)
                 book = new Book(bookID, title, year, publisherID);
             else
@@ -176,7 +206,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <example><code>
         /// bool Book = Book.TryParse("1;Title;2015", out Book b1);
         /// Book b2 = null; Book.TryParse("2$Title$2015$5", out b2, "$");
-        /// if (!Book.TryParse("3;Title;2015;5;9785705329110", out Book b3, ";", true)) { }
+        /// if (!Book.TryParse("3;Title;2015;5;15.99", out Book b3, ";", true)) { }
         /// </code></example>
         public static bool TryParse(string data, out Book book, string splitString = ";", bool restrictionCheck = false)
         {
@@ -190,8 +220,10 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override string ToString()
         {
-            if (PublisherID.HasValue && ISBN.HasValue)
-                return $"[#{BookID}]{Title}({Year}) - [#{PublisherID.Value}]({ISBN.Value})";
+            if (PublisherID.HasValue && Price.HasValue && Rating.HasValue)
+                return $"[#{BookID}]{Title}({Year}) - [#{PublisherID.Value}]({Rating.Value}) - ${Price.Value}";
+            else if (PublisherID.HasValue && Price.HasValue)
+                return $"[#{BookID}]{Title}({Year}) - [#{PublisherID.Value}] - ${Price.Value}";
             else if (PublisherID.HasValue)
                 return $"[#{BookID}]{Title}({Year}) - [#{PublisherID.Value}]";
             else
@@ -206,8 +238,8 @@ namespace QGXUN0_HFT_2023241.Models
             else if (Authors != (obj as Book).Authors) return false;
             else if (Year != (obj as Book).Year) return false;
             else if (Publisher != (obj as Book).Publisher) return false;
-            else if (ISBN.HasValue != (obj as Book).ISBN.HasValue) return false;
-            else if (ISBN.Value != (obj as Book).ISBN.Value) return false;
+            else if (Price != (obj as Book).Price) return false;
+            else if (Rating != (obj as Book).Rating) return false;
             else return true;
         }
 
@@ -233,7 +265,10 @@ namespace QGXUN0_HFT_2023241.Models
             comparer = Comparer.Default.Compare(Publisher, other.Publisher);
             if (comparer != 0) return comparer;
 
-            comparer = Comparer.Default.Compare(ISBN, other.ISBN);
+            comparer = Comparer.Default.Compare(Price, other.Price);
+            if (comparer != 0) return comparer;
+
+            comparer = Comparer.Default.Compare(Rating, other.Rating);
             return comparer;
         }
 
