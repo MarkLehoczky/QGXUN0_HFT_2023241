@@ -1,4 +1,5 @@
-﻿using QGXUN0_HFT_2023241.Models;
+﻿using QGXUN0_HFT_2023241.Logic.Logic;
+using QGXUN0_HFT_2023241.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,7 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         bool ContainsAll(params Publisher[] publisher);
         bool ContainsAny(IEnumerable<Publisher> publishers);
         bool ContainsAny(params Publisher[] publishers);
+        ExtendedPublisher ConvertPublisherToExtendedPublisher(Publisher publisher);
         int? Create(Publisher publisher);
         bool Delete(int publisherID);
         bool Delete(Publisher publisher);
@@ -23,12 +25,16 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         bool DeleteRange(IEnumerable<Publisher> publishers);
         bool DeleteRange(params int[] publisherIDs);
         bool DeleteRange(params Publisher[] publishers);
+        IEnumerable<ExtendedPublisher> GetAllAsExtendedPublisher();
         IEnumerable<Author> GetAuthorsOfPublisher(Publisher publisher);
         IEnumerable<Book> GetBooksFromPublisherBetweenYears(Publisher publisher, int minimumYear, int maximumYear);
         IEnumerable<Book> GetBooksFromPublisherInYear(Publisher publisher, int year);
+        KeyValuePair<double, Publisher> GetHighestRatedPublisher();
+        KeyValuePair<double, Publisher> GetLowestRatedPublisher();
         IEnumerable<Publisher> GetOnlySeriesPublishers();
         IEnumerable<Author> GetPermanentAuthors();
         IEnumerable<Author> GetPermanentAuthorsOfPublisher(Publisher publisher);
+        double? GetRatingOfPublisher(Publisher publisher);
         IEnumerable<Publisher> GetSeriesPublishers();
         IEnumerable<IGrouping<int, Publisher>> GroupByNumberOfBooks();
         Publisher Read(int publisherID);

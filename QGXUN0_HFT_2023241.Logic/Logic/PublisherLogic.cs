@@ -312,6 +312,27 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
 
         /// <summary>
+        /// Returns all publisher as <see cref="ExtendedPublisher"/>
+        /// </summary>
+        /// <returns>all publisher as <see cref="ExtendedPublisher"/></returns>
+        public IEnumerable<ExtendedPublisher> GetAllAsExtendedPublisher()
+        {
+            return ReadAll().Select(t => ConvertPublisherToExtendedPublisher(t));
+        }
+
+        /// <summary>
+        /// Converts a publisher to a <see cref="ExtendedPublisher"/>
+        /// </summary>
+        /// <param name="publisher"></param>
+        /// <returns>publisher as <see cref="ExtendedPublisher"/></returns>
+        public ExtendedPublisher ConvertPublisherToExtendedPublisher(Publisher publisher)
+        {
+            return new ExtendedPublisher(publisher,
+                GetAuthorsOfPublisher(publisher),
+                GetRatingOfPublisher(publisher));
+        }
+
+        /// <summary>
         /// Returns all <see cref="Publisher"/> who released at least one series
         /// </summary>
         /// <returns>series publishers</returns>
@@ -319,6 +340,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             return ReadAll().Where(t => t.Books.Any(u => u.Collections.Any(v => v.IsSeries.HasValue && v.IsSeries.Value == true))).ToList();
         }
+
         /// <summary>
         /// Returns all <see cref="Publisher"/> who only released series
         /// </summary>
@@ -326,6 +348,37 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<Publisher> GetOnlySeriesPublishers()
         {
             return ReadAll().Where(t => t.Books.All(u => u.Collections.Any(v => v.IsSeries.HasValue && v.IsSeries.Value == true))).ToList();
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Publisher"/> which has the highest average <see cref="Publisher.Books"/> rating
+        /// </summary>
+        /// <returns>highest rated publisher, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Publisher"/></returns>
+        public KeyValuePair<double, Publisher> GetHighestRatedPublisher()
+        {
+            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Publisher>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Publisher"/> which has the lowest average <see cref="Publisher.Books"/> rating
+        /// </summary>
+        /// <returns>lowest rated publisher, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Publisher"/></returns>
+        public KeyValuePair<double, Publisher> GetLowestRatedPublisher()
+        {
+            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Publisher>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the average rating of all the books of the <paramref name="publisher"/>
+        /// </summary>
+        /// <param name="publisher">publisher</param>
+        /// <returns>average rating of the publisher</returns>
+        public double? GetRatingOfPublisher(Publisher publisher)
+        {
+            if (publisher == null || publisher.Books == null) return null;
+            return publisher.Books.Average(t => t.Rating);
         }
 
         /// <summary>
@@ -399,6 +452,31 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<IGrouping<int, Publisher>> GroupByNumberOfBooks()
         {
             return ReadAll().OrderBy(t => t.Books.Count).ToList().GroupBy(u => u.Books.Count);
+        }
+    }
+
+
+
+    public class ExtendedPublisher : Publisher
+    {
+        /// <summary>
+        /// Authors of the publisher
+        /// </summary>
+        public virtual ICollection<Author> Authors { get; set; }
+
+        /// <summary>
+        /// Average rating of the publisher
+        /// </summary>
+        public double? Rating { get; set; }
+
+
+        public ExtendedPublisher(Publisher publisher, IEnumerable<Author> authors, double? rating)
+        {
+            base.PublisherID = publisher.PublisherID;
+            base.PublisherName = publisher.PublisherName;
+            base.Books = publisher.Books;
+            this.Authors = authors.ToList();
+            this.Rating = rating;
         }
     }
 }

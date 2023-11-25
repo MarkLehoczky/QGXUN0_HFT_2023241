@@ -3,6 +3,8 @@ using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QGXUN0_HFT_2023241.Logic.Logic
@@ -500,6 +502,28 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
 
         /// <summary>
+        /// Returns all collection as <see cref="ExtendedCollection"/>
+        /// </summary>
+        /// <returns>all collection as <see cref="ExtendedCollection"/></returns>
+        public IEnumerable<ExtendedCollection> GetAllAsExtendedCollection()
+        {
+            return ReadAll().Select(t => ConvertCollectionToExtendedCollection(t));
+        }
+
+        /// <summary>
+        /// Converts a collection to a <see cref="ExtendedCollection"/>
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <returns>collection as <see cref="ExtendedCollection"/></returns>
+        public ExtendedCollection ConvertCollectionToExtendedCollection(Collection collection)
+        {
+            return new ExtendedCollection(collection,
+                collection.Books.SelectMany(u => u.Authors, (u, authors) => authors).Distinct(),
+                GetPriceOfCollection(collection),
+                GetRatingOfCollection(collection));
+        }
+
+        /// <summary>
         /// Returns all <see cref="Collection"/> which is a series
         /// </summary>
         /// <returns>all series collections</returns>
@@ -507,6 +531,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             return ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries.Value == true).ToList();
         }
+
         /// <summary>
         /// Returns all <see cref="Collection"/> which is not a series
         /// </summary>
@@ -514,6 +539,184 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<Collection> GetAllNonSeries()
         {
             return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false).ToList();
+        }
+
+        /// <summary>
+        /// Returns the most expensive <see cref="Collection"/> which is a series
+        /// </summary>
+        /// <returns>most expensive series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetMostExpensiveSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderByDescending(t => t.Books.Sum(u => u.Price))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the most expensive <see cref="Collection"/> which is not a series
+        /// </summary>
+        /// <returns>most expensive non-series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetMostExpensiveNonSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderByDescending(t => t.Books.Sum(u => u.Price))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the most expensive <see cref="Collection"/>
+        /// </summary>
+        /// <returns>most expensive collection, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetMostExpensiveCollection()
+        {
+            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Sum(u => u.Price))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the least expensive <see cref="Collection"/> which is a series
+        /// </summary>
+        /// <returns>least expensive series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetLeastExpensiveSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderBy(t => t.Books.Sum(u => u.Price))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the least expensive <see cref="Collection"/> which is not a series
+        /// </summary>
+        /// <returns>least expensive non-series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetLeastExpensiveNonSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderBy(t => t.Books.Sum(u => u.Price))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the least expensive <see cref="Collection"/>
+        /// </summary>
+        /// <returns>least expensive collection, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetLeastExpensiveCollection()
+        {
+            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Sum(u => u.Price))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the highest average rated <see cref="Collection"/> which is a series
+        /// </summary>
+        /// <returns>highest rated series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetHighestRatedSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderByDescending(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the highest average rated <see cref="Collection"/> which is not a series
+        /// </summary>
+        /// <returns>highest rated non-series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetHighestRatedNonSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderByDescending(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the highest average rated <see cref="Collection"/>
+        /// </summary>
+        /// <returns>highest rated collection, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetHighestRatedCollection()
+        {
+            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the lowest average rated <see cref="Collection"/> which is a series
+        /// </summary>
+        /// <returns>lowest rated series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetLowestRatedSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderBy(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the lowest average rated <see cref="Collection"/> which is not a series
+        /// </summary>
+        /// <returns>lowest rated non-series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetLowestRatedNonSeries()
+        {
+            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderBy(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+        /// <summary>
+        /// Returns the lowest average rated <see cref="Collection"/>
+        /// </summary>
+        /// <returns>lowest rated collection, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> GetLowestRatedCollection()
+        {
+            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the most expensive book from an <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection">collection</param>
+        /// <returns>most expensive book from the <paramref name="collection"/></returns>
+        public Book GetMostExpensiveBookFromCollection(Collection collection)
+        {
+            if (collection == null || collection.Books == null) return null;
+            return collection.Books.OrderByDescending(t => t.Price).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the least expensive book from an <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection">collection</param>
+        /// <returns>least expensive book from the <paramref name="collection"/></returns>
+        public Book GetLeastExpensiveBookFromCollection(Collection collection)
+        {
+            if (collection == null || collection.Books == null) return null;
+            return collection.Books.OrderBy(t => t.Price).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the highest rated book from an <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection">collection</param>
+        /// <returns>highest rated book from the <paramref name="collection"/></returns>
+        public Book GetHighestRatedBookFromCollection(Collection collection)
+        {
+            if (collection == null || collection.Books == null) return null;
+            return collection.Books.OrderByDescending(t => t.Rating).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the lowest rated book from an <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection">collection</param>
+        /// <returns>lowest rated book from the <paramref name="collection"/></returns>
+        public Book GetLowestRatedBookFromCollection(Collection collection)
+        {
+            if (collection == null || collection.Books == null) return null;
+            return collection.Books.OrderBy(t => t.Rating).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the summarized price of all the books of the <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection">collection</param>
+        /// <returns>price of the collection</returns>
+        public double? GetPriceOfCollection(Collection collection)
+        {
+            if (collection == null || collection.Books == null) return null;
+            return collection.Books.Sum(t => t.Price);
+        }
+
+        /// <summary>
+        /// Returns the average rating of all the books of the <paramref name="collection"/>
+        /// </summary>
+        /// <param name="collection">collection</param>
+        /// <returns>average rating of the collection</returns>
+        public double? GetRatingOfCollection(Collection collection)
+        {
+            if (collection == null || collection.Books == null) return null;
+            return collection.Books.Average(t => t.Rating);
         }
 
         /// <summary>
@@ -598,6 +801,39 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<IGrouping<int, Collection>> GroupByNumberOfBooks()
         {
             return ReadAll().Where(t => t.Books.Count != 0).OrderBy(t => t.Books.Count).ToList().GroupBy(u => u.Books.Count);
+        }
+    }
+
+
+
+    public class ExtendedCollection : Collection
+    {
+        /// <summary>
+        /// Authors of the collection
+        /// </summary>
+        public virtual ICollection<Author> Authors { get; set; }
+
+        /// <summary>
+        /// Total price of the collection
+        /// </summary>
+        public double? Price { get; set; }
+
+        /// <summary>
+        /// Average rating of the collection
+        /// </summary>
+        public double? Rating { get; set; }
+
+
+        public ExtendedCollection(Collection collection, IEnumerable<Author> authors, double? price, double? rating)
+        {
+            base.CollectionID = collection.CollectionID;
+            base.CollectionName = collection.CollectionName;
+            base.Books = collection.Books;
+            base.BookConnector = collection.BookConnector;
+            base.IsSeries = collection.IsSeries;
+            this.Authors = authors.ToList();
+            this.Price = price;
+            this.Rating = rating;
         }
     }
 }

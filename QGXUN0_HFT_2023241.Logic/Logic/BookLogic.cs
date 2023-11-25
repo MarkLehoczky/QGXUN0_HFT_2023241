@@ -415,15 +415,207 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
 
         /// <summary>
-        /// Determines whether a <paramref name="book"/> is in a series
+        /// Adds authors to a <paramref name="book"/>
         /// </summary>
-        /// <param name="book">book</param>
-        /// <returns><see langword="true"/> if the book is in a series, otherwise <see langword="false"/></returns>
-        public bool IsBookSeries(Book book)
+        /// <remarks>The authors must be in the database</remarks>
+        /// <param name="book">book for the authors</param>
+        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddAuthorsToBook(Book book, IEnumerable<int> authorIDs)
         {
-            if (book == null || book.Collections == null)
+            if (book == null || authorIDs.Count() == 0)
                 return false;
-            return book.Collections.Any(t => t.IsSeries.HasValue && t.IsSeries.Value == true);
+
+            book.Authors ??= new List<Author>();
+            int count = book.Authors.Count;
+
+            foreach (var item in authorRepository.ReadAll().Where(t => authorIDs.Contains(t.AuthorID)))
+                book.Authors.Add(item);
+
+            connectorRepository.SaveChanges();
+            return authorIDs.All(t => book.Authors.Any(u => u.AuthorID == t));
+        }
+        /// <summary>
+        /// Adds authors to a <paramref name="book"/>
+        /// </summary>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authors">addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddAuthorsToBook(Book book, IEnumerable<Author> authors)
+        {
+            if (book == null || authors.Count() == 0 || authors.Any(t => t == null))
+                return false;
+
+            book.Authors ??= new List<Author>();
+            int count = book.Authors.Count;
+
+            foreach (var item in authors)
+                book.Authors.Add(item);
+
+            connectorRepository.SaveChanges();
+            return authors.All(t => book.Authors.Contains(t));
+        }
+        /// <summary>
+        /// Adds authors to a <paramref name="book"/>
+        /// </summary>
+        /// <remarks>The authors must be in the database</remarks>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddAuthorsToBook(Book book, params int[] authorIDs)
+        {
+            return AddAuthorsToBook(book, authorIDs.AsEnumerable());
+        }
+        /// <summary>
+        /// Adds authors to a <paramref name="book"/>
+        /// </summary>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authors">addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddAuthorsToBook(Book book, params Author[] authors)
+        {
+            return AddAuthorsToBook(book, authors.AsEnumerable());
+        }
+
+        /// <summary>
+        /// Adds new authors to a <paramref name="book"/>
+        /// </summary>
+        /// <remarks><para>The authors must be in the database</para><para>Removes all previous authors</para></remarks>
+        /// <param name="book">book for the authors</param>
+        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddNewAuthorsToBook(Book book, IEnumerable<int> authorIDs)
+        {
+            if (book != null) book.Authors = null;
+            return AddAuthorsToBook(book, authorIDs);
+        }
+        /// <summary>
+        /// Adds new authors to a <paramref name="book"/>
+        /// </summary>
+        /// <remarks>Removes all previous authors</remarks>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authors">addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddNewAuthorsToBook(Book book, IEnumerable<Author> authors)
+        {
+            if (book != null) book.Authors = null;
+            return AddAuthorsToBook(book, authors);
+        }
+        /// <summary>
+        /// Adds new authors to a <paramref name="book"/>
+        /// </summary>
+        /// <remarks><para>The authors must be in the database</para><para>Removes all previous authors</para></remarks>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddNewAuthorsToBook(Book book, params int[] authorIDs)
+        {
+            return AddNewAuthorsToBook(book, authorIDs.AsEnumerable());
+        }
+        /// <summary>
+        /// Adds new authors to a <paramref name="book"/>
+        /// </summary>
+        /// <remarks>Removes all previous authors</remarks>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authors">addable authors</param>
+        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        public bool AddNewAuthorsToBook(Book book, params Author[] authors)
+        {
+            return AddNewAuthorsToBook(book, authors.AsEnumerable());
+        }
+
+        /// <summary>
+        /// Removes authors from a <paramref name="book"/>
+        /// </summary>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the removable authors</param>
+        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        public bool RemoveAuthorsFromBook(Book book, IEnumerable<int> authorIDs)
+        {
+            if (book == null)
+                return false;
+
+            int count = book.Authors.Count;
+
+            foreach (var item in authorRepository.ReadAll().Where(t => authorIDs.Contains(t.AuthorID)))
+                book.Authors.Remove(item);
+
+            connectorRepository.SaveChanges();
+            return !book.Authors.Any(t => authorIDs.Contains(t.AuthorID));
+        }
+        /// <summary>
+        /// Removes authors from a <paramref name="book"/>
+        /// </summary>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authors">removable authors</param>
+        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        public bool RemoveAuthorsFromBook(Book book, IEnumerable<Author> authors)
+        {
+            if (book == null)
+                return false;
+
+            foreach (var item in authors)
+                book.Authors.Remove(item);
+
+            connectorRepository.SaveChanges();
+            return !book.Authors.Any(t => authors.Contains(t));
+        }
+        /// <summary>
+        /// Removes authors from a <paramref name="book"/>
+        /// </summary>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the removable authors</param>
+        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        public bool RemoveAuthorsFromBook(Book book, params int[] authorIDs)
+        {
+            return RemoveAuthorsFromBook(book, authorIDs.AsEnumerable());
+        }
+        /// <summary>
+        /// Removes authors from a <paramref name="book"/>
+        /// </summary>
+        /// <param name="book">book of the authors</param>
+        /// <param name="authors">removable authors</param>
+        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        public bool RemoveAuthorsFromBook(Book book, params Author[] authors)
+        {
+            return RemoveAuthorsFromBook(book, authors.AsEnumerable());
+        }
+
+
+        /// <summary>
+        /// Returns the most expensive book
+        /// </summary>
+        /// <returns>most expensive book</returns>
+        public Book GetMostExpensiveBook()
+        {
+            return ReadAll().OrderByDescending(t => t.Price).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the least expensive book
+        /// </summary>
+        /// <returns>least expensive book</returns>
+        public Book GetLeastExpensiveBook()
+        {
+            return ReadAll().OrderBy(t => t.Price).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the highest rated book
+        /// </summary>
+        /// <returns>highest rated book</returns>
+        public Book GetHighestRatedBook()
+        {
+            return ReadAll().OrderByDescending(t => t.Rating).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Returns the lowest rated book
+        /// </summary>
+        /// <returns>lowest rated book</returns>
+        public Book GetLowestRatedBook()
+        {
+            return ReadAll().OrderBy(t => t.Rating).FirstOrDefault();
         }
 
         /// <summary>
@@ -496,250 +688,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<IGrouping<int, Book>> GroupByNumberOfAuthors()
         {
             return ReadAll().Where(t => t.Authors.Count != 0).OrderBy(t => t.Authors.Count).ToList().GroupBy(u => u.Authors.Count);
-        }
-
-
-        /// <summary>
-        /// Creates an empty <paramref name="author"/>
-        /// </summary>
-        /// <remarks>The <see cref="Author.AuthorID"/> may be changed if another <see cref="Author"/> instance has the same <see langword="key"/></remarks>
-        /// <param name="author">new author</param>
-        /// <returns><see cref="Author.AuthorID"/> of the <paramref name="author"/> if the author is valid, otherwise <see langword="null"/></returns>
-        public int? CreateAuthor(Author author)
-        {
-            if (!author.IsValid())
-                return null;
-
-            if (ReadAuthor(author.AuthorID) != null)
-                author.AuthorID = ReadAllAuthor().Max(t => t.AuthorID) + 1;
-
-            authorRepository.Create(author);
-            return author.AuthorID;
-        }
-
-        /// <summary>
-        /// Reads a <see cref="Author"/> with the same <paramref name="authorID"/> value
-        /// </summary>
-        /// <param name="authorID"><see cref="Author.AuthorID"/> value of the author</param>
-        /// <returns><see cref="Author"/> if the author exists, otherwise <see langword="null"/></returns>
-        public Author ReadAuthor(int authorID)
-        {
-            try { return authorRepository.Read(authorID); }
-            catch (InvalidOperationException) { return null; }
-        }
-
-        /// <summary>
-        /// Updates a <paramref name="author"/> with the same <see cref="Author.AuthorID"/> value
-        /// </summary>
-        /// <remarks>The <see cref="Author.AuthorID"/> value of the <paramref name="author"/> must be the same as the one intended to update</remarks>
-        /// <param name="author">updated author</param>
-        /// <returns><see langword="true"/> if the update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateAuthor(Author author)
-        {
-            if (!author.IsValid() || Read(author.AuthorID) == null)
-                return false;
-            authorRepository.Update(author);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Deletes a <see cref="Author"/> with the same <see cref="Author.AuthorID"/>
-        /// </summary>
-        /// <param name="authorID"><see cref="Author.AuthorID"/> of the <see cref="Author"/></param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteAuthor(int authorID)
-        {
-            try { authorRepository.Delete(authorID); }
-            catch (InvalidOperationException) { return false; }
-            return ReadAuthor(authorID) == null;
-        }
-        /// <summary>
-        /// Deletes a <see cref="Author"/> with the same <paramref name="author"/>
-        /// </summary>
-        /// <param name="author"><see cref="Author"/> instance</param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteAuthor(Author author)
-        {
-            if (author == null) return false;
-            return DeleteAuthor(author.AuthorID);
-        }
-
-        /// <summary>
-        /// Reads all <see cref="Author"/>
-        /// </summary>
-        /// <returns>all <see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Author> ReadAllAuthor()
-        {
-            return authorRepository.ReadAll();
-        }
-
-
-        /// <summary>
-        /// Adds authors to a <paramref name="book"/>
-        /// </summary>
-        /// <remarks>The authors must be in the database</remarks>
-        /// <param name="book">book for the authors</param>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddAuthorsToBook(Book book, IEnumerable<int> authorIDs)
-        {
-            if (book == null || authorIDs.Count() == 0)
-                return false;
-
-            book.Authors ??= new List<Author>();
-            int count = book.Authors.Count;
-
-            foreach (var item in authorRepository.ReadAll().Where(t => authorIDs.Contains(t.AuthorID)))
-                book.Authors.Add(item);
-
-            connectorRepository.SaveChanges();
-            return authorIDs.All(t => book.Authors.Any(u => u.AuthorID == t));
-        }
-        /// <summary>
-        /// Adds authors to a <paramref name="book"/>
-        /// </summary>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authors">addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddAuthorsToBook(Book book, IEnumerable<Author> authors)
-        {
-            if (book == null || authors.Count() == 0 || authors.Any(t => t == null))
-                return false;
-
-            book.Authors ??= new List<Author>();
-            int count = book.Authors.Count;
-
-            foreach (var item in authors)
-                book.Authors.Add(item);
-
-            connectorRepository.SaveChanges();
-            return authors.All(t => book.Authors.Contains(t));
-        }
-        /// <summary>
-        /// Adds authors to a <paramref name="book"/>
-        /// </summary>
-        /// <remarks>The authors must be in the database</remarks>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddAuthorsToBook(Book book, params int[] authorIDs)
-        {
-            return AddAuthorsToBook(book, authorIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Adds authors to a <paramref name="book"/>
-        /// </summary>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authors">addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddAuthorsToBook(Book book, params Author[] authors)
-        {
-            return AddAuthorsToBook(book, authors.AsEnumerable());
-        }
-
-        /// <summary>
-        /// Adds new authors to a <paramref name="book"/>
-        /// </summary>
-        /// <remarks><para>The authors must be in the database</para><para>Removes all previous authors</para></remarks>
-        /// <param name="book">book for the authors</param>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddNewAuthorsToBook(Book book, IEnumerable<int> authorIDs)
-        {
-            if (book != null) book.Authors = null;
-            return AddAuthorsToBook(book, authorIDs);
-        }
-        /// <summary>
-        /// Adds new authors to a <paramref name="book"/>
-        /// </summary>
-        /// <remarks>Removes all previous authors</remarks>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authors">addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddNewAuthorsToBook(Book book, IEnumerable<Author> authors)
-        {
-            if (book != null) book.Authors = null;
-            return AddAuthorsToBook(book, authors);
-        }
-        /// <summary>
-        /// Adds new authors to a <paramref name="book"/>
-        /// </summary>
-        /// <remarks><para>The authors must be in the database</para><para>Removes all previous authors</para></remarks>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddNewAuthorsToBook(Book book, params int[] authorIDs)
-        {
-            return AddNewAuthorsToBook(book, authorIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Adds new authors to a <paramref name="book"/>
-        /// </summary>
-        /// <remarks>Removes all previous authors</remarks>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authors">addable authors</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        protected bool AddNewAuthorsToBook(Book book, params Author[] authors)
-        {
-            return AddNewAuthorsToBook(book, authors.AsEnumerable());
-        }
-
-        /// <summary>
-        /// Removes authors from a <paramref name="book"/>
-        /// </summary>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the removable authors</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
-        protected bool RemoveAuthorsFromBook(Book book, IEnumerable<int> authorIDs)
-        {
-            if (book == null)
-                return false;
-
-            int count = book.Authors.Count;
-
-            foreach (var item in authorRepository.ReadAll().Where(t => authorIDs.Contains(t.AuthorID)))
-                book.Authors.Remove(item);
-
-            connectorRepository.SaveChanges();
-            return !book.Authors.Any(t => authorIDs.Contains(t.AuthorID));
-        }
-        /// <summary>
-        /// Removes authors from a <paramref name="book"/>
-        /// </summary>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authors">removable authors</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
-        protected bool RemoveAuthorsFromBook(Book book, IEnumerable<Author> authors)
-        {
-            if (book == null)
-                return false;
-
-            foreach (var item in authors)
-                book.Authors.Remove(item);
-
-            connectorRepository.SaveChanges();
-            return !book.Authors.Any(t => authors.Contains(t));
-        }
-        /// <summary>
-        /// Removes authors from a <paramref name="book"/>
-        /// </summary>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> of the removable authors</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
-        protected bool RemoveAuthorsFromBook(Book book, params int[] authorIDs)
-        {
-            return RemoveAuthorsFromBook(book, authorIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Removes authors from a <paramref name="book"/>
-        /// </summary>
-        /// <param name="book">book of the authors</param>
-        /// <param name="authors">removable authors</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
-        protected bool RemoveAuthorsFromBook(Book book, params Author[] authors)
-        {
-            return RemoveAuthorsFromBook(book, authors.AsEnumerable());
         }
     }
 }

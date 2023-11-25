@@ -1,4 +1,5 @@
-﻿using QGXUN0_HFT_2023241.Models;
+﻿using QGXUN0_HFT_2023241.Logic.Logic;
+using QGXUN0_HFT_2023241.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,6 +19,7 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         bool ContainsAll(params Collection[] collection);
         bool ContainsAny(IEnumerable<Collection> collections);
         bool ContainsAny(params Collection[] collections);
+        ExtendedCollection ConvertCollectionToExtendedCollection(Collection collection);
         int? Create(Collection collection);
         int? Create(Collection collection, IEnumerable<Book> books);
         int? Create(Collection collection, IEnumerable<int> bookIDs);
@@ -32,12 +34,31 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         bool DeleteRange(IEnumerable<int> collectionIDs);
         bool DeleteRange(params Collection[] collections);
         bool DeleteRange(params int[] collectionIDs);
+        IEnumerable<ExtendedCollection> GetAllAsExtendedCollection();
         IEnumerable<Collection> GetAllNonSeries();
         IEnumerable<Collection> GetAllSeries();
         IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear);
         IEnumerable<Collection> GetCollectionsInYear(int year);
+        Book GetHighestRatedBookFromCollection(Collection collection);
+        KeyValuePair<double, Collection> GetHighestRatedCollection();
+        KeyValuePair<double, Collection> GetHighestRatedNonSeries();
+        KeyValuePair<double, Collection> GetHighestRatedSeries();
+        Book GetLeastExpensiveBookFromCollection(Collection collection);
+        KeyValuePair<double, Collection> GetLeastExpensiveCollection();
+        KeyValuePair<double, Collection> GetLeastExpensiveNonSeries();
+        KeyValuePair<double, Collection> GetLeastExpensiveSeries();
+        Book GetLowestRatedBookFromCollection(Collection collection);
+        KeyValuePair<double, Collection> GetLowestRatedCollection();
+        KeyValuePair<double, Collection> GetLowestRatedNonSeries();
+        KeyValuePair<double, Collection> GetLowestRatedSeries();
+        Book GetMostExpensiveBookFromCollection(Collection collection);
+        KeyValuePair<double, Collection> GetMostExpensiveCollection();
+        KeyValuePair<double, Collection> GetMostExpensiveNonSeries();
+        KeyValuePair<double, Collection> GetMostExpensiveSeries();
         IEnumerable<Collection> GetNonSeriesBetweenYears(int minimumYear, int maximumYear);
         IEnumerable<Collection> GetNonSeriesInYear(int year);
+        double? GetPriceOfCollection(Collection collection);
+        double? GetRatingOfCollection(Collection collection);
         IEnumerable<Collection> GetSeriesBetweenYears(int minimumYear, int maximumYear);
         IEnumerable<Collection> GetSeriesInYear(int year);
         IEnumerable<IGrouping<int, Collection>> GroupByNumberOfBooks();
