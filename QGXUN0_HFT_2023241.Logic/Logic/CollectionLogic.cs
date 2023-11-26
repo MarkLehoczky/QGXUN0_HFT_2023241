@@ -3,8 +3,6 @@ using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QGXUN0_HFT_2023241.Logic.Logic
@@ -82,37 +80,11 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// </summary>
         /// <remarks><para>The <see cref="Collection.CollectionID"/> may be changed if another <see cref="Collection"/> instance has the same <see langword="key"/></para><para>The books must be in the database</para></remarks>
         /// <param name="collection">new collection</param>
-        /// <param name="bookIDs"><see cref="Book.BookID"/> of the books in the collection</param>
-        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
-        public int? Create(Collection collection, IEnumerable<int> bookIDs)
-        {
-            var created = Create(collection);
-            if (created != null)
-                AddBooksToCollection(collection, bookIDs);
-
-            return created;
-        }
-        /// <summary>
-        /// Creates a <paramref name="collection"/> with books
-        /// </summary>
-        /// <remarks><para>The <see cref="Collection.CollectionID"/> may be changed if another <see cref="Collection"/> instance has the same <see langword="key"/></para><para>The books must be in the database</para></remarks>
-        /// <param name="collection">new collection</param>
         /// <param name="books">books in the collection</param>
         /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
         public int? Create(Collection collection, IEnumerable<Book> books)
         {
-            return Create(collection, books.Select(t => t.BookID));
-        }
-        /// <summary>
-        /// Creates a <paramref name="collection"/> with books
-        /// </summary>
-        /// <remarks><para>The <see cref="Collection.CollectionID"/> may be changed if another <see cref="Collection"/> instance has the same <see langword="key"/></para><para>The books must be in the database</para></remarks>
-        /// <param name="collection">new collection</param>
-        /// <param name="bookIDs"><see cref="Book.BookID"/> of the books in the collection</param>
-        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
-        public int? Create(Collection collection, params int[] bookIDs)
-        {
-            return Create(collection, bookIDs.AsEnumerable());
+            return Create(collection, books.AsEnumerable());
         }
         /// <summary>
         /// Creates a <paramref name="collection"/> with books
@@ -123,7 +95,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
         public int? Create(Collection collection, params Book[] books)
         {
-            return Create(collection, books.Select(t => t.BookID));
+            return Create(collection, books.AsEnumerable());
         }
 
         /// <summary>
@@ -153,17 +125,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
         /// <summary>
-        /// Deletes a <see cref="Collection"/> with the same <see cref="Collection.CollectionID"/>
-        /// </summary>
-        /// <param name="collectionID"><see cref="Collection.CollectionID"/> of the <see cref="Collection"/></param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
-        public bool Delete(int collectionID)
-        {
-            try { collectionRepository.Delete(collectionID); }
-            catch (InvalidOperationException) { return false; }
-            return Read(collectionID) == null;
-        }
-        /// <summary>
         /// Deletes a <see cref="Collection"/> with the same <paramref name="collection"/>
         /// </summary>
         /// <param name="collection"><see cref="Collection"/> instance</param>
@@ -171,7 +132,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public bool Delete(Collection collection)
         {
             if (collection == null) return false;
-            return Delete(collection.CollectionID);
+            try { collectionRepository.Delete(collection.CollectionID); return true; }
+            catch { return false; }
         }
 
         /// <summary>
@@ -184,216 +146,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
 
-        /// <summary>
-        /// Reads a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collectionIDs"><see cref="Collection.CollectionID"/> values of the collections</param>
-        /// <returns><see cref="Collection"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Collection> ReadRange(IEnumerable<int> collectionIDs)
-        {
-            return ReadAll().Where(t => collectionIDs.Any(u => u == t.CollectionID));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collections"><see cref="Collection"/> instances</param>
-        /// <returns><see cref="Collection"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Collection> ReadRange(IEnumerable<Collection> collections)
-        {
-            return ReadAll().Where(t => collections.Any(u => u == t));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collectionIDs"><see cref="Collection.CollectionID"/> values of the collections</param>
-        /// <returns><see cref="Collection"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Collection> ReadRange(params int[] collectionIDs)
-        {
-            return ReadAll().Where(t => collectionIDs.Any(u => u == t.CollectionID));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collections"><see cref="Collection"/> instances</param>
-        /// <returns><see cref="Collection"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Collection> ReadRange(params Collection[] collections)
-        {
-            return ReadAll().Where(t => collections.Any(u => u == t));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Collection"/> instances between the given <paramref name="minimumID"/> and <paramref name="maximumID"/>
-        /// </summary>
-        /// <param name="minimumID">minimum value of the <see cref="Collection.CollectionID"/></param>
-        /// <param name="maximumID">maximum value of the <see cref="Collection.CollectionID"/></param>
-        /// <returns><see cref="Collection"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Collection> ReadBetween(int minimumID, int maximumID)
-        {
-            return ReadAll().Where(t => t.CollectionID >= minimumID && t.CollectionID <= maximumID);
-        }
-
-        /// <summary>
-        /// Updates a range of <paramref name="collections"/> with the same <see cref="Collection.CollectionID"/> values
-        /// </summary>
-        /// <remarks>The <see cref="Collection.CollectionID"/> values of the <paramref name="collections"/> must be the same as the ones intended to update</remarks>
-        /// <param name="collections">updated collections</param>
-        /// <returns><see langword="true"/> if every update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateRange(IEnumerable<Collection> collections)
-        {
-            bool successful = true;
-
-            foreach (var item in collections)
-                if (!Update(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Updates a range of <paramref name="collections"/> with the same <see cref="Collection.CollectionID"/> values
-        /// </summary>
-        /// <remarks>The <see cref="Collection.CollectionID"/> values of the <paramref name="collections"/> must be the same as the ones intended to update</remarks>
-        /// <param name="collections">updated collections</param>
-        /// <returns><see langword="true"/> if every update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateRange(params Collection[] collections)
-        {
-            return UpdateRange(collections.AsEnumerable());
-        }
-
-        /// <summary>
-        /// Deletes a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collectionIDs"><see cref="Collection.CollectionID"/> values of the <see cref="Collection"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(IEnumerable<int> collectionIDs)
-        {
-            bool successful = true;
-
-            foreach (var item in collectionIDs)
-                if (!Delete(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collections"><see cref="Collection"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(IEnumerable<Collection> collections)
-        {
-            bool successful = true;
-
-            foreach (var item in collections)
-                if (!Delete(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collectionIDs"><see cref="Collection.CollectionID"/> values of the <see cref="Collection"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(params int[] collectionIDs)
-        {
-            return DeleteRange(collectionIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Collection"/> instances
-        /// </summary>
-        /// <param name="collections"><see cref="Collection"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(params Collection[] collections)
-        {
-            return DeleteRange(collections.AsEnumerable());
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Collection"/> instances between the given <paramref name="minimumID"/> and <paramref name="maximumID"/>
-        /// </summary>
-        /// <param name="minimumID">minimum value of the <see cref="Collection.CollectionID"/></param>
-        /// <param name="maximumID">maximum value of the <see cref="Collection.CollectionID"/></param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteBetween(int minimumID, int maximumID)
-        {
-            return DeleteRange(ReadBetween(minimumID, maximumID));
-        }
-        /// <summary>
-        /// Deletes every <see cref="Collection"/> instances
-        /// </summary>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteAll()
-        {
-            return DeleteRange(ReadAll());
-        }
-
-
-        /// <summary>
-        /// Determines whether the <see cref="Collection"/> instances contains the <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">searched collection</param>
-        /// <returns><see langword="true"/> if the <paramref name="collection"/> was found, otherwise <see langword="false"/></returns>
-        public bool Contains(Collection collection)
-        {
-            return ReadAll().Contains(collection);
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Collection"/> instances contains any of the <paramref name="collections"/>
-        /// </summary>
-        /// <param name="collections">searched collections</param>
-        /// <returns><see langword="true"/> if any of the <paramref name="collections"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAny(IEnumerable<Collection> collections)
-        {
-            return collections.Any(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Collection"/> instances contains any of the <paramref name="collections"/>
-        /// </summary>
-        /// <param name="collections">searched collections</param>
-        /// <returns><see langword="true"/> if any of the <paramref name="collections"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAny(params Collection[] collections)
-        {
-            return collections.Any(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Collection"/> instances contains all the <paramref name="collections"/>
-        /// </summary>
-        /// <param name="collections">searched collections</param>
-        /// <returns><see langword="true"/> if all the <paramref name="collections"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAll(IEnumerable<Collection> collections)
-        {
-            return collections.All(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Collection"/> instances contains all the <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">searched collections</param>
-        /// <returns><see langword="true"/> if all the <paramref name="collection"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAll(params Collection[] collection)
-        {
-            return collection.All(t => Contains(t));
-        }
-
-
-        /// <summary>
-        /// Adds books to a <paramref name="collection"/>
-        /// </summary>
-        /// <remarks>The books must be in the database</remarks>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="bookIDs"><see cref="Book.BookID"/> of the addable books</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        public bool AddBooksToCollection(Collection collection, IEnumerable<int> bookIDs)
-        {
-            if (collection == null || Read(collection.CollectionID) == null)
-                return false;
-
-            collection.Books ??= new List<Book>();
-            int count = collection.Books.Count;
-
-            foreach (var item in bookRepository.ReadAll().Where(t => bookIDs.Contains(t.BookID)))
-                collection.Books.Add(item);
-
-            connectorRepository.SaveChanges();
-            return bookIDs.All(t => collection.Books.Any(u => u.BookID == t));
-        }
         /// <summary>
         /// Adds books to a <paramref name="collection"/>
         /// </summary>
@@ -420,17 +172,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// </summary>
         /// <remarks>The books must be in the database</remarks>
         /// <param name="collection">collection of the books</param>
-        /// <param name="bookIDs"><see cref="Book.BookID"/> of the addable books</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
-        public bool AddBooksToCollection(Collection collection, params int[] bookIDs)
-        {
-            return AddBooksToCollection(collection, bookIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Adds books to a <paramref name="collection"/>
-        /// </summary>
-        /// <remarks>The books must be in the database</remarks>
-        /// <param name="collection">collection of the books</param>
         /// <param name="books">addable books</param>
         /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
         public bool AddBooksToCollection(Collection collection, params Book[] books)
@@ -438,22 +179,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             return AddBooksToCollection(collection, books.AsEnumerable());
         }
 
-        /// <summary>
-        /// Removes books from a <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="bookIDs"><see cref="Book.BookID"/> of the removable books</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
-        public bool RemoveBooksFromCollection(Collection collection, IEnumerable<int> bookIDs)
-        {
-            if (collection == null || collection.Books == null) return false;
-
-            foreach (var item in bookRepository.ReadAll().Where(t => bookIDs.Contains(t.BookID)))
-                collection.Books.Remove(item);
-
-            connectorRepository.SaveChanges();
-            return !collection.Books.Any(t => bookIDs.Contains(t.BookID));
-        }
         /// <summary>
         /// Removes books from a <paramref name="collection"/>
         /// </summary>
@@ -469,16 +194,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
             connectorRepository.SaveChanges();
             return !collection.Books.Any(t => books.Contains(t));
-        }
-        /// <summary>
-        /// Removes books from a <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="bookIDs"><see cref="Book.BookID"/> of the removable books</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
-        public bool RemoveBooksFromCollection(Collection collection, params int[] bookIDs)
-        {
-            return RemoveBooksFromCollection(collection, bookIDs.AsEnumerable());
         }
         /// <summary>
         /// Removes books from a <paramref name="collection"/>
@@ -542,159 +257,67 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
         /// <summary>
-        /// Returns the most expensive <see cref="Collection"/> which is a series
+        /// Select the collections based on the given <paramref name="bookFilter"/> and <paramref name="collectionFilter"/>
         /// </summary>
-        /// <returns>most expensive series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetMostExpensiveSeries()
+        /// <param name="bookFilter">book filter</param>
+        /// <param name="collectionFilter">collection filter</param>
+        /// <returns>selected collection, where the <see langword="Key"/> is the <paramref name="bookFilter"/> option's value and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        public KeyValuePair<double, Collection> SelectCollection(BookFilter bookFilter, CollectionFilter collectionFilter = CollectionFilter.Collection)
         {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderByDescending(t => t.Books.Sum(u => u.Price))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the most expensive <see cref="Collection"/> which is not a series
-        /// </summary>
-        /// <returns>most expensive non-series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetMostExpensiveNonSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderByDescending(t => t.Books.Sum(u => u.Price))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the most expensive <see cref="Collection"/>
-        /// </summary>
-        /// <returns>most expensive collection, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetMostExpensiveCollection()
-        {
-            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Sum(u => u.Price))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
+            IEnumerable<Collection> filtered = null;
+
+            switch (collectionFilter)
+            {
+                case CollectionFilter.Series: filtered = ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries == true); break;
+                case CollectionFilter.NonSeries: filtered = ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries == false); break;
+                case CollectionFilter.Collection: filtered = ReadAll(); break;
+                default: filtered = Enumerable.Empty<Collection>(); break;
+            }
+
+            switch (bookFilter)
+            {
+                case BookFilter.MostExpensive:
+                    return filtered.OrderByDescending(t => t.Books.Sum(u => u.Price))
+                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v))
+                    .FirstOrDefault();
+
+                case BookFilter.LeastExpensive:
+                    return filtered.OrderBy(t => t.Books.Sum(u => u.Price))
+                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v))
+                    .FirstOrDefault();
+
+                case BookFilter.HighestRated:
+                    return filtered.OrderByDescending(t => t.Books.Average(u => u.Rating))
+                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v))
+                    .FirstOrDefault();
+
+                case BookFilter.LowestRated:
+                    return filtered.OrderBy(t => t.Books.Average(u => u.Rating))
+                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v))
+                    .FirstOrDefault();
+
+                default: return new KeyValuePair<double, Collection>(0, null);
+            }
         }
 
         /// <summary>
-        /// Returns the least expensive <see cref="Collection"/> which is a series
-        /// </summary>
-        /// <returns>least expensive series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetLeastExpensiveSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderBy(t => t.Books.Sum(u => u.Price))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the least expensive <see cref="Collection"/> which is not a series
-        /// </summary>
-        /// <returns>least expensive non-series, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetLeastExpensiveNonSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderBy(t => t.Books.Sum(u => u.Price))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the least expensive <see cref="Collection"/>
-        /// </summary>
-        /// <returns>least expensive collection, where the <see langword="Key"/> is the sum of the price and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetLeastExpensiveCollection()
-        {
-            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Sum(u => u.Price))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v)).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the highest average rated <see cref="Collection"/> which is a series
-        /// </summary>
-        /// <returns>highest rated series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetHighestRatedSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderByDescending(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the highest average rated <see cref="Collection"/> which is not a series
-        /// </summary>
-        /// <returns>highest rated non-series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetHighestRatedNonSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderByDescending(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the highest average rated <see cref="Collection"/>
-        /// </summary>
-        /// <returns>highest rated collection, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetHighestRatedCollection()
-        {
-            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the lowest average rated <see cref="Collection"/> which is a series
-        /// </summary>
-        /// <returns>lowest rated series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetLowestRatedSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == true && t.IsSeries == true).OrderBy(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the lowest average rated <see cref="Collection"/> which is not a series
-        /// </summary>
-        /// <returns>lowest rated non-series, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetLowestRatedNonSeries()
-        {
-            return ReadAll().Where(t => t.Books != null && t.IsSeries.HasValue == false || t.IsSeries == false).OrderBy(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
-        }
-        /// <summary>
-        /// Returns the lowest average rated <see cref="Collection"/>
-        /// </summary>
-        /// <returns>lowest rated collection, where the <see langword="Key"/> is the average rating of the books and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> GetLowestRatedCollection()
-        {
-            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the most expensive book from an <paramref name="collection"/>
+        /// Selects a book based on the given <paramref name="bookFilter"/> from an <paramref name="collection"/>
         /// </summary>
         /// <param name="collection">collection</param>
-        /// <returns>most expensive book from the <paramref name="collection"/></returns>
-        public Book GetMostExpensiveBookFromCollection(Collection collection)
+        /// <param name="bookFilter">book filter</param>
+        /// <returns>selected book</returns>
+        public Book SelectBookFromCollection(Collection collection, BookFilter bookFilter)
         {
             if (collection == null || collection.Books == null) return null;
-            return collection.Books.OrderByDescending(t => t.Price).FirstOrDefault();
-        }
 
-        /// <summary>
-        /// Returns the least expensive book from an <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection</param>
-        /// <returns>least expensive book from the <paramref name="collection"/></returns>
-        public Book GetLeastExpensiveBookFromCollection(Collection collection)
-        {
-            if (collection == null || collection.Books == null) return null;
-            return collection.Books.OrderBy(t => t.Price).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the highest rated book from an <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection</param>
-        /// <returns>highest rated book from the <paramref name="collection"/></returns>
-        public Book GetHighestRatedBookFromCollection(Collection collection)
-        {
-            if (collection == null || collection.Books == null) return null;
-            return collection.Books.OrderByDescending(t => t.Rating).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the lowest rated book from an <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection</param>
-        /// <returns>lowest rated book from the <paramref name="collection"/></returns>
-        public Book GetLowestRatedBookFromCollection(Collection collection)
-        {
-            if (collection == null || collection.Books == null) return null;
-            return collection.Books.OrderBy(t => t.Rating).FirstOrDefault();
+            switch (bookFilter)
+            {
+                case BookFilter.MostExpensive: return collection.Books.OrderByDescending(t => t.Price).FirstOrDefault();
+                case BookFilter.HighestRated: return collection.Books.OrderByDescending(t => t.Rating).FirstOrDefault();
+                case BookFilter.LeastExpensive: return collection.Books.OrderBy(t => t.Price).FirstOrDefault();
+                case BookFilter.LowestRated: return collection.Books.OrderBy(t => t.Rating).FirstOrDefault();
+                default: return null;
+            }
         }
 
         /// <summary>
@@ -720,28 +343,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
         /// <summary>
-        /// Returns all <see cref="Collection"/> which is a series with at least one <see cref="Book"/> released in the given <paramref name="year"/>
-        /// </summary>
-        /// <param name="year">value of the <see cref="Book.Year"/></param>
-        /// <returns>all series in the given <paramref name="year"/></returns>
-        public IEnumerable<Collection> GetSeriesInYear(int year)
-        {
-            return ReadAll().Where(t => t.IsSeries.HasValue && t.IsSeries.Value == true)
-                .Intersect(ReadAll().Where(t => t.Books.Any(u => u.Year == year)))
-                .ToList();
-        }
-        /// <summary>
-        /// Returns all <see cref="Collection"/> which is not a series with at least one <see cref="Book"/> released in the given <paramref name="year"/>
-        /// </summary>
-        /// <param name="year">value of the <see cref="Book.Year"/></param>
-        /// <returns>all series in the given <paramref name="year"/></returns>
-        public IEnumerable<Collection> GetNonSeriesInYear(int year)
-        {
-            return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false)
-                .Intersect(ReadAll().Where(t => t.Books.Any(u => u.Year == year)))
-                .ToList();
-        }
-        /// <summary>
         /// Returns all <see cref="Collection"/> with at least one <see cref="Book"/> released in the given <paramref name="year"/>
         /// </summary>
         /// <param name="year">value of the <see cref="Book.Year"/></param>
@@ -752,30 +353,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
         /// <summary>
-        /// Returns all <see cref="Collection"/> which is a series between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
-        /// </summary>
-        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
-        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
-        /// <returns>all series in the given interval</returns>
-        public IEnumerable<Collection> GetSeriesBetweenYears(int minimumYear, int maximumYear)
-        {
-            return ReadAll().Where(t => t.IsSeries.HasValue && t.IsSeries.Value == true)
-                .Intersect(ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear))
-                .ToList();
-        }
-        /// <summary>
-        /// Returns all <see cref="Collection"/> which is not a series between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
-        /// </summary>
-        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
-        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
-        /// <returns>all series in the given interval</returns>
-        public IEnumerable<Collection> GetNonSeriesBetweenYears(int minimumYear, int maximumYear)
-        {
-            return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false)
-                .Intersect(ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear))
-                .ToList();
-        }
-        /// <summary>
         /// Returns all <see cref="Collection"/> between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
         /// </summary>
         /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
@@ -784,56 +361,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear)
         {
             return ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear).ToList();
-        }
-
-        /// <summary>
-        /// Creates <see cref="Collection"/> instances from the <see cref="Publisher"/> values
-        /// </summary>
-        public void CreatePublisherCollections()
-        {
-            bookRepository.ReadAll().Select(t => t.Publisher).Where(u => u != null).Distinct().ToList().ForEach(v => Create(new Collection(1, v.PublisherName), v.Books));
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Collection"/> instances grouped by their number of <see cref="Collection.Books"/>
-        /// </summary>
-        /// <returns>grouped collections</returns>
-        public IEnumerable<IGrouping<int, Collection>> GroupByNumberOfBooks()
-        {
-            return ReadAll().Where(t => t.Books.Count != 0).OrderBy(t => t.Books.Count).ToList().GroupBy(u => u.Books.Count);
-        }
-    }
-
-
-
-    public class ExtendedCollection : Collection
-    {
-        /// <summary>
-        /// Authors of the collection
-        /// </summary>
-        public virtual ICollection<Author> Authors { get; set; }
-
-        /// <summary>
-        /// Total price of the collection
-        /// </summary>
-        public double? Price { get; set; }
-
-        /// <summary>
-        /// Average rating of the collection
-        /// </summary>
-        public double? Rating { get; set; }
-
-
-        public ExtendedCollection(Collection collection, IEnumerable<Author> authors, double? price, double? rating)
-        {
-            base.CollectionID = collection.CollectionID;
-            base.CollectionName = collection.CollectionName;
-            base.Books = collection.Books;
-            base.BookConnector = collection.BookConnector;
-            base.IsSeries = collection.IsSeries;
-            this.Authors = authors.ToList();
-            this.Price = price;
-            this.Rating = rating;
         }
     }
 }

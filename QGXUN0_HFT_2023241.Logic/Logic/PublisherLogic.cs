@@ -91,17 +91,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
         /// <summary>
-        /// Deletes a <see cref="Publisher"/> with the same <see cref="Publisher.PublisherID"/>
-        /// </summary>
-        /// <param name="publisherID"><see cref="Publisher.PublisherID"/> of the <see cref="Publisher"/></param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
-        public bool Delete(int publisherID)
-        {
-            try { publisherRepository.Delete(publisherID); }
-            catch (InvalidOperationException) { return false; }
-            return Read(publisherID) == null;
-        }
-        /// <summary>
         /// Deletes a <see cref="Publisher"/> with the same <paramref name="publisher"/>
         /// </summary>
         /// <param name="publisher"><see cref="Publisher"/> instance</param>
@@ -109,7 +98,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public bool Delete(Publisher publisher)
         {
             if (publisher == null) return false;
-            return Delete(publisher.PublisherID);
+            try { publisherRepository.Delete(publisher.PublisherID); return true; }
+            catch { return false; }
         }
 
         /// <summary>
@@ -119,195 +109,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IQueryable<Publisher> ReadAll()
         {
             return publisherRepository.ReadAll();
-        }
-
-
-        /// <summary>
-        /// Reads a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publisherIDs"><see cref="Publisher.PublisherID"/> values of the publishers</param>
-        /// <returns><see cref="Publisher"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Publisher> ReadRange(IEnumerable<int> publisherIDs)
-        {
-            return ReadAll().Where(t => publisherIDs.Any(u => u == t.PublisherID));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publishers"><see cref="Publisher"/> instances</param>
-        /// <returns><see cref="Publisher"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Publisher> ReadRange(IEnumerable<Publisher> publishers)
-        {
-            return ReadRange(publishers.Select(t => t.PublisherID));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publisherIDs"><see cref="Publisher.PublisherID"/> values of the publishers</param>
-        /// <returns><see cref="Publisher"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Publisher> ReadRange(params int[] publisherIDs)
-        {
-            return ReadRange(publisherIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publishers"><see cref="Publisher"/> instances</param>
-        /// <returns><see cref="Publisher"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Publisher> ReadRange(params Publisher[] publishers)
-        {
-            return ReadRange(publishers.AsEnumerable());
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Publisher"/> instances between the given <paramref name="minimumID"/> and <paramref name="maximumID"/>
-        /// </summary>
-        /// <param name="minimumID">minimum value of the <see cref="Publisher.PublisherID"/></param>
-        /// <param name="maximumID">maximum value of the <see cref="Publisher.PublisherID"/></param>
-        /// <returns><see cref="Publisher"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Publisher> ReadBetween(int minimumID, int maximumID)
-        {
-            return ReadAll().Where(t => t.PublisherID >= minimumID && t.PublisherID <= maximumID);
-        }
-
-        /// <summary>
-        /// Updates a range of <paramref name="publishers"/> with the same <see cref="Publisher.PublisherID"/> values
-        /// </summary>
-        /// <remarks>The <see cref="Publisher.PublisherID"/> values of the <paramref name="publishers"/> must be the same as the ones intended to update</remarks>
-        /// <param name="publishers">updated publishers</param>
-        /// <returns><see langword="true"/> if every update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateRange(IEnumerable<Publisher> publishers)
-        {
-            bool successful = true;
-
-            foreach (var item in publishers)
-                if (!Update(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Updates a range of <paramref name="publishers"/> with the same <see cref="Publisher.PublisherID"/> values
-        /// </summary>
-        /// <remarks>The <see cref="Publisher.PublisherID"/> values of the <paramref name="publishers"/> must be the same as the ones intended to update</remarks>
-        /// <param name="publishers">updated publishers</param>
-        /// <returns><see langword="true"/> if every update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateRange(params Publisher[] publishers)
-        {
-            return UpdateRange(publishers.AsEnumerable());
-        }
-
-        /// <summary>
-        /// Deletes a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publisherIDs"><see cref="Publisher.PublisherID"/> values of the <see cref="Publisher"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(IEnumerable<int> publisherIDs)
-        {
-            bool successful = true;
-
-            foreach (var item in publisherIDs)
-                if (!Delete(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publishers"><see cref="Publisher"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(IEnumerable<Publisher> publishers)
-        {
-            bool successful = true;
-
-            foreach (var item in publishers)
-                if (!Delete(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publisherIDs"><see cref="Publisher.PublisherID"/> values of the <see cref="Publisher"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(params int[] publisherIDs)
-        {
-            return DeleteRange(publisherIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <param name="publishers"><see cref="Publisher"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(params Publisher[] publishers)
-        {
-            return DeleteRange(publishers.AsEnumerable());
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Publisher"/> instances between the given <paramref name="minimumID"/> and <paramref name="maximumID"/>
-        /// </summary>
-        /// <param name="minimumID">minimum value of the <see cref="Publisher.PublisherID"/></param>
-        /// <param name="maximumID">maximum value of the <see cref="Publisher.PublisherID"/></param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteBetween(int minimumID, int maximumID)
-        {
-            return DeleteRange(ReadBetween(minimumID, maximumID));
-        }
-        /// <summary>
-        /// Deletes every <see cref="Publisher"/> instances
-        /// </summary>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteAll()
-        {
-            return DeleteRange(ReadAll());
-        }
-
-
-        /// <summary>
-        /// Determines whether the <see cref="Publisher"/> instances contains the <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">searched publisher</param>
-        /// <returns><see langword="true"/> if the <paramref name="publisher"/> was found, otherwise <see langword="false"/></returns>
-        public bool Contains(Publisher publisher)
-        {
-            return ReadAll().Contains(publisher);
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Publisher"/> instances contains any of the <paramref name="publishers"/>
-        /// </summary>
-        /// <param name="publishers">searched publishers</param>
-        /// <returns><see langword="true"/> if any of the <paramref name="publishers"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAny(IEnumerable<Publisher> publishers)
-        {
-            return publishers.Any(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Publisher"/> instances contains any of the <paramref name="publishers"/>
-        /// </summary>
-        /// <param name="publishers">searched publishers</param>
-        /// <returns><see langword="true"/> if any of the <paramref name="publishers"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAny(params Publisher[] publishers)
-        {
-            return publishers.Any(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Publisher"/> instances contains all the <paramref name="publishers"/>
-        /// </summary>
-        /// <param name="publishers">searched publishers</param>
-        /// <returns><see langword="true"/> if all the <paramref name="publishers"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAll(IEnumerable<Publisher> publishers)
-        {
-            return publishers.All(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Publisher"/> instances contains all the <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">searched publishers</param>
-        /// <returns><see langword="true"/> if all the <paramref name="publisher"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAll(params Publisher[] publisher)
-        {
-            return publisher.All(t => Contains(t));
         }
 
 
@@ -418,65 +219,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
                 .Distinct().ToList();
 
             // note: I know it would have been way easier if I would have passed through the AuthorRepository in the constructor, but why take the easy way?
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Book"/> with the given <paramref name="year"/> from the given <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">publisher</param>
-        /// <param name="year">value of the <see cref="Book.Year"/></param>
-        /// <returns>all book in the given <paramref name="year"/> from the <paramref name="publisher"/></returns>
-        public IEnumerable<Book> GetBooksFromPublisherInYear(Publisher publisher, int year)
-        {
-            if (publisher == null) return Enumerable.Empty<Book>();
-            return publisher.Books.Where(t => t.Year == year).ToList();
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Book"/> between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/> from the given <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">publisher</param>
-        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
-        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
-        /// <returns>all book in the given interval from the <paramref name="publisher"/></returns>
-        public IEnumerable<Book> GetBooksFromPublisherBetweenYears(Publisher publisher, int minimumYear, int maximumYear)
-        {
-            if (publisher == null) return Enumerable.Empty<Book>();
-            return publisher.Books.Where(t => t.Year >= minimumYear && t.Year <= maximumYear).ToList();
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Publisher"/> instances grouped by their number of <see cref="Publisher.Books"/>
-        /// </summary>
-        /// <returns>grouped publishers</returns>
-        public IEnumerable<IGrouping<int, Publisher>> GroupByNumberOfBooks()
-        {
-            return ReadAll().OrderBy(t => t.Books.Count).ToList().GroupBy(u => u.Books.Count);
-        }
-    }
-
-
-
-    public class ExtendedPublisher : Publisher
-    {
-        /// <summary>
-        /// Authors of the publisher
-        /// </summary>
-        public virtual ICollection<Author> Authors { get; set; }
-
-        /// <summary>
-        /// Average rating of the publisher
-        /// </summary>
-        public double? Rating { get; set; }
-
-
-        public ExtendedPublisher(Publisher publisher, IEnumerable<Author> authors, double? rating)
-        {
-            base.PublisherID = publisher.PublisherID;
-            base.PublisherName = publisher.PublisherName;
-            base.Books = publisher.Books;
-            this.Authors = authors.ToList();
-            this.Rating = rating;
         }
     }
 }

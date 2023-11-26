@@ -88,17 +88,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         }
 
         /// <summary>
-        /// Deletes a <see cref="Author"/> with the same <see cref="Author.AuthorID"/>
-        /// </summary>
-        /// <param name="authorID"><see cref="Author.AuthorID"/> of the <see cref="Author"/></param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
-        public bool Delete(int authorID)
-        {
-            try { authorRepository.Delete(authorID); }
-            catch (InvalidOperationException) { return false; }
-            return Read(authorID) == null;
-        }
-        /// <summary>
         /// Deletes a <see cref="Author"/> with the same <paramref name="author"/>
         /// </summary>
         /// <param name="author"><see cref="Author"/> instance</param>
@@ -106,7 +95,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public bool Delete(Author author)
         {
             if (author == null) return false;
-            return Delete(author.AuthorID);
+            try { authorRepository.Delete(author.AuthorID); return true; }
+            catch { return false; }
         }
 
         /// <summary>
@@ -118,238 +108,22 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             return authorRepository.ReadAll();
         }
 
-
         /// <summary>
-        /// Reads a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> values of the authors</param>
-        /// <returns><see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Author> ReadRange(IEnumerable<int> authorIDs)
-        {
-            return ReadAll().Where(t => authorIDs.Any(u => u == t.AuthorID));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authors"><see cref="Author"/> instances</param>
-        /// <returns><see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Author> ReadRange(IEnumerable<Author> authors)
-        {
-            return ReadRange(authors.Select(t => t.AuthorID));
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> values of the authors</param>
-        /// <returns><see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Author> ReadRange(params int[] authorIDs)
-        {
-            return ReadRange(authorIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authors"><see cref="Author"/> instances</param>
-        /// <returns><see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Author> ReadRange(params Author[] authors)
-        {
-            return ReadRange(authors.AsEnumerable());
-        }
-        /// <summary>
-        /// Reads a range of <see cref="Author"/> instances between the given <paramref name="minimumID"/> and <paramref name="maximumID"/>
-        /// </summary>
-        /// <param name="minimumID">minimum value of the <see cref="Author.AuthorID"/></param>
-        /// <param name="maximumID">maximum value of the <see cref="Author.AuthorID"/></param>
-        /// <returns><see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
-        public IQueryable<Author> ReadBetween(int minimumID, int maximumID)
-        {
-            return ReadAll().Where(t => t.AuthorID >= minimumID && t.AuthorID <= maximumID);
-        }
-
-        /// <summary>
-        /// Updates a range of <paramref name="authors"/> with the same <see cref="Author.AuthorID"/> values
-        /// </summary>
-        /// <remarks>The <see cref="Author.AuthorID"/> values of the <paramref name="authors"/> must be the same as the ones intended to update</remarks>
-        /// <param name="authors">updated authors</param>
-        /// <returns><see langword="true"/> if every update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateRange(IEnumerable<Author> authors)
-        {
-            bool successful = true;
-
-            foreach (var item in authors)
-                if (!Update(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Updates a range of <paramref name="authors"/> with the same <see cref="Author.AuthorID"/> values
-        /// </summary>
-        /// <remarks>The <see cref="Author.AuthorID"/> values of the <paramref name="authors"/> must be the same as the ones intended to update</remarks>
-        /// <param name="authors">updated authors</param>
-        /// <returns><see langword="true"/> if every update was successful, otherwise <see langword="false"/></returns>
-        public bool UpdateRange(params Author[] authors)
-        {
-            return UpdateRange(authors.AsEnumerable());
-        }
-
-        /// <summary>
-        /// Deletes a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> values of the <see cref="Author"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(IEnumerable<int> authorIDs)
-        {
-            bool successful = true;
-
-            foreach (var item in authorIDs)
-                if (!Delete(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authors"><see cref="Author"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(IEnumerable<Author> authors)
-        {
-            bool successful = true;
-
-            foreach (var item in authors)
-                if (!Delete(item) && successful)
-                    successful = false;
-
-            return successful;
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authorIDs"><see cref="Author.AuthorID"/> values of the <see cref="Author"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(params int[] authorIDs)
-        {
-            return DeleteRange(authorIDs.AsEnumerable());
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Author"/> instances
-        /// </summary>
-        /// <param name="authors"><see cref="Author"/> instances</param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteRange(params Author[] authors)
-        {
-            return DeleteRange(authors.AsEnumerable());
-        }
-        /// <summary>
-        /// Deletes a range of <see cref="Author"/> instances between the given <paramref name="minimumID"/> and <paramref name="maximumID"/>
-        /// </summary>
-        /// <param name="minimumID">minimum value of the <see cref="Author.AuthorID"/></param>
-        /// <param name="maximumID">maximum value of the <see cref="Author.AuthorID"/></param>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteBetween(int minimumID, int maximumID)
-        {
-            return DeleteRange(ReadBetween(minimumID, maximumID));
-        }
-        /// <summary>
-        /// Deletes every <see cref="Author"/> instances
-        /// </summary>
-        /// <returns><see langword="true"/> if every deleting was successful, otherwise <see langword="false"/></returns>
-        public bool DeleteAll()
-        {
-            return DeleteRange(ReadAll());
-        }
-
-
-        /// <summary>
-        /// Determines whether the <see cref="Author"/> instances contains the <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">searched author</param>
-        /// <returns><see langword="true"/> if the <paramref name="author"/> was found, otherwise <see langword="false"/></returns>
-        public bool Contains(Author author)
-        {
-            return ReadAll().Contains(author);
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Author"/> instances contains any of the <paramref name="authors"/>
-        /// </summary>
-        /// <param name="authors">searched authors</param>
-        /// <returns><see langword="true"/> if any of the <paramref name="authors"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAny(IEnumerable<Author> authors)
-        {
-            return authors.Any(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Author"/> instances contains any of the <paramref name="authors"/>
-        /// </summary>
-        /// <param name="authors">searched authors</param>
-        /// <returns><see langword="true"/> if any of the <paramref name="authors"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAny(params Author[] authors)
-        {
-            return authors.Any(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Author"/> instances contains all the <paramref name="authors"/>
-        /// </summary>
-        /// <param name="authors">searched authors</param>
-        /// <returns><see langword="true"/> if all the <paramref name="authors"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAll(IEnumerable<Author> authors)
-        {
-            return authors.All(t => Contains(t));
-        }
-        /// <summary>
-        /// Determines whether the <see cref="Author"/> instances contains all the <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">searched authors</param>
-        /// <returns><see langword="true"/> if all the <paramref name="author"/> was found, otherwise <see langword="false"/></returns>
-        public bool ContainsAll(params Author[] author)
-        {
-            return author.All(t => Contains(t));
-        }
-
-
-        /// <summary>
-        /// Returns the >most expensive book from an <paramref name="author"/>
+        /// Selects a book based on the given <paramref name="bookFilter"/> from an <paramref name="author"/>
         /// </summary>
         /// <param name="author">author</param>
-        /// <returns>most expensive book from the <paramref name="author"/></returns>
-        public Book GetMostExpensiveBookFromAuthor(Author author)
+        /// <param name="bookFilter">book filter</param>
+        /// <returns>selected book</returns>
+        public Book SelectBookFromAuthor(Author author, BookFilter bookFilter)
         {
-            if (author == null || author.Books == null) return null;
-            return author.Books.OrderByDescending(t => t.Price).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the least expensive book from an <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">author</param>
-        /// <returns>least expensive book from the <paramref name="author"/></returns>
-        public Book GetLeastExpensiveBookFromAuthor(Author author)
-        {
-            if (author == null || author.Books == null) return null;
-            return author.Books.OrderBy(t => t.Price).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the highest rated book from an <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">author</param>
-        /// <returns>highest rated book from the <paramref name="author"/></returns>
-        public Book GetHighestRatedBookFromAuthor(Author author)
-        {
-            if (author == null || author.Books == null) return null;
-            return author.Books.OrderByDescending(t => t.Rating).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// Returns the lowest rated book from an <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">author</param>
-        /// <returns>lowest rated book from the <paramref name="author"/></returns>
-        public Book GetLowestRatedBookFromAuthor(Author author)
-        {
-            if (author == null || author.Books == null) return null;
-            return author.Books.OrderBy(t => t.Rating).FirstOrDefault();
+            switch (bookFilter)
+            {
+                case BookFilter.MostExpensive: return author.Books.OrderByDescending(t => t.Price).FirstOrDefault();
+                case BookFilter.HighestRated: return author.Books.OrderByDescending(t => t.Rating).FirstOrDefault();
+                case BookFilter.LeastExpensive: return author.Books.OrderBy(t => t.Price).FirstOrDefault();
+                case BookFilter.LowestRated: return author.Books.OrderBy(t => t.Rating).FirstOrDefault();
+                default: return null;
+            }
         }
 
         /// <summary>
@@ -381,15 +155,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             if (author == null || author.Books == null) return Enumerable.Empty<Collection>();
             return author.Books.SelectMany(t => t.Collections, (t, collections) => collections).Where(t => t.IsSeries == true).Distinct();
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Author"/> instances grouped by their number of <see cref="Author.Books"/>
-        /// </summary>
-        /// <returns>grouped authors</returns>
-        public IEnumerable<IGrouping<int, Author>> GroupByNumberOfBooks()
-        {
-            return ReadAll().OrderBy(t => t.Books.Count).ToList().GroupBy(u => u.Books.Count);
         }
     }
 }
