@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Reflection;
 
 namespace QGXUN0_HFT_2023241.Models
 {
     /// <summary>
     /// Contains a book's title, authors, release year, and optionally the publisher, collections, ISBN number
     /// </summary>
-    public class Book : IComparable<Book>, IComparable<string>, IComparable
+    public class Book : IComparable<Book>, IComparable<string>, IComparable, IEquatable<Book>
     {
         /// <summary>
         /// Unique key value
@@ -22,7 +21,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Title of the book
         /// </summary>
-        [Required][StringLength(200)] public string Title { get; set; }
+        [Required][StringLength(200, MinimumLength = 1)] public string Title { get; set; }
 
         /// <summary>
         /// Authors groups of the book
@@ -189,7 +188,7 @@ namespace QGXUN0_HFT_2023241.Models
                 book = new Book(bookID, title, year);
 
             if (restrictionCheck)
-                book.Validate();
+                book.Validate(typeof(RequiredAttribute));
 
             return book;
 
@@ -233,20 +232,14 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (obj == null || obj is not Book) return false;
-            else if (Title != (obj as Book).Title) return false;
-            else if (Authors != (obj as Book).Authors) return false;
-            else if (Year != (obj as Book).Year) return false;
-            else if (Publisher != (obj as Book).Publisher) return false;
-            else if (Price != (obj as Book).Price) return false;
-            else if (Rating != (obj as Book).Rating) return false;
-            else return true;
+            if (obj is not Book book) return false;
+            else return Equals(book);
         }
 
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return HashCode.Combine(Title, Authors, Year, Publisher, Price, Rating);
         }
 
 
@@ -285,9 +278,24 @@ namespace QGXUN0_HFT_2023241.Models
         public int CompareTo(object obj)
         {
             if (obj is not Book)
-                return Comparer.Default.Compare(ToString(), obj.ToString());
+                return CompareTo(obj.ToString());
             else
                 return CompareTo(obj as Book);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Book other)
+        {
+            if (other == null) return false;
+            else if (ReferenceEquals(this, other)) return true;
+            else if (Title != other.Title) return false;
+            else if ((Authors == null && other.Authors != null) || (Authors != null && other.Authors == null)) return false;
+            else if (Authors != null && other.Authors != null && !Authors.SequenceEqual(other.Authors)) return false;
+            else if (Year != other.Year) return false;
+            else if (Publisher != other.Publisher) return false;
+            else if (Price != other.Price) return false;
+            else if (Rating != other.Rating) return false;
+            else return true;
         }
     }
 }

@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Reflection;
 
 namespace QGXUN0_HFT_2023241.Models
 {
     /// <summary>
     /// Contains a publisher's name, books, and optionally website
     /// </summary>
-    public class Publisher : IComparable<Publisher>, IComparable<string>, IComparable
+    public class Publisher : IComparable<Publisher>, IComparable<string>, IComparable, IEquatable<Publisher>
     {
         /// <summary>
         /// Unique key value
@@ -22,7 +21,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Name of the publisher
         /// </summary>
-        [Required][StringLength(50)] public string PublisherName { get; set; }
+        [Required][StringLength(50, MinimumLength = 1)] public string PublisherName { get; set; }
 
         /// <summary>
         /// Books of the publisher
@@ -32,16 +31,13 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Website of the publisher
         /// </summary>
-        [StringLength(250)] public string Website { get; set; }
+        [StringLength(250, MinimumLength = 1)] public string Website { get; set; }
 
 
         /// <summary>
         /// Empty constructor
         /// </summary>
-        public Publisher()
-        {
-            Books = new HashSet<Book>();
-        }
+        public Publisher() { }
         /// <summary>
         /// Constructor with required property values
         /// </summary>
@@ -140,17 +136,14 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (obj == null || obj is not Publisher) return false;
-            else if (PublisherName != (obj as Publisher).PublisherName) return false;
-            else if (Books != (obj as Publisher).Books) return false;
-            else if (Website != (obj as Publisher).Website) return false;
-            else return true;
+            if (obj is not Publisher publisher) return false;
+            else return Equals(publisher);
         }
 
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return HashCode.Combine(PublisherName, Books);
         }
 
 
@@ -180,9 +173,21 @@ namespace QGXUN0_HFT_2023241.Models
         public int CompareTo(object obj)
         {
             if (obj is not Book)
-                return Comparer.Default.Compare(ToString(), obj.ToString());
+                return CompareTo(obj.ToString());
             else
                 return CompareTo(obj as Book);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Publisher other)
+        {
+            if (other == null) return false;
+            else if (ReferenceEquals(this, other)) return true;
+            else if (PublisherName != other.PublisherName) return false;
+            else if ((Books == null && other.Books != null) || (Books != null && other.Books == null)) return false;
+            else if (Books != null && other.Books != null && !Books.SequenceEqual(other.Books)) return false;
+            else if (Website != other.Website) return false;
+            else return true;
         }
     }
 }

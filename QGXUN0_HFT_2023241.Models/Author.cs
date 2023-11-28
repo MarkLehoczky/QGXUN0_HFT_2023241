@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Reflection;
 
 namespace QGXUN0_HFT_2023241.Models
 {
     /// <summary>
     /// Contains a author's name and books
     /// </summary>
-    public class Author : IComparable<Author>, IComparable<string>, IComparable
+    public class Author : IComparable<Author>, IComparable<string>, IComparable, IEquatable<Author>
     {
         /// <summary>
         /// Unique key value
@@ -22,7 +21,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Name of the author
         /// </summary>
-        [Required][StringLength(50)] public string AuthorName { get; set; }
+        [Required][StringLength(50, MinimumLength = 1)] public string AuthorName { get; set; }
 
         /// <summary>
         /// Books of the author
@@ -77,7 +76,7 @@ namespace QGXUN0_HFT_2023241.Models
             Author author = new Author(authorID, authorName);
 
             if (restrictionCheck)
-                author.Validate();
+                author.Validate(typeof(RequiredAttribute));
 
             return author;
         }
@@ -113,16 +112,14 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (obj == null || obj is not Author) return false;
-            else if (AuthorName != (obj as Author).AuthorName) return false;
-            else if (Books != (obj as Author).Books) return false;
-            else return true;
+            if (obj is not Author author) return false;
+            else return Equals(author);
         }
 
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return HashCode.Combine(AuthorName, Books);
         }
 
 
@@ -149,9 +146,20 @@ namespace QGXUN0_HFT_2023241.Models
         public int CompareTo(object obj)
         {
             if (obj is not Book)
-                return Comparer.Default.Compare(ToString(), obj.ToString());
+                return CompareTo(obj.ToString());
             else
                 return CompareTo(obj as Book);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Author other)
+        {
+            if (other == null) return false;
+            else if (ReferenceEquals(this, other)) return true;
+            else if (AuthorName != other.AuthorName) return false;
+            else if ((Books == null && other.Books != null) || (Books != null && other.Books == null)) return false;
+            else if (Books != null && other.Books != null && !Books.SequenceEqual(other.Books)) return false;
+            else return true;
         }
     }
 }

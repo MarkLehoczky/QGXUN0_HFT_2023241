@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Reflection;
 
 namespace QGXUN0_HFT_2023241.Models
 {
     /// <summary>
     /// Contains a collection's name, books, and optionally whether it is a series
     /// </summary>
-    public class Collection : IComparable<Collection>, IComparable<string>, IComparable
+    public class Collection : IComparable<Collection>, IComparable<string>, IComparable, IEquatable<Collection>
     {
         /// <summary>
         /// Unique key value
@@ -22,7 +21,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Name of the collection
         /// </summary>
-        [Required][StringLength(50)] public string CollectionName { get; set; }
+        [Required][StringLength(50, MinimumLength = 1)] public string CollectionName { get; set; }
 
         /// <summary>
         /// Books of the collection
@@ -136,7 +135,7 @@ namespace QGXUN0_HFT_2023241.Models
         public override string ToString()
         {
             if (IsSeries.HasValue)
-                return $"[#{CollectionID}]{CollectionName} ({IsSeries.Value})";
+                return $"[#{CollectionID}]{CollectionName} ({IsSeries})";
             else
                 return $"[#{CollectionID}]{CollectionName}";
         }
@@ -144,18 +143,14 @@ namespace QGXUN0_HFT_2023241.Models
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (obj == null || obj is not Collection) return false;
-            else if (CollectionName != (obj as Collection).CollectionName) return false;
-            else if (Books != (obj as Collection).Books) return false;
-            else if (IsSeries.HasValue != (obj as Collection).IsSeries.HasValue) return false;
-            else if (IsSeries.Value != (obj as Collection).IsSeries.Value) return false;
-            else return true;
+            if (obj is not Collection collection) return false;
+            else return Equals(collection);
         }
 
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return HashCode.Combine(CollectionName, Books, IsSeries);
         }
 
 
@@ -185,9 +180,21 @@ namespace QGXUN0_HFT_2023241.Models
         public int CompareTo(object obj)
         {
             if (obj is not Book)
-                return Comparer.Default.Compare(ToString(), obj.ToString());
+                return CompareTo(obj.ToString());
             else
                 return CompareTo(obj as Book);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(Collection other)
+        {
+            if (other == null) return false;
+            else if (ReferenceEquals(this, other)) return true;
+            else if (CollectionName != other.CollectionName) return false;
+            else if ((Books == null && other.Books != null) || (Books != null && other.Books == null)) return false;
+            else if (Books != null && other.Books != null && !Books.SequenceEqual(other.Books)) return false;
+            else if (IsSeries != other.IsSeries) return false;
+            else return true;
         }
     }
 }
