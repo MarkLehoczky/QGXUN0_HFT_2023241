@@ -3,6 +3,7 @@ using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QGXUN0_HFT_2023241.Logic.Logic
@@ -59,19 +60,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Book.BookID"/> of the <paramref name="book"/> if the book and authors are valid, otherwise <see langword="null"/></returns>
         public int? Create(Book book)
         {
-            // if the book attributes are not valid (through ValidationAttribute), then returns
             if (!book.IsValid())
                 return null;
 
-            // if the book already exists, then returns
-            // else if the ID already exists, gives a new ID to the book
-            var read = Read(book.BookID);
-            if (read == book)
-                return book.BookID;
-            else if (read != null)
+            if (ReadAll().Contains(book))
+                return ReadAll().FirstOrDefault(t => t == book)?.BookID;
+
+            if (Read(book.BookID) != null)
                 book.BookID = ReadAll().Max(t => t.BookID) + 1;
 
-            // creates the book, then returns the ID
             bookRepository.Create(book);
             return book.BookID;
         }
@@ -84,29 +81,26 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Book.BookID"/> of the <paramref name="book"/> if the book is valid, otherwise <see langword="null"/></returns>
         public int? Create(Book book, IEnumerable<Author> authors)
         {
-            // if the book does not exist, then returns
-            if (book == null)
+            if (book == null || !book.IsValid(typeof(RequiredAttribute)))
                 return null;
 
-            // if not all author addition was successful, resets the authors
-            var prevAuthors = book.Authors?.ToList();
-            book.Authors = Enumerable.Empty<Author>().ToList();
+            var prevAuthors = book.Authors;
+            book.Authors = null;
             if (!AddAuthorsToBook(book, authors))
+            {
                 book.Authors = prevAuthors;
+                return null;
+            }
 
-            // if the book attributes are not valid (through ValidationAttribute), then returns
             if (!book.IsValid())
                 return null;
 
-            // if the book already exists, then returns
-            // else if the ID already exists, gives a new ID to the book
-            var read = Read(book.BookID);
-            if (read == book)
-                return book.BookID;
-            else if (read != null)
+            if (ReadAll().Contains(book))
+                return ReadAll().FirstOrDefault(t => t == book)?.BookID;
+
+            if (Read(book.BookID) != null)
                 book.BookID = ReadAll().Max(t => t.BookID) + 1;
 
-            // creates the book, then returns the ID
             bookRepository.Create(book);
             return book.BookID;
         }
@@ -178,15 +172,14 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
         public bool AddAuthorsToBook(Book book, IEnumerable<Author> authors)
         {
-            if (book == null || authors.Count() == 0 || authors.Any(t => t == null))
-                return false;
+            if (book == null) return false;
 
             book.Authors ??= new List<Author>();
-            int count = book.Authors.Count;
 
-            foreach (var item in authors)
+            foreach (var item in authorRepository.ReadAll().Where(t => authors.Contains(t)))
                 book.Authors.Add(item);
 
+            book.Authors = book.Authors.Distinct().ToList();
             connectorRepository.SaveChanges();
             return authors.All(t => book.Authors.Contains(t));
         }
@@ -209,14 +202,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
         public bool RemoveAuthorsFromBook(Book book, IEnumerable<Author> authors)
         {
-            if (book == null)
-                return false;
+            if (book == null || book.Authors == null) return false;
+            bool successful = true;
 
             foreach (var item in authors)
-                book.Authors.Remove(item);
+                if (!book.Authors.Remove(item) && successful)
+                    successful = false;
 
             connectorRepository.SaveChanges();
-            return !book.Authors.Any(t => authors.Contains(t));
+            return successful;
         }
         /// <summary>
         /// Removes authors from a <paramref name="book"/>
@@ -239,10 +233,10 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             switch (bookFilter)
             {
-                case BookFilter.MostExpensive: return ReadAll().OrderByDescending(t => t.Price).FirstOrDefault();
-                case BookFilter.HighestRated: return ReadAll().OrderByDescending(t => t.Rating).FirstOrDefault();
-                case BookFilter.LeastExpensive: return ReadAll().OrderBy(t => t.Price).FirstOrDefault();
-                case BookFilter.LowestRated: return ReadAll().OrderBy(t => t.Rating).FirstOrDefault();
+                case BookFilter.MostExpensive: return ReadAll().Where(t => t.Price != null).OrderByDescending(t => t.Price).FirstOrDefault();
+                case BookFilter.HighestRated: return ReadAll().Where(t => t.Rating != null).OrderByDescending(t => t.Rating).FirstOrDefault();
+                case BookFilter.LeastExpensive: return ReadAll().Where(t => t.Price != null).OrderBy(t => t.Price).FirstOrDefault();
+                case BookFilter.LowestRated: return ReadAll().Where(t => t.Rating != null).OrderBy(t => t.Rating).FirstOrDefault();
                 default: return null;
             }
         }
@@ -255,7 +249,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<Book> GetBooksWithTitle(string text)
         {
             if (text == null) return Enumerable.Empty<Book>();
-            return ReadAll().Where(t => t.Title.ToLower().Contains(text)).ToList();
+            return ReadAll().Where(t => t.Title.ToLower().Contains(text.ToLower())).ToList();
         }
 
         /// <summary>

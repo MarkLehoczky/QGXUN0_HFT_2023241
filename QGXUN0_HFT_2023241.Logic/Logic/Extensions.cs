@@ -80,6 +80,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             base.PublisherID = publisher.PublisherID;
             base.PublisherName = publisher.PublisherName;
+            base.Website = publisher.Website;
             base.Books = publisher.Books;
             this.Authors = authors.ToList();
             this.Rating = rating;

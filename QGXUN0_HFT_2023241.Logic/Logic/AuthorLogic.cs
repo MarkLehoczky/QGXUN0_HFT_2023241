@@ -3,6 +3,7 @@ using QGXUN0_HFT_2023241.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QGXUN0_HFT_2023241.Logic.Logic
@@ -44,19 +45,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Author.AuthorID"/> of the <paramref name="author"/> if the author is valid, otherwise <see langword="null"/></returns>
         public int? Create(Author author)
         {
-            // if the author attributes are not valid (through ValidationAttribute), then returns
-            if (!author.IsValid())
+            if (!author.IsValid(typeof(RequiredAttribute)))
                 return null;
 
-            // if the author already exists, then returns
-            // else if the ID already exists, gives a new ID to the author
-            var read = Read(author.AuthorID);
-            if (read == author)
-                return author.AuthorID;
-            else if (read != null)
+            if (ReadAll().Contains(author))
+                return ReadAll().FirstOrDefault(t => t == author)?.AuthorID;
+
+            if (Read(author.AuthorID) != null)
                 author.AuthorID = ReadAll().Max(t => t.AuthorID) + 1;
 
-            // creates the author, then returns the ID
             authorRepository.Create(author);
             return author.AuthorID;
         }
@@ -116,6 +113,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>selected book</returns>
         public Book SelectBookFromAuthor(Author author, BookFilter bookFilter)
         {
+            if (author == null || author.Books == null) return null;
+
             switch (bookFilter)
             {
                 case BookFilter.MostExpensive: return author.Books.OrderByDescending(t => t.Price).FirstOrDefault();
@@ -132,8 +131,11 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>highest rated author, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Author"/></returns>
         public KeyValuePair<double, Author> GetHighestRatedAuthor()
         {
-            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Author>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+            return ReadAll()
+                .Where(t => t.Books != null && t.Books.Any(t => t.Rating != null))
+                .OrderByDescending(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Author>((double)v.Books.Average(u => u.Rating), v))
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -142,8 +144,11 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>lowest rated author, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Author"/></returns>
         public KeyValuePair<double, Author> GetLowestRatedAuthor()
         {
-            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Author>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
+            return ReadAll()
+                .Where(t => t.Books != null && t.Books.Any(t => t.Rating != null))
+                .OrderBy(t => t.Books.Average(u => u.Rating))
+                .Select(v => new KeyValuePair<double, Author>((double)v.Books.Average(u => u.Rating), v))
+                .FirstOrDefault();
         }
 
         /// <summary>
@@ -154,7 +159,11 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public IEnumerable<Collection> GetSeriesOfAuthor(Author author)
         {
             if (author == null || author.Books == null) return Enumerable.Empty<Collection>();
-            return author.Books.SelectMany(t => t.Collections, (t, collections) => collections).Where(t => t.IsSeries == true).Distinct();
+            return author.Books
+                .Where(t => t.Collections != null)
+                .SelectMany(t => t.Collections, (t, collections) => collections)
+                .Where(t => t.IsSeries.HasValue == true && t.IsSeries == true)
+                .Distinct();
         }
     }
 }

@@ -59,19 +59,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
         public int? Create(Collection collection)
         {
-            // if the collection attributes are not valid (through ValidationAttribute), then returns
             if (!collection.IsValid())
                 return null;
 
-            // if the collection already exists, then returns
-            // else if the ID already exists, gives a new ID to the collection
-            var read = Read(collection.CollectionID);
-            if (read == collection)
-                return collection.CollectionID;
-            else if (read != null)
+            if (ReadAll().Contains(collection))
+                return ReadAll().FirstOrDefault(t => t == collection)?.CollectionID;
+
+            if (Read(collection.CollectionID) != null)
                 collection.CollectionID = ReadAll().Max(t => t.CollectionID) + 1;
 
-            // creates the collection, then returns the ID
             collectionRepository.Create(collection);
             return collection.CollectionID;
         }
@@ -84,7 +80,11 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
         public int? Create(Collection collection, IEnumerable<Book> books)
         {
-            return Create(collection, books.AsEnumerable());
+            var created = Create(collection);
+            if (created != null)
+                AddBooksToCollection(collection, books);
+
+            return created;
         }
         /// <summary>
         /// Creates a <paramref name="collection"/> with books
@@ -155,15 +155,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
         public bool AddBooksToCollection(Collection collection, IEnumerable<Book> books)
         {
-            if (collection == null || Read(collection.CollectionID) == null)
+            if (collection == null)
                 return false;
 
             collection.Books ??= new List<Book>();
-            int count = collection.Books.Count;
 
             foreach (var item in bookRepository.ReadAll().Where(t => books.Contains(t)))
                 collection.Books.Add(item);
 
+            collection.Books = collection.Books.Distinct().ToList();
             connectorRepository.SaveChanges();
             return books.All(t => collection.Books.Contains(t));
         }
@@ -188,12 +188,14 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         public bool RemoveBooksFromCollection(Collection collection, IEnumerable<Book> books)
         {
             if (collection == null || collection.Books == null) return false;
+            bool successful = true;
 
-            foreach (var item in bookRepository.ReadAll().Where(t => books.Contains(t)))
-                collection.Books.Remove(item);
+            foreach (var item in books)
+                if (!collection.Books.Remove(item) && successful)
+                    successful = false;
 
             connectorRepository.SaveChanges();
-            return !collection.Books.Any(t => books.Contains(t));
+            return successful;
         }
         /// <summary>
         /// Removes books from a <paramref name="collection"/>
@@ -212,7 +214,10 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
         public bool RemoveAllBookFromCollection(Collection collection)
         {
-            return RemoveBooksFromCollection(collection, collection.Books);
+            var bookClone = new Book[collection.Books.Count];
+            collection.Books.CopyTo(bookClone, 0);
+
+            return RemoveBooksFromCollection(collection, bookClone);
         }
 
 
@@ -232,8 +237,10 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>collection as <see cref="ExtendedCollection"/></returns>
         public ExtendedCollection ConvertCollectionToExtendedCollection(Collection collection)
         {
+            if (collection == null) return null;
+
             return new ExtendedCollection(collection,
-                collection.Books.SelectMany(u => u.Authors, (u, authors) => authors).Distinct(),
+                collection.Books == null ? Enumerable.Empty<Author>() : collection.Books.SelectMany(u => u.Authors, (u, authors) => authors).Distinct(),
                 GetPriceOfCollection(collection),
                 GetRatingOfCollection(collection));
         }
@@ -277,22 +284,22 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             switch (bookFilter)
             {
                 case BookFilter.MostExpensive:
-                    return filtered.OrderByDescending(t => t.Books.Sum(u => u.Price))
+                    return filtered.Where(t => t.Books != null && t.Books.Any(u => u.Price != null)).OrderByDescending(t => t.Books.Sum(u => u.Price))
                     .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v))
                     .FirstOrDefault();
 
                 case BookFilter.LeastExpensive:
-                    return filtered.OrderBy(t => t.Books.Sum(u => u.Price))
+                    return filtered.Where(t => t.Books != null && t.Books.Any(u => u.Price != null)).OrderBy(t => t.Books.Sum(u => u.Price))
                     .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v))
                     .FirstOrDefault();
 
                 case BookFilter.HighestRated:
-                    return filtered.OrderByDescending(t => t.Books.Average(u => u.Rating))
+                    return filtered.Where(t => t.Books != null && t.Books.Any(u => u.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating))
                     .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v))
                     .FirstOrDefault();
 
                 case BookFilter.LowestRated:
-                    return filtered.OrderBy(t => t.Books.Average(u => u.Rating))
+                    return filtered.Where(t => t.Books != null && t.Books.Any(u => u.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating))
                     .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v))
                     .FirstOrDefault();
 
@@ -312,10 +319,10 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
             switch (bookFilter)
             {
-                case BookFilter.MostExpensive: return collection.Books.OrderByDescending(t => t.Price).FirstOrDefault();
-                case BookFilter.HighestRated: return collection.Books.OrderByDescending(t => t.Rating).FirstOrDefault();
-                case BookFilter.LeastExpensive: return collection.Books.OrderBy(t => t.Price).FirstOrDefault();
-                case BookFilter.LowestRated: return collection.Books.OrderBy(t => t.Rating).FirstOrDefault();
+                case BookFilter.MostExpensive: return collection.Books.Where(t => t.Price != null).OrderByDescending(t => t.Price).FirstOrDefault();
+                case BookFilter.HighestRated: return collection.Books.Where(t => t.Rating != null).OrderByDescending(t => t.Rating).FirstOrDefault();
+                case BookFilter.LeastExpensive: return collection.Books.Where(t => t.Price != null).OrderBy(t => t.Price).FirstOrDefault();
+                case BookFilter.LowestRated: return collection.Books.Where(t => t.Rating != null).OrderBy(t => t.Rating).FirstOrDefault();
                 default: return null;
             }
         }
@@ -349,7 +356,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>all collection in the given <paramref name="year"/></returns>
         public IEnumerable<Collection> GetCollectionsInYear(int year)
         {
-            return ReadAll().Where(t => t.Books.Count != 0 && t.Books.Any(u => u.Year == year)).ToList();
+            return ReadAll().Where(t => t.Books != null && t.Books.Any(u => u.Year == year)).ToList();
         }
 
         /// <summary>
@@ -360,7 +367,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>all collection in the given interval</returns>
         public IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear)
         {
-            return ReadAll().Where(t => t.Books.Count != 0 && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear).ToList();
+            return ReadAll().Where(t => t.Books != null && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear).ToList();
         }
     }
 }

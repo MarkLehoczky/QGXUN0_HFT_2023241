@@ -47,19 +47,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Publisher.PublisherID"/> of the <paramref name="publisher"/> if the publisher is valid, otherwise <see langword="null"/></returns>
         public int? Create(Publisher publisher)
         {
-            // if the publisher attributes are not valid (through ValidationAttribute), then returns
             if (!publisher.IsValid())
                 return null;
 
-            // if the publisher already exists, then returns
-            // else if the ID already exists, gives a new ID to the publisher
-            var read = Read(publisher.PublisherID);
-            if (read == publisher)
-                return publisher.PublisherID;
-            else if (read != null)
+            if (ReadAll().Contains(publisher))
+                return ReadAll().FirstOrDefault(t => t == publisher)?.PublisherID;
+
+            if (Read(publisher.PublisherID) != null)
                 publisher.PublisherID = ReadAll().Max(t => t.PublisherID) + 1;
 
-            // creates the publisher, then returns the ID
             publisherRepository.Create(publisher);
             return publisher.PublisherID;
         }
@@ -128,6 +124,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>publisher as <see cref="ExtendedPublisher"/></returns>
         public ExtendedPublisher ConvertPublisherToExtendedPublisher(Publisher publisher)
         {
+            if (publisher == null) return null;
+
             return new ExtendedPublisher(publisher,
                 GetAuthorsOfPublisher(publisher),
                 GetRatingOfPublisher(publisher));
@@ -139,7 +137,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>series publishers</returns>
         public IEnumerable<Publisher> GetSeriesPublishers()
         {
-            return ReadAll().Where(t => t.Books.Any(u => u.Collections.Any(v => v.IsSeries.HasValue && v.IsSeries.Value == true))).ToList();
+            return ReadAll().Where(t => t.Books != null && t.Books.Any(u => u.Collections != null && u.Collections.Any(v => v.IsSeries.HasValue && v.IsSeries == true))).ToList();
         }
 
         /// <summary>
@@ -148,7 +146,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>only series publishers</returns>
         public IEnumerable<Publisher> GetOnlySeriesPublishers()
         {
-            return ReadAll().Where(t => t.Books.All(u => u.Collections.Any(v => v.IsSeries.HasValue && v.IsSeries.Value == true))).ToList();
+            return ReadAll().Where(t => t.Books != null && t.Books.All(u => u.Collections != null && u.Collections.Any(v => v.IsSeries.HasValue && v.IsSeries == true))).ToList();
         }
 
         /// <summary>
@@ -157,7 +155,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>highest rated publisher, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Publisher"/></returns>
         public KeyValuePair<double, Publisher> GetHighestRatedPublisher()
         {
-            return ReadAll().Where(t => t.Books != null).OrderByDescending(t => t.Books.Average(u => u.Rating))
+            return ReadAll().Where(t => t.Books != null && t.Books.Any(u => u.Rating != null)).OrderByDescending(t => GetRatingOfPublisher(t))
                 .Select(v => new KeyValuePair<double, Publisher>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
         }
 
@@ -167,7 +165,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>lowest rated publisher, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Publisher"/></returns>
         public KeyValuePair<double, Publisher> GetLowestRatedPublisher()
         {
-            return ReadAll().Where(t => t.Books != null).OrderBy(t => t.Books.Average(u => u.Rating))
+            return ReadAll().Where(t => t.Books != null && t.Books.Any(u => u.Rating != null)).OrderBy(t => GetRatingOfPublisher(t))
                 .Select(v => new KeyValuePair<double, Publisher>((double)v.Books.Average(u => u.Rating), v)).FirstOrDefault();
         }
 
@@ -189,8 +187,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>authors of the publisher</returns>
         public IEnumerable<Author> GetAuthorsOfPublisher(Publisher publisher)
         {
-            if (publisher == null) return Enumerable.Empty<Author>();
-            return publisher.Books.SelectMany(t => t.Authors, (t, u) => u).ToList();
+            if (publisher == null || publisher.Books == null) return Enumerable.Empty<Author>();
+            return publisher.Books.SelectMany(t => t.Authors, (t, u) => u).Distinct().ToList();
         }
 
         /// <summary>
@@ -200,8 +198,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>permanent authors of the publisher</returns>
         public IEnumerable<Author> GetPermanentAuthorsOfPublisher(Publisher publisher)
         {
-            if (publisher == null) return Enumerable.Empty<Author>();
-            return publisher.Books.SelectMany(book => book.Authors, (book, author) => author).Distinct().Where(author => author.Books.All(book => book.Publisher == publisher)).ToList();
+            if (publisher == null || publisher.Books == null) return Enumerable.Empty<Author>();
+            return publisher.Books.SelectMany(book => book.Authors, (book, author) => author).Distinct().Where(author => author.Books.All(book => book.Publisher == publisher)).Distinct().ToList();
         }
 
         /// <summary>
@@ -212,7 +210,9 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             // "flattens" the publishers' books, then "flattens" the books' authors, then selects the authors who only published at one publisher
             return ReadAll()
+                .Where(p => p.Books != null)
                 .SelectMany(publisher => publisher.Books, (publisher, book) => new { publisher, book })
+                .Where(pb => pb.book.Authors != null)
                 .SelectMany(pb => pb.book.Authors, (pb, author) => new { pb.publisher, author })
                 .Where(pa => pa.author.Books.All(book => book.Publisher != null && book.Publisher == pa.publisher))
                 .Select(pa => pa.author)
