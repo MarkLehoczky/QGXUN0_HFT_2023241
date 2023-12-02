@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using QGXUN0_HFT_2023241.Models.Attributes;
 
-namespace QGXUN0_HFT_2023241.Models
+namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
     /// Contains a book's title, authors, release year, and optionally the publisher, collections, ISBN number
@@ -52,7 +53,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// </summary>
         public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
         /// <summary>
-        /// Connector for the <see cref="Book"></see> and <see cref="Models.Collection"></see> instances
+        /// Connector for the <see cref="Book"></see> and <see cref="Collection"></see> instances
         /// </summary>
         public virtual ICollection<BookCollectionConnector> CollectionConnector { get; set; }
 

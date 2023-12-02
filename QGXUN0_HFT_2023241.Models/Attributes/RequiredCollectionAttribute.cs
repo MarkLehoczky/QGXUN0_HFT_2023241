@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace QGXUN0_HFT_2023241.Models
+namespace QGXUN0_HFT_2023241.Models.Attributes
 {
     public class RequiredCollectionAttribute : ValidationAttribute
     {

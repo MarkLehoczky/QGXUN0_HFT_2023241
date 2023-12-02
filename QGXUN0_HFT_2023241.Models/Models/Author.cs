@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using QGXUN0_HFT_2023241.Models.Attributes;
 
-namespace QGXUN0_HFT_2023241.Models
+namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
     /// Contains a author's name and books

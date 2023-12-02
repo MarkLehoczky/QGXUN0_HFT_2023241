@@ -3,7 +3,7 @@ using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QGXUN0_HFT_2023241.Models
+namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
     /// Connector for the <see cref="Models.Book"></see> and <see cref="Models.Collection"></see> instances

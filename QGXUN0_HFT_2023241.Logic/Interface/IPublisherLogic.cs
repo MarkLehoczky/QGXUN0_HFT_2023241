@@ -1,5 +1,5 @@
 ﻿using QGXUN0_HFT_2023241.Logic.Logic;
-using QGXUN0_HFT_2023241.Models;
+using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
 using System.Linq;
 

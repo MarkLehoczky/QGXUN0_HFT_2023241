@@ -1,4 +1,4 @@
-﻿using QGXUN0_HFT_2023241.Models;
+﻿using QGXUN0_HFT_2023241.Models.Models;
 
 namespace QGXUN0_HFT_2023241.Repository.Database
 {

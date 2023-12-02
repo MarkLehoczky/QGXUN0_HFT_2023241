@@ -1,4 +1,4 @@
-﻿using QGXUN0_HFT_2023241.Models;
+﻿using QGXUN0_HFT_2023241.Models.Models;
 using QGXUN0_HFT_2023241.Repository.Database;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System.Linq;
