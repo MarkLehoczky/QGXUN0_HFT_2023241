@@ -32,7 +32,7 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// <summary>
         /// Website of the publisher
         /// </summary>
-        [StringLength(250, MinimumLength = 1)] public string Website { get; set; }
+        [Website][StringLength(250, MinimumLength = 1)] public string Website { get; set; }
 
 
         /// <summary>

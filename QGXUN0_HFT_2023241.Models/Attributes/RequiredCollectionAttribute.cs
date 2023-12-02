@@ -1,9 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QGXUN0_HFT_2023241.Models.Attributes
 {
+    /// <summary>
+    /// Attribute which checks whether an <see cref="IEnumerable{T}"/> collection is empty
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue, AllowMultiple = false)]
     public class RequiredCollectionAttribute : ValidationAttribute
     {
         /// <inheritdoc/>
