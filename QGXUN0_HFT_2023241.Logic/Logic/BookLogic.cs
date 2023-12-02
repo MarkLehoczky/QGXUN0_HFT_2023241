@@ -246,8 +246,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>books with the given <paramref name="text"/> in the title</returns>
         public IEnumerable<Book> GetBooksWithTitle(string text)
         {
-            if (text == null) return Enumerable.Empty<Book>();
-            return ReadAll().Where(t => t.Title.ToLower().Contains(text.ToLower())).ToList();
+            return ReadAll().Where(t => t.Title.Contains(text, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         /// <summary>
@@ -257,9 +256,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>books and texts, where the <see langword="Key"/> is the text and the <see langword="Value"/> is the <see cref="Book"/> instances</returns>
         public IDictionary<string, IEnumerable<Book>> GetBooksWithTitles(IEnumerable<string> texts)
         {
-            IDictionary<string, IEnumerable<Book>> dict = new Dictionary<string, IEnumerable<Book>>();
-            texts.Where(t => t != null).ToList().ForEach(t => dict.Add(t, GetBooksWithTitle(t)));
-            return dict;
+            return new Dictionary<string, IEnumerable<Book>>(texts.Select(t => new KeyValuePair<string, IEnumerable<Book>>(t, GetBooksWithTitle(t))));
         }
 
         /// <summary>

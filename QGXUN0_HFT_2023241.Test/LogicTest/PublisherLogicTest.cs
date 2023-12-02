@@ -270,8 +270,8 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.GetRatingOfPublisher(p1));
             Assert.That(logic.GetRatingOfPublisher(p2), Is.EqualTo(4.4).Within(0.0001));
 
-            Assert.That(logic.GetHighestRatedPublisher(), Is.EqualTo(new KeyValuePair<double, Publisher>(0, null)));
-            Assert.That(logic.GetLowestRatedPublisher(), Is.EqualTo(new KeyValuePair<double, Publisher>(0, null)));
+            Assert.That(logic.GetHighestRatedPublisher(), Is.EqualTo(new KeyValuePair<double?, Publisher>(null, null)));
+            Assert.That(logic.GetLowestRatedPublisher(), Is.EqualTo(new KeyValuePair<double?, Publisher>(null, null)));
 
             Assert.AreEqual(Enumerable.Empty<Publisher>(), logic.GetSeriesPublishers());
             Assert.AreEqual(Enumerable.Empty<Publisher>(), logic.GetOnlySeriesPublishers());
@@ -310,8 +310,8 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.GetRatingOfPublisher(p1));
             Assert.IsNull(logic.GetRatingOfPublisher(p2));
 
-            Assert.That(logic.GetHighestRatedPublisher(), Is.EqualTo(new KeyValuePair<double, Publisher>(0, null)));
-            Assert.That(logic.GetLowestRatedPublisher(), Is.EqualTo(new KeyValuePair<double, Publisher>(0, null)));
+            Assert.That(logic.GetHighestRatedPublisher(), Is.EqualTo(new KeyValuePair<double?, Publisher>(null, null)));
+            Assert.That(logic.GetLowestRatedPublisher(), Is.EqualTo(new KeyValuePair<double?, Publisher>(null, null)));
 
             Assert.AreEqual(Enumerable.Empty<Publisher>(), logic.GetSeriesPublishers());
             Assert.AreEqual(Enumerable.Empty<Publisher>(), logic.GetOnlySeriesPublishers());
@@ -357,8 +357,8 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.GetRatingOfPublisher(p1));
             Assert.IsNull(logic.GetRatingOfPublisher(p2));
 
-            Assert.That(logic.GetHighestRatedPublisher(), Is.EqualTo(new KeyValuePair<double, Publisher>(0, null)));
-            Assert.That(logic.GetLowestRatedPublisher(), Is.EqualTo(new KeyValuePair<double, Publisher>(0, null)));
+            Assert.That(logic.GetHighestRatedPublisher(), Is.EqualTo(new KeyValuePair<double?, Publisher>(null, null)));
+            Assert.That(logic.GetLowestRatedPublisher(), Is.EqualTo(new KeyValuePair<double?, Publisher>(null, null)));
 
             Assert.AreEqual(Enumerable.Empty<Publisher>(), logic.GetSeriesPublishers());
             Assert.AreEqual(Enumerable.Empty<Publisher>(), logic.GetOnlySeriesPublishers());

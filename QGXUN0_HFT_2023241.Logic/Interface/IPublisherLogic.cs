@@ -15,8 +15,8 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         bool Delete(Publisher publisher);
         IEnumerable<ExtendedPublisher> GetAllAsExtendedPublisher();
         IEnumerable<Author> GetAuthorsOfPublisher(Publisher publisher);
-        KeyValuePair<double, Publisher> GetHighestRatedPublisher();
-        KeyValuePair<double, Publisher> GetLowestRatedPublisher();
+        KeyValuePair<double?, Publisher> GetHighestRatedPublisher();
+        KeyValuePair<double?, Publisher> GetLowestRatedPublisher();
         IEnumerable<Publisher> GetOnlySeriesPublishers();
         IEnumerable<Author> GetPermanentAuthors();
         IEnumerable<Author> GetPermanentAuthorsOfPublisher(Publisher publisher);

@@ -229,8 +229,8 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(logic.Count, Is.EqualTo(10));
             Assert.IsFalse(logic.IsEmpty);
 
-            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(5.0, a3)));
-            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(3.0, a10)));
+            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(5.0, a3)));
+            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(3.0, a10)));
             Assert.That(logic.SelectBookFromAuthor(null, BookFilter.MostExpensive), Is.EqualTo(null));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.MostExpensive), Is.EqualTo(b12));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.LeastExpensive), Is.EqualTo(b13));
@@ -251,8 +251,8 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(logic.Count, Is.EqualTo(0));
             Assert.IsTrue(logic.IsEmpty);
 
-            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(0, null)));
-            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(0, null)));
+            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(null, null)));
+            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(null, null)));
             Assert.That(logic.SelectBookFromAuthor(null, BookFilter.MostExpensive), Is.EqualTo(null));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.MostExpensive), Is.EqualTo(b12));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.LeastExpensive), Is.EqualTo(b13));
@@ -269,15 +269,15 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
         {
             foreach (var item in authors)
             {
-                item.Books = null;
+                item.Books = new List<Book>();
             }
 
 
             Assert.That(logic.Count, Is.EqualTo(10));
             Assert.IsFalse(logic.IsEmpty);
 
-            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(0, null)));
-            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(0, null)));
+            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(null, null)));
+            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(null, null)));
             Assert.That(logic.SelectBookFromAuthor(null, BookFilter.MostExpensive), Is.EqualTo(null));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.MostExpensive), Is.EqualTo(null));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.LeastExpensive), Is.EqualTo(null));
@@ -296,15 +296,15 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             foreach (var item in authors)
             {
-                item.Books = null;
+                item.Books = new List<Book>();
             }
 
 
             Assert.That(logic.Count, Is.EqualTo(0));
             Assert.IsTrue(logic.IsEmpty);
 
-            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(0, null)));
-            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double, Author>(0, null)));
+            Assert.That(logic.GetHighestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(null, null)));
+            Assert.That(logic.GetLowestRatedAuthor(), Is.EqualTo(new KeyValuePair<double?, Author>(null, null)));
             Assert.That(logic.SelectBookFromAuthor(null, BookFilter.MostExpensive), Is.EqualTo(null));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.MostExpensive), Is.EqualTo(null));
             Assert.That(logic.SelectBookFromAuthor(a9, BookFilter.LeastExpensive), Is.EqualTo(null));

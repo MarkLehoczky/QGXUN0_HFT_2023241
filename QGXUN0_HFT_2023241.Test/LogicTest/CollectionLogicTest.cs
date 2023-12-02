@@ -340,13 +340,13 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(logic.SelectBookFromCollection(c2, BookFilter.HighestRated), Is.EqualTo(b6));
             Assert.That(logic.SelectBookFromCollection(c2, BookFilter.LowestRated), Is.EqualTo(b4));
 
-            Assert.That(logic.SelectCollection(BookFilter.MostExpensive), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.HighestRated), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LowestRated), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
+            Assert.That(logic.SelectCollection(BookFilter.MostExpensive), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.HighestRated), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LowestRated), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
 
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
 
             Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
             var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);
@@ -393,13 +393,13 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.SelectBookFromCollection(c2, BookFilter.HighestRated));
             Assert.IsNull(logic.SelectBookFromCollection(c2, BookFilter.LowestRated));
 
-            Assert.That(logic.SelectCollection(BookFilter.MostExpensive), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.HighestRated), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LowestRated), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
+            Assert.That(logic.SelectCollection(BookFilter.MostExpensive), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.HighestRated), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LowestRated), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
 
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
 
             Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
             var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);
@@ -455,13 +455,13 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.SelectBookFromCollection(c2, BookFilter.HighestRated));
             Assert.IsNull(logic.SelectBookFromCollection(c2, BookFilter.LowestRated));
 
-            Assert.That(logic.SelectCollection(BookFilter.MostExpensive), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.HighestRated), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LowestRated), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
+            Assert.That(logic.SelectCollection(BookFilter.MostExpensive), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.HighestRated), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LowestRated), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
 
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
-            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double, Collection>(0, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
+            Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
 
             Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
             var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);

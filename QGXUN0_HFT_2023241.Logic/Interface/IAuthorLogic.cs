@@ -12,8 +12,8 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
 
         int? Create(Author author);
         bool Delete(Author author);
-        KeyValuePair<double, Author> GetHighestRatedAuthor();
-        KeyValuePair<double, Author> GetLowestRatedAuthor();
+        KeyValuePair<double?, Author> GetHighestRatedAuthor();
+        KeyValuePair<double?, Author> GetLowestRatedAuthor();
         IEnumerable<Collection> GetSeriesOfAuthor(Author author);
         Author Read(int authorID);
         IQueryable<Author> ReadAll();

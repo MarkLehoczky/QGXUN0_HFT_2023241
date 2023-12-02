@@ -30,7 +30,7 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         bool RemoveBooksFromCollection(Collection collection, IEnumerable<Book> books);
         bool RemoveBooksFromCollection(Collection collection, params Book[] books);
         Book SelectBookFromCollection(Collection collection, BookFilter bookFilter);
-        KeyValuePair<double, Collection> SelectCollection(BookFilter bookFilter, CollectionFilter collectionFilter = CollectionFilter.Collection);
+        KeyValuePair<double?, Collection> SelectCollection(BookFilter bookFilter, CollectionFilter collectionFilter = CollectionFilter.Collection);
         bool Update(Collection collection);
     }
 }

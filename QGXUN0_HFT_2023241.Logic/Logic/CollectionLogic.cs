@@ -265,7 +265,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <param name="bookFilter">book filter</param>
         /// <param name="collectionFilter">collection filter</param>
         /// <returns>selected collection, where the <see langword="Key"/> is the <paramref name="bookFilter"/> option's value and the <see langword="Value"/> is the <see cref="Collection"/></returns>
-        public KeyValuePair<double, Collection> SelectCollection(BookFilter bookFilter, CollectionFilter collectionFilter = CollectionFilter.Collection)
+        public KeyValuePair<double?, Collection> SelectCollection(BookFilter bookFilter, CollectionFilter collectionFilter = CollectionFilter.Collection)
         {
             IEnumerable<Collection> filtered = null;
 
@@ -277,29 +277,28 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
                 default: filtered = Enumerable.Empty<Collection>(); break;
             }
 
+            Collection temp;
+
             switch (bookFilter)
             {
                 case BookFilter.MostExpensive:
-                    return filtered.Where(t => t.Books.Any(u => u.Price != null)).OrderByDescending(t => t.Books.Sum(u => u.Price))
-                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v))
-                    .FirstOrDefault();
+                    temp = filtered.Where(t => t.Books.Any(u => u.Price != null)).OrderByDescending(t => t.Books.Sum(u => u.Price)).FirstOrDefault();
+                    return new KeyValuePair<double?, Collection>(temp?.Books.Sum(t => t.Price), temp);
 
                 case BookFilter.LeastExpensive:
-                    return filtered.Where(t => t.Books.Any(u => u.Price != null)).OrderBy(t => t.Books.Sum(u => u.Price))
-                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Sum(u => u.Price), v))
-                    .FirstOrDefault();
+                    temp = filtered.Where(t => t.Books.Any(u => u.Price != null)).OrderBy(t => t.Books.Sum(u => u.Price)).FirstOrDefault();
+                    return new KeyValuePair<double?, Collection>(temp?.Books.Sum(t => t.Price), temp);
 
                 case BookFilter.HighestRated:
-                    return filtered.Where(t => t.Books.Any(u => u.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating))
-                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v))
-                    .FirstOrDefault();
+                    temp = filtered.Where(t => t.Books.Any(u => u.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
+                    return new KeyValuePair<double?, Collection>(temp?.Books.Average(t => t.Rating), temp);
 
                 case BookFilter.LowestRated:
-                    return filtered.Where(t => t.Books.Any(u => u.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating))
-                    .Select(v => new KeyValuePair<double, Collection>((double)v.Books.Average(u => u.Rating), v))
-                    .FirstOrDefault();
+                    temp = filtered.Where(t => t.Books.Any(u => u.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
+                    return new KeyValuePair<double?, Collection>(temp?.Books.Average(t => t.Rating), temp);
 
-                default: return new KeyValuePair<double, Collection>(0, null);
+
+                default: return new KeyValuePair<double?, Collection>(null, null);
             }
         }
 

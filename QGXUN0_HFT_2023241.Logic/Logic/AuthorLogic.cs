@@ -130,26 +130,20 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// Returns the <see cref="Author"/> which has the highest average <see cref="Author.Books"/> rating
         /// </summary>
         /// <returns>highest rated author, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Author"/></returns>
-        public KeyValuePair<double, Author> GetHighestRatedAuthor()
+        public KeyValuePair<double?, Author> GetHighestRatedAuthor()
         {
-            return ReadAll()
-                .Where(t => t.Books != null && t.Books.Any(t => t.Rating != null))
-                .OrderByDescending(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Author>((double)v.Books.Average(u => u.Rating), v))
-                .FirstOrDefault();
+            var temp = ReadAll().Where(t => t.Books.Any(t => t.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
+            return new KeyValuePair<double?, Author>(temp?.Books.Average(t => t.Rating), temp);
         }
 
         /// <summary>
         /// Returns the <see cref="Author"/> which has the lowest average <see cref="Author.Books"/> rating
         /// </summary>
         /// <returns>lowest rated author, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Author"/></returns>
-        public KeyValuePair<double, Author> GetLowestRatedAuthor()
+        public KeyValuePair<double?, Author> GetLowestRatedAuthor()
         {
-            return ReadAll()
-                .Where(t => t.Books != null && t.Books.Any(t => t.Rating != null))
-                .OrderBy(t => t.Books.Average(u => u.Rating))
-                .Select(v => new KeyValuePair<double, Author>((double)v.Books.Average(u => u.Rating), v))
-                .FirstOrDefault();
+            var temp = ReadAll().Where(t => t.Books.Any(t => t.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
+            return new KeyValuePair<double?, Author>(temp?.Books.Average(t => t.Rating), temp);
         }
 
         /// <summary>
@@ -159,12 +153,12 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns>series of an <paramref name="author"/></returns>
         public IEnumerable<Collection> GetSeriesOfAuthor(Author author)
         {
-            if (author == null || author.Books == null) return Enumerable.Empty<Collection>();
+            if (author == null) return Enumerable.Empty<Collection>();
             return author.Books
-                .Where(t => t.Collections != null)
                 .SelectMany(t => t.Collections, (t, collections) => collections)
                 .Where(t => t.IsSeries.HasValue == true && t.IsSeries == true)
-                .Distinct();
+                .Distinct()
+                .ToList();
         }
     }
 }
