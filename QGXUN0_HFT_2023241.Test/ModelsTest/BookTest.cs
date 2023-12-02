@@ -14,12 +14,12 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.BookID, Is.EqualTo(0));
             Assert.IsNull(actual.Title);
-            Assert.IsNull(actual.Authors);
+            Assert.IsEmpty(actual.Authors);
             Assert.IsNull(actual.AuthorConnector);
             Assert.That(actual.Year, Is.EqualTo(0));
             Assert.IsNull(actual.PublisherID);
             Assert.IsNull(actual.Publisher);
-            Assert.IsNull(actual.Collections);
+            Assert.IsEmpty(actual.Collections);
             Assert.IsNull(actual.CollectionConnector);
             Assert.IsNull(actual.Price);
             Assert.IsNull(actual.Rating);
@@ -29,12 +29,12 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.BookID, Is.EqualTo(1));
             Assert.That(actual.Title, Is.EqualTo("Title"));
-            Assert.IsNull(actual.Authors);
+            Assert.IsEmpty(actual.Authors);
             Assert.IsNull(actual.AuthorConnector);
             Assert.That(actual.Year, Is.EqualTo(2023));
             Assert.IsNull(actual.PublisherID);
             Assert.IsNull(actual.Publisher);
-            Assert.IsNull(actual.Collections);
+            Assert.IsEmpty(actual.Collections);
             Assert.IsNull(actual.CollectionConnector);
             Assert.IsNull(actual.Price);
             Assert.IsNull(actual.Rating);
@@ -44,12 +44,12 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.BookID, Is.EqualTo(1));
             Assert.That(actual.Title, Is.EqualTo("Title"));
-            Assert.IsNull(actual.Authors);
+            Assert.IsEmpty(actual.Authors);
             Assert.IsNull(actual.AuthorConnector);
             Assert.That(actual.Year, Is.EqualTo(2023));
             Assert.That(actual.PublisherID, Is.EqualTo(1));
             Assert.IsNull(actual.Publisher);
-            Assert.IsNull(actual.Collections);
+            Assert.IsEmpty(actual.Collections);
             Assert.IsNull(actual.CollectionConnector);
             Assert.IsNull(actual.Price);
             Assert.IsNull(actual.Rating);
@@ -58,12 +58,12 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
             actual = new Book(1, "Title", 2023, 1, 15.99);
 
             Assert.That(actual.Title, Is.EqualTo("Title"));
-            Assert.IsNull(actual.Authors);
+            Assert.IsEmpty(actual.Authors);
             Assert.IsNull(actual.AuthorConnector);
             Assert.That(actual.Year, Is.EqualTo(2023));
             Assert.That(actual.PublisherID, Is.EqualTo(1));
             Assert.IsNull(actual.Publisher);
-            Assert.IsNull(actual.Collections);
+            Assert.IsEmpty(actual.Collections);
             Assert.IsNull(actual.CollectionConnector);
             Assert.That(actual.Price, Is.EqualTo(15.99).Within(0.01));
             Assert.IsNull(actual.Rating);
@@ -72,12 +72,12 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
             actual = new Book(1, "Title", 2023, 1, 15.99, 4.7);
 
             Assert.That(actual.Title, Is.EqualTo("Title"));
-            Assert.IsNull(actual.Authors);
+            Assert.IsEmpty(actual.Authors);
             Assert.IsNull(actual.AuthorConnector);
             Assert.That(actual.Year, Is.EqualTo(2023));
             Assert.That(actual.PublisherID, Is.EqualTo(1));
             Assert.IsNull(actual.Publisher);
-            Assert.IsNull(actual.Collections);
+            Assert.IsEmpty(actual.Collections);
             Assert.IsNull(actual.CollectionConnector);
             Assert.That(actual.Price, Is.EqualTo(15.99).Within(0.01));
             Assert.That(actual.Rating, Is.EqualTo(4.7).Within(0.01));

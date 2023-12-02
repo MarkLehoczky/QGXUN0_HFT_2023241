@@ -14,7 +14,8 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.CollectionID, Is.EqualTo(0));
             Assert.IsNull(actual.CollectionName);
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
+            Assert.IsNull(actual.BookConnector);
             Assert.IsNull(actual.IsSeries);
 
 
@@ -22,7 +23,8 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.CollectionID, Is.EqualTo(1));
             Assert.That(actual.CollectionName, Is.EqualTo("Name"));
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
+            Assert.IsNull(actual.BookConnector);
             Assert.IsNull(actual.IsSeries);
 
 
@@ -30,14 +32,16 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.CollectionID, Is.EqualTo(1));
             Assert.That(actual.CollectionName, Is.EqualTo("Name"));
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
+            Assert.IsNull(actual.BookConnector);
             Assert.IsFalse(actual.IsSeries);
 
             actual = new Collection(1, "Name", true);
 
             Assert.That(actual.CollectionID, Is.EqualTo(1));
             Assert.That(actual.CollectionName, Is.EqualTo("Name"));
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
+            Assert.IsNull(actual.BookConnector);
             Assert.IsTrue(actual.IsSeries);
         }
 

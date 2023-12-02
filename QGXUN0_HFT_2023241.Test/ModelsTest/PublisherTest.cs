@@ -14,7 +14,7 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.PublisherID, Is.EqualTo(0));
             Assert.IsNull(actual.PublisherName);
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
             Assert.IsNull(actual.Website);
 
 
@@ -22,7 +22,7 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.PublisherID, Is.EqualTo(1));
             Assert.That(actual.PublisherName, Is.EqualTo("Name"));
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
             Assert.IsNull(actual.Website);
 
 
@@ -30,7 +30,7 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.PublisherID, Is.EqualTo(1));
             Assert.That(actual.PublisherName, Is.EqualTo("Name"));
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
             Assert.That(actual.Website, Is.EqualTo("www.example.com"));
         }
 

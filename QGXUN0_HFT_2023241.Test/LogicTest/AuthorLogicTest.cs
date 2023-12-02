@@ -196,7 +196,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
         [Test]
         public void UpdateTest()
         {
-            var notadded = new Author(10, "First");
+            var notadded = new Author(20, "First");
             var author1 = a1; author1.AuthorName = "Updated Normal Author";
 
             Assert.IsFalse(logic.Update(null));

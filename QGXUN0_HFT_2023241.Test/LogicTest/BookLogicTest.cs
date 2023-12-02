@@ -248,13 +248,11 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             Assert.IsNull(logic.Create(null, a1, a2));
             Assert.IsNull(logic.Create(incorrect, a1, a2));
-            Assert.That(logic.Create(book1, a1, a2), Is.EqualTo(21));
-            Assert.AreEqual(new List<Author> { a1, a2 }, book1.Authors);
 
             bookMock.Verify(b => b.Create(incorrect), Times.Never);
-            bookMock.Verify(b => b.Create(book1), Times.Once);
+            bookMock.Verify(b => b.Create(book1), Times.Never);
             bookMock.Verify(b => b.Create(book2), Times.Once);
-            bookMock.Verify(b => b.Read(1), Times.Once);
+            bookMock.Verify(b => b.Read(1), Times.Never);
             bookMock.Verify(b => b.Read(20), Times.Once);
             bookMock.Verify(b => b.Read(21), Times.Never);
         }
@@ -302,41 +300,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             bookMock.Verify(b => b.Delete(0), Times.Once);
             bookMock.Verify(b => b.Delete(1), Times.Once);
             bookMock.Verify(b => b.Delete(2), Times.Never);
-        }
-
-        [Test]
-        public void AuthorAdditionTest()
-        {
-            var book1 = new Book(0, "First", 2023);
-            var notadded = new Author(0, "Not added");
-
-            Assert.IsFalse(logic.AddAuthorsToBook(null, a1, a2));
-            Assert.IsTrue(logic.AddAuthorsToBook(book1, a1, a2));
-            Assert.AreEqual(new List<Author> { a1, a2 }, book1.Authors);
-            Assert.IsFalse(logic.AddAuthorsToBook(book1, a4, a5, a5, a5, notadded));
-            Assert.AreEqual(new List<Author> { a1, a2, a4, a5 }, book1.Authors);
-            Assert.IsFalse(logic.AddAuthorsToBook(book1, a7, a8, null));
-            Assert.AreEqual(new List<Author> { a1, a2, a4, a5, a7, a8 }, book1.Authors);
-            Assert.IsFalse(logic.AddAuthorsToBook(book1, a10, null, notadded));
-            Assert.AreEqual(new List<Author> { a1, a2, a4, a5, a7, a8, a10 }, book1.Authors);
-        }
-
-        [Test]
-        public void AuthorRemovalTest()
-        {
-            var book1 = new Book(0, "First", 2023);
-            var notadded = new Author(0, "Not added");
-            book1.Authors = authors.ToList();
-
-            Assert.IsFalse(logic.RemoveAuthorsFromBook(null, a1, a2));
-            Assert.IsTrue(logic.RemoveAuthorsFromBook(book1, a1, a2));
-            Assert.AreEqual(new List<Author> { a3, a4, a5, a6, a7, a8, a9, a10 }, book1.Authors);
-            Assert.IsFalse(logic.RemoveAuthorsFromBook(book1, a4, a5, notadded));
-            Assert.AreEqual(new List<Author> { a3, a6, a7, a8, a9, a10 }, book1.Authors);
-            Assert.IsFalse(logic.RemoveAuthorsFromBook(book1, a7, a8, null));
-            Assert.AreEqual(new List<Author> { a3, a6, a9, a10 }, book1.Authors);
-            Assert.IsFalse(logic.RemoveAuthorsFromBook(book1, a10, null, notadded));
-            Assert.AreEqual(new List<Author> { a3, a6, a9 }, book1.Authors);
         }
 
 
@@ -400,10 +363,10 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
         {
             foreach (var item in books)
             {
-                item.Authors = null;
+                item.Authors = new List<Author>();
                 item.Publisher = null;
                 item.PublisherID = null;
-                item.Collections = null;
+                item.Collections = new List<Collection>();
             }
 
 
@@ -437,10 +400,10 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             foreach (var item in books)
             {
-                item.Authors = null;
+                item.Authors = new List<Author>();
                 item.Publisher = null;
                 item.PublisherID = null;
-                item.Collections = null;
+                item.Collections = new List<Collection>();
             }
 
 

@@ -14,14 +14,16 @@ namespace QGXUN0_HFT_2023241.Test.ModelsTest
 
             Assert.That(actual.AuthorID, Is.EqualTo(0));
             Assert.IsNull(actual.AuthorName);
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
+            Assert.IsNull(actual.BookConnector);
 
 
             actual = new Author(1, "Name");
 
             Assert.That(actual.AuthorID, Is.EqualTo(1));
             Assert.That(actual.AuthorName, Is.EqualTo("Name"));
-            Assert.IsNull(actual.Books);
+            Assert.IsEmpty(actual.Books);
+            Assert.IsNull(actual.BookConnector);
         }
 
         [TestCaseSource(typeof(AuthorTestData), nameof(AuthorTestData.CorrectParseValues))]

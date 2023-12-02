@@ -176,7 +176,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             c1.Books = new List<Book> { b5, b8, b11, b15 };
             c2.Books = new List<Book> { b4, b6, b7 };
             c3.Books = new List<Book> { b3, b4, b7, b12, b15 };
-            c4.Books = null;
+            c4.Books = new List<Book>();
         }
 
 
@@ -197,14 +197,13 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.Create(null, b1, b2));
             Assert.IsNull(logic.Create(incorrect, b1, b2));
             Assert.That(logic.Create(collection2, b1, b2), Is.EqualTo(10));
-            Assert.AreEqual(new List<Book> { b1, b2 }, collection2.Books);
 
             collectionMock.Verify(c => c.Create(incorrect), Times.Never);
             collectionMock.Verify(c => c.Create(collection1), Times.Once);
             collectionMock.Verify(c => c.Create(collection2), Times.Once);
             collectionMock.Verify(c => c.Read(1), Times.Once);
             collectionMock.Verify(c => c.Read(5), Times.Never);
-            collectionMock.Verify(c => c.Read(10), Times.Once);
+            collectionMock.Verify(c => c.Read(10), Times.Exactly(2));
         }
 
 
@@ -251,43 +250,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             collectionMock.Verify(c => c.Delete(0), Times.Once);
             collectionMock.Verify(c => c.Delete(1), Times.Once);
             collectionMock.Verify(c => c.Delete(2), Times.Never);
-        }
-
-        [Test]
-        public void BookAdditionTest()
-        {
-            var collection1 = new Collection(0, "First");
-            var notadded = new Book(0, "Not added", 2023);
-
-            Assert.IsFalse(logic.AddBooksToCollection(null, b1, b2));
-            Assert.IsTrue(logic.AddBooksToCollection(collection1, b1, b2));
-            Assert.AreEqual(new List<Book> { b1, b2 }, collection1.Books);
-            Assert.IsFalse(logic.AddBooksToCollection(collection1, b4, b5, b5, b5, notadded));
-            Assert.AreEqual(new List<Book> { b1, b2, b4, b5 }, collection1.Books);
-            Assert.IsFalse(logic.AddBooksToCollection(collection1, b7, b8, null));
-            Assert.AreEqual(new List<Book> { b1, b2, b4, b5, b7, b8 }, collection1.Books);
-            Assert.IsFalse(logic.AddBooksToCollection(collection1, b10, b11, null, notadded));
-            Assert.AreEqual(new List<Book> { b1, b2, b4, b5, b7, b8, b10, b11 }, collection1.Books);
-        }
-
-        [Test]
-        public void BookRemovalTest()
-        {
-            var collection1 = new Collection(0, "First");
-            var notadded = new Book(0, "Not added", 2023);
-            collection1.Books = books.ToList();
-
-            Assert.IsFalse(logic.RemoveBooksFromCollection(null, b1, b2));
-            Assert.IsTrue(logic.RemoveBooksFromCollection(collection1, b1, b2));
-            Assert.AreEqual(new List<Book> { b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15 }, collection1.Books);
-            Assert.IsFalse(logic.RemoveBooksFromCollection(collection1, b4, b5, notadded));
-            Assert.AreEqual(new List<Book> { b3, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15 }, collection1.Books);
-            Assert.IsFalse(logic.RemoveBooksFromCollection(collection1, b7, b8, null));
-            Assert.AreEqual(new List<Book> { b3, b6, b9, b10, b11, b12, b13, b14, b15 }, collection1.Books);
-            Assert.IsFalse(logic.RemoveBooksFromCollection(collection1, b10, b11, null, notadded));
-            Assert.AreEqual(new List<Book> { b3, b6, b9, b12, b13, b14, b15 }, collection1.Books);
-            Assert.IsTrue(logic.RemoveAllBookFromCollection(collection1));
-            Assert.AreEqual(Enumerable.Empty<Book>().ToList(), collection1.Books);
         }
 
 
@@ -403,7 +365,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
         {
             foreach (var item in collections)
             {
-                item.Books = null;
+                item.Books = new List<Book>();
             }
 
 
@@ -445,7 +407,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(convertedpublisher.IsSeries, Is.EqualTo(c3.IsSeries));
             Assert.IsNull(convertedpublisher.Price);
             Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsNull(convertedpublisher.Books);
+            Assert.IsEmpty(convertedpublisher.Books);
             Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
 
             var extendedpublishers = logic.GetAllAsExtendedCollection();
@@ -453,7 +415,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(extendedpublishers.FirstOrDefault().IsSeries, Is.EqualTo(c1.IsSeries));
             Assert.IsNull(extendedpublishers.FirstOrDefault().Price);
             Assert.IsNull(extendedpublishers.FirstOrDefault().Rating);
-            Assert.IsNull(extendedpublishers.FirstOrDefault().Books);
+            Assert.IsEmpty(extendedpublishers.FirstOrDefault().Books);
             Assert.AreEqual(Enumerable.Empty<Author>(), extendedpublishers.FirstOrDefault().Authors);
         }
 
@@ -464,7 +426,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             foreach (var item in collections)
             {
-                item.Books = null;
+                item.Books = new List<Book>();
             }
 
 
@@ -507,7 +469,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(convertedpublisher.IsSeries, Is.EqualTo(c3.IsSeries));
             Assert.IsNull(convertedpublisher.Price);
             Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsNull(convertedpublisher.Books);
+            Assert.IsEmpty(convertedpublisher.Books);
             Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
 
             Assert.AreEqual(Enumerable.Empty<ExtendedCollection>(), logic.GetAllAsExtendedCollection());

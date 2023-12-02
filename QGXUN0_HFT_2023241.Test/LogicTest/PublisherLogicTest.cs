@@ -143,7 +143,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             p1.Books = new List<Book> { b1, b2, b9 };
             p2.Books = new List<Book> { b3, b4, b6, b13 };
             p3.Books = new List<Book> { b7, b12, b15 };
-            p4.Books = null;
+            p4.Books = new List<Book>();
         }
 
 
@@ -299,7 +299,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
         {
             foreach (var item in publishers)
             {
-                item.Books = null;
+                item.Books = new List<Book>();
             }
 
 
@@ -328,14 +328,14 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(convertedpublisher.PublisherID, Is.EqualTo(3));
             Assert.That(convertedpublisher.Website, Is.EqualTo(p3.Website));
             Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsNull(convertedpublisher.Books);
+            Assert.IsEmpty(convertedpublisher.Books);
             Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
 
             var extendedpublishers = logic.GetAllAsExtendedPublisher();
             Assert.That(extendedpublishers.FirstOrDefault().PublisherID, Is.EqualTo(1));
             Assert.That(extendedpublishers.FirstOrDefault().Website, Is.EqualTo(p1.Website));
             Assert.IsNull(extendedpublishers.FirstOrDefault().Rating);
-            Assert.IsNull(extendedpublishers.FirstOrDefault().Books);
+            Assert.IsEmpty(extendedpublishers.FirstOrDefault().Books);
             Assert.AreEqual(Enumerable.Empty<Author>(), extendedpublishers.FirstOrDefault().Authors);
         }
 
@@ -346,7 +346,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             foreach (var item in publishers)
             {
-                item.Books = null;
+                item.Books = new List<Book>();
             }
 
 
@@ -375,7 +375,7 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.That(convertedpublisher.PublisherID, Is.EqualTo(3));
             Assert.That(convertedpublisher.Website, Is.EqualTo(p3.Website));
             Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsNull(convertedpublisher.Books);
+            Assert.IsEmpty(convertedpublisher.Books);
             Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
 
             Assert.AreEqual(Enumerable.Empty<ExtendedPublisher>(), logic.GetAllAsExtendedPublisher());
