@@ -26,7 +26,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Books of the publisher
         /// </summary>
-        public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 
         /// <summary>
         /// Website of the publisher
@@ -153,9 +153,6 @@ namespace QGXUN0_HFT_2023241.Models
             int comparer = Comparer.Default.Compare(PublisherName, other.PublisherName);
             if (comparer != 0) return comparer;
 
-            comparer = Comparer.Default.Compare(Books, other.Books);
-            if (comparer != 0) return comparer;
-
             comparer = Comparer.Default.Compare(Website, other.Website);
             return comparer;
         }
@@ -184,8 +181,7 @@ namespace QGXUN0_HFT_2023241.Models
             if (other == null) return false;
             else if (ReferenceEquals(this, other)) return true;
             else if (PublisherName != other.PublisherName) return false;
-            else if ((Books == null && other.Books != null) || (Books != null && other.Books == null)) return false;
-            else if (Books != null && other.Books != null && !Books.SequenceEqual(other.Books)) return false;
+            else if (!Books.SequenceEqual(other.Books)) return false;
             else if (Website != other.Website) return false;
             else return true;
         }

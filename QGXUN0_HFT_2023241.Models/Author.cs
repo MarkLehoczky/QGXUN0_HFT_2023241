@@ -26,7 +26,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Books of the author
         /// </summary>
-        [Required] public virtual ICollection<Book> Books { get; set; }
+        [Required] public virtual ICollection<Book> Books { get; set; } = new List<Book>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Author"></see> instances
         /// </summary>
@@ -127,9 +127,6 @@ namespace QGXUN0_HFT_2023241.Models
         public int CompareTo(Author other)
         {
             int comparer = Comparer.Default.Compare(AuthorName, other.AuthorName);
-            if (comparer != 0) return comparer;
-
-            comparer = Comparer.Default.Compare(Books, other.Books);
             return comparer;
         }
 
@@ -157,8 +154,7 @@ namespace QGXUN0_HFT_2023241.Models
             if (other == null) return false;
             else if (ReferenceEquals(this, other)) return true;
             else if (AuthorName != other.AuthorName) return false;
-            else if ((Books == null && other.Books != null) || (Books != null && other.Books == null)) return false;
-            else if (Books != null && other.Books != null && !Books.SequenceEqual(other.Books)) return false;
+            else if (!Books.SequenceEqual(other.Books)) return false;
             else return true;
         }
     }

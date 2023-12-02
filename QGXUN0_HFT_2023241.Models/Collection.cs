@@ -26,7 +26,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Books of the collection
         /// </summary>
-        public virtual ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; } = new List<Book>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Collection"></see> instances
         /// </summary>
@@ -160,9 +160,6 @@ namespace QGXUN0_HFT_2023241.Models
             int comparer = Comparer.Default.Compare(CollectionName, other.CollectionName);
             if (comparer != 0) return comparer;
 
-            comparer = Comparer.Default.Compare(Books, other.Books);
-            if (comparer != 0) return comparer;
-
             comparer = Comparer.Default.Compare(IsSeries, other.IsSeries);
             return comparer;
         }
@@ -191,8 +188,7 @@ namespace QGXUN0_HFT_2023241.Models
             if (other == null) return false;
             else if (ReferenceEquals(this, other)) return true;
             else if (CollectionName != other.CollectionName) return false;
-            else if ((Books == null && other.Books != null) || (Books != null && other.Books == null)) return false;
-            else if (Books != null && other.Books != null && !Books.SequenceEqual(other.Books)) return false;
+            else if (!Books.SequenceEqual(other.Books)) return false;
             else if (IsSeries != other.IsSeries) return false;
             else return true;
         }

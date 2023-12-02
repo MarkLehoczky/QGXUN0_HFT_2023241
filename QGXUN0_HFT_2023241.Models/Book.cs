@@ -26,7 +26,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// Authors groups of the book
         /// </summary>
-        [Required] public virtual ICollection<Author> Authors { get; set; }
+        [Required][RequiredCollection] public virtual ICollection<Author> Authors { get; set; } = new List<Author>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Author"></see> instances
         /// </summary>
@@ -50,7 +50,7 @@ namespace QGXUN0_HFT_2023241.Models
         /// <summary>
         /// <see cref="Collection"></see> groups which contains the book
         /// </summary>
-        public virtual ICollection<Collection> Collections { get; set; }
+        public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Models.Collection"></see> instances
         /// </summary>
@@ -188,7 +188,7 @@ namespace QGXUN0_HFT_2023241.Models
                 book = new Book(bookID, title, year);
 
             if (restrictionCheck)
-                book.Validate(typeof(RequiredAttribute));
+                book.Validate(typeof(RequiredCollectionAttribute));
 
             return book;
 
@@ -252,9 +252,6 @@ namespace QGXUN0_HFT_2023241.Models
             comparer = Comparer.Default.Compare(Year, other.Year);
             if (comparer != 0) return comparer;
 
-            comparer = Comparer.Default.Compare(Authors, other.Authors);
-            if (comparer != 0) return comparer;
-
             comparer = Comparer.Default.Compare(Publisher, other.Publisher);
             if (comparer != 0) return comparer;
 
@@ -289,8 +286,7 @@ namespace QGXUN0_HFT_2023241.Models
             if (other == null) return false;
             else if (ReferenceEquals(this, other)) return true;
             else if (Title != other.Title) return false;
-            else if ((Authors == null && other.Authors != null) || (Authors != null && other.Authors == null)) return false;
-            else if (Authors != null && other.Authors != null && !Authors.SequenceEqual(other.Authors)) return false;
+            else if (!Authors.SequenceEqual(other.Authors)) return false;
             else if (Year != other.Year) return false;
             else if (Publisher != other.Publisher) return false;
             else if (Price != other.Price) return false;

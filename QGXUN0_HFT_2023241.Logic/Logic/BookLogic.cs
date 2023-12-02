@@ -63,8 +63,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             if (!book.IsValid())
                 return null;
 
-            if (ReadAll().Contains(book))
-                return ReadAll().FirstOrDefault(t => t == book)?.BookID;
+            if (ReadAll().AsEnumerable().Contains(book))
+                return ReadAll().AsEnumerable().FirstOrDefault(t => t == book)?.BookID;
 
             if (Read(book.BookID) != null)
                 book.BookID = ReadAll().Max(t => t.BookID) + 1;
@@ -81,7 +81,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Book.BookID"/> of the <paramref name="book"/> if the book is valid, otherwise <see langword="null"/></returns>
         public int? Create(Book book, IEnumerable<Author> authors)
         {
-            if (book == null || !book.IsValid(typeof(RequiredAttribute)))
+            if (book == null || !book.IsValid(typeof(RequiredCollectionAttribute)))
                 return null;
 
             var prevAuthors = book.Authors;
@@ -95,8 +95,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             if (!book.IsValid())
                 return null;
 
-            if (ReadAll().Contains(book))
-                return ReadAll().FirstOrDefault(t => t == book)?.BookID;
+            if (ReadAll().AsEnumerable().Contains(book))
+                return ReadAll().AsEnumerable().FirstOrDefault(t => t == book)?.BookID;
 
             if (Read(book.BookID) != null)
                 book.BookID = ReadAll().Max(t => t.BookID) + 1;
@@ -172,15 +172,15 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
         public bool AddAuthorsToBook(Book book, IEnumerable<Author> authors)
         {
-            if (book == null) return false;
+            if (book == null || Read(book.BookID) == null) return false;
 
-            book.Authors ??= new List<Author>();
+            foreach (var item in authorRepository.ReadAll().Where(t => authors.Contains(t)).Intersect(authorRepository.ReadAll().Where(t => !book.Authors.Contains(t))))
+                connectorRepository.Create(new BookAuthorConnector(
+                    connectorRepository.ReadAll().Max(t => t.BookAuthorConnectorID) + 1,
+                    book.BookID,
+                    item.AuthorID
+                ));
 
-            foreach (var item in authorRepository.ReadAll().Where(t => authors.Contains(t)))
-                book.Authors.Add(item);
-
-            book.Authors = book.Authors.Distinct().ToList();
-            connectorRepository.SaveChanges();
             return authors.All(t => book.Authors.Contains(t));
         }
         /// <summary>
@@ -202,15 +202,12 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
         public bool RemoveAuthorsFromBook(Book book, IEnumerable<Author> authors)
         {
-            if (book == null || book.Authors == null) return false;
-            bool successful = true;
+            if (book == null || Read(book.BookID) == null) return false;
 
-            foreach (var item in authors)
-                if (!book.Authors.Remove(item) && successful)
-                    successful = false;
+            foreach (var item in connectorRepository.ReadAll().Where(t => t.Book == book && authors.Contains(t.Author)))
+                connectorRepository.Delete(item.BookAuthorConnectorID);
 
-            connectorRepository.SaveChanges();
-            return successful;
+            return authors.All(t => authorRepository.ReadAll().Contains(t)) && !authors.Any(t => book.Authors.Contains(t));
         }
         /// <summary>
         /// Removes authors from a <paramref name="book"/>
