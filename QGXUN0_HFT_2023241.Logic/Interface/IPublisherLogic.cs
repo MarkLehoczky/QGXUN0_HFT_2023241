@@ -10,10 +10,8 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
         int Count { get; }
         bool IsEmpty { get; }
 
-        ExtendedPublisher ConvertPublisherToExtendedPublisher(Publisher publisher);
         int? Create(Publisher publisher);
         bool Delete(Publisher publisher);
-        IEnumerable<ExtendedPublisher> GetAllAsExtendedPublisher();
         IEnumerable<Author> GetAuthorsOfPublisher(Publisher publisher);
         KeyValuePair<double?, Publisher> GetHighestRatedPublisher();
         KeyValuePair<double?, Publisher> GetLowestRatedPublisher();

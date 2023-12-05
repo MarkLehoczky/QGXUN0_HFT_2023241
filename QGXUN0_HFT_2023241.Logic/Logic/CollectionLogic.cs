@@ -218,30 +218,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
 
         /// <summary>
-        /// Returns all collection as <see cref="ExtendedCollection"/>
-        /// </summary>
-        /// <returns>all collection as <see cref="ExtendedCollection"/></returns>
-        public IEnumerable<ExtendedCollection> GetAllAsExtendedCollection()
-        {
-            return ReadAll().ToList().Select(t => ConvertCollectionToExtendedCollection(t));
-        }
-
-        /// <summary>
-        /// Converts a collection to a <see cref="ExtendedCollection"/>
-        /// </summary>
-        /// <param name="collection"></param>
-        /// <returns>collection as <see cref="ExtendedCollection"/></returns>
-        public ExtendedCollection ConvertCollectionToExtendedCollection(Collection collection)
-        {
-            if (collection == null) return null;
-
-            return new ExtendedCollection(collection,
-                collection.Books == null ? Enumerable.Empty<Author>() : collection.Books.SelectMany(u => u.Authors, (u, authors) => authors).Distinct(),
-                GetPriceOfCollection(collection),
-                GetRatingOfCollection(collection));
-        }
-
-        /// <summary>
         /// Returns all <see cref="Collection"/> which is a series
         /// </summary>
         /// <returns>all series collections</returns>

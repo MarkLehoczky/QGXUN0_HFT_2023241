@@ -12,12 +12,10 @@ namespace QGXUN0_HFT_2023241.Logic.Interface
 
         bool AddBooksToCollection(Collection collection, IEnumerable<Book> books);
         bool AddBooksToCollection(Collection collection, params Book[] books);
-        ExtendedCollection ConvertCollectionToExtendedCollection(Collection collection);
         int? Create(Collection collection);
         int? Create(Collection collection, IEnumerable<Book> books);
         int? Create(Collection collection, params Book[] books);
         bool Delete(Collection collection);
-        IEnumerable<ExtendedCollection> GetAllAsExtendedCollection();
         IEnumerable<Collection> GetAllNonSeries();
         IEnumerable<Collection> GetAllSeries();
         IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear);

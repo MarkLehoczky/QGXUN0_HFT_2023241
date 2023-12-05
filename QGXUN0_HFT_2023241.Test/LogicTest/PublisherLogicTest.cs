@@ -240,21 +240,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(null));
             Assert.AreEqual(new List<Author> { a6 }, logic.GetPermanentAuthorsOfPublisher(p1));
             Assert.AreEqual(new List<Author> { a4 }, logic.GetPermanentAuthorsOfPublisher(p3));
-
-            Assert.IsNull(logic.ConvertPublisherToExtendedPublisher(null));
-            var convertedpublisher = logic.ConvertPublisherToExtendedPublisher(p3);
-            Assert.That(convertedpublisher.PublisherID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.Website, Is.EqualTo(p3.Website));
-            Assert.That(convertedpublisher.Rating, Is.EqualTo(3.25).Within(0.0001));
-            Assert.AreEqual(p3.Books, convertedpublisher.Books);
-            Assert.AreEqual(new List<Author> { a4, a5, a7, a8, a9, a10 }, convertedpublisher.Authors);
-
-            var extendedpublishers = logic.GetAllAsExtendedPublisher();
-            Assert.That(extendedpublishers.FirstOrDefault().PublisherID, Is.EqualTo(1));
-            Assert.That(extendedpublishers.FirstOrDefault().Website, Is.EqualTo(p1.Website));
-            Assert.IsNull(extendedpublishers.FirstOrDefault().Rating);
-            Assert.AreEqual(p1.Books, extendedpublishers.FirstOrDefault().Books);
-            Assert.AreEqual(new List<Author> { a1, a6 }, extendedpublishers.FirstOrDefault().Authors);
         }
 
         [Test]
@@ -282,16 +267,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(null));
             Assert.AreEqual(new List<Author> { a6 }, logic.GetPermanentAuthorsOfPublisher(p1));
             Assert.AreEqual(new List<Author> { a4 }, logic.GetPermanentAuthorsOfPublisher(p3));
-
-            Assert.IsNull(logic.ConvertPublisherToExtendedPublisher(null));
-            var convertedpublisher = logic.ConvertPublisherToExtendedPublisher(p3);
-            Assert.That(convertedpublisher.PublisherID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.Website, Is.EqualTo(p3.Website));
-            Assert.That(convertedpublisher.Rating, Is.EqualTo(3.25).Within(0.0001));
-            Assert.AreEqual(p3.Books, convertedpublisher.Books);
-            Assert.AreEqual(new List<Author> { a4, a5, a7, a8, a9, a10 }, convertedpublisher.Authors);
-
-            Assert.AreEqual(Enumerable.Empty<ExtendedPublisher>(), logic.GetAllAsExtendedPublisher());
         }
 
         [Test]
@@ -322,21 +297,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(null));
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(p1));
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(p3));
-
-            Assert.IsNull(logic.ConvertPublisherToExtendedPublisher(null));
-            var convertedpublisher = logic.ConvertPublisherToExtendedPublisher(p3);
-            Assert.That(convertedpublisher.PublisherID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.Website, Is.EqualTo(p3.Website));
-            Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsEmpty(convertedpublisher.Books);
-            Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
-
-            var extendedpublishers = logic.GetAllAsExtendedPublisher();
-            Assert.That(extendedpublishers.FirstOrDefault().PublisherID, Is.EqualTo(1));
-            Assert.That(extendedpublishers.FirstOrDefault().Website, Is.EqualTo(p1.Website));
-            Assert.IsNull(extendedpublishers.FirstOrDefault().Rating);
-            Assert.IsEmpty(extendedpublishers.FirstOrDefault().Books);
-            Assert.AreEqual(Enumerable.Empty<Author>(), extendedpublishers.FirstOrDefault().Authors);
         }
 
         [Test]
@@ -369,16 +329,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(null));
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(p1));
             Assert.AreEqual(Enumerable.Empty<Author>(), logic.GetPermanentAuthorsOfPublisher(p3));
-
-            Assert.IsNull(logic.ConvertPublisherToExtendedPublisher(null));
-            var convertedpublisher = logic.ConvertPublisherToExtendedPublisher(p3);
-            Assert.That(convertedpublisher.PublisherID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.Website, Is.EqualTo(p3.Website));
-            Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsEmpty(convertedpublisher.Books);
-            Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
-
-            Assert.AreEqual(Enumerable.Empty<ExtendedPublisher>(), logic.GetAllAsExtendedPublisher());
         }
     }
 }

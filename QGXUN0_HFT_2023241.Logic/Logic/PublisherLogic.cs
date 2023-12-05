@@ -110,29 +110,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
 
 
         /// <summary>
-        /// Returns all publisher as <see cref="ExtendedPublisher"/>
-        /// </summary>
-        /// <returns>all publisher as <see cref="ExtendedPublisher"/></returns>
-        public IEnumerable<ExtendedPublisher> GetAllAsExtendedPublisher()
-        {
-            return ReadAll().ToList().Select(t => ConvertPublisherToExtendedPublisher(t));
-        }
-
-        /// <summary>
-        /// Converts a publisher to a <see cref="ExtendedPublisher"/>
-        /// </summary>
-        /// <param name="publisher"></param>
-        /// <returns>publisher as <see cref="ExtendedPublisher"/></returns>
-        public ExtendedPublisher ConvertPublisherToExtendedPublisher(Publisher publisher)
-        {
-            if (publisher == null) return null;
-
-            return new ExtendedPublisher(publisher,
-                GetAuthorsOfPublisher(publisher),
-                GetRatingOfPublisher(publisher));
-        }
-
-        /// <summary>
         /// Returns all <see cref="Publisher"/> who released at least one series
         /// </summary>
         /// <returns>series publishers</returns>

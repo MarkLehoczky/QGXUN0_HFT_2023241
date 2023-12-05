@@ -291,23 +291,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series).Key, Is.EqualTo(30).Within(0.0001));
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series).Value, Is.EqualTo(c3));
-
-            Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
-            var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);
-            Assert.That(convertedpublisher.CollectionID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.IsSeries, Is.EqualTo(c3.IsSeries));
-            Assert.That(convertedpublisher.Price, Is.EqualTo(30).Within(0.0001));
-            Assert.That(convertedpublisher.Rating, Is.EqualTo(3.5).Within(0.0001));
-            Assert.AreEqual(c3.Books, convertedpublisher.Books);
-            Assert.AreEqual(new List<Author> { a1, a2, a4, a5, a7, a8, a9, a10 }, convertedpublisher.Authors);
-
-            var extendedpublishers = logic.GetAllAsExtendedCollection();
-            Assert.That(extendedpublishers.FirstOrDefault().CollectionID, Is.EqualTo(1));
-            Assert.That(extendedpublishers.FirstOrDefault().IsSeries, Is.EqualTo(c1.IsSeries));
-            Assert.That(extendedpublishers.FirstOrDefault().Price, Is.EqualTo(8).Within(0.0001));
-            Assert.That(extendedpublishers.FirstOrDefault().Rating, Is.EqualTo(3.0).Within(0.0001));
-            Assert.AreEqual(c1.Books, extendedpublishers.FirstOrDefault().Books);
-            Assert.AreEqual(new List<Author> { a2, a3, a5, a8, a10 }, extendedpublishers.FirstOrDefault().Authors);
         }
 
         [Test]
@@ -347,17 +330,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
-
-            Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
-            var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);
-            Assert.That(convertedpublisher.CollectionID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.IsSeries, Is.EqualTo(c3.IsSeries));
-            Assert.That(convertedpublisher.Price, Is.EqualTo(30).Within(0.0001));
-            Assert.That(convertedpublisher.Rating, Is.EqualTo(3.5).Within(0.0001));
-            Assert.AreEqual(c3.Books, convertedpublisher.Books);
-            Assert.AreEqual(new List<Author> { a1, a2, a4, a5, a7, a8, a9, a10 }, convertedpublisher.Authors);
-
-            Assert.AreEqual(Enumerable.Empty<ExtendedCollection>(), logic.GetAllAsExtendedCollection());
         }
 
         [Test]
@@ -400,23 +372,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
-
-            Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
-            var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);
-            Assert.That(convertedpublisher.CollectionID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.IsSeries, Is.EqualTo(c3.IsSeries));
-            Assert.IsNull(convertedpublisher.Price);
-            Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsEmpty(convertedpublisher.Books);
-            Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
-
-            var extendedpublishers = logic.GetAllAsExtendedCollection();
-            Assert.That(extendedpublishers.FirstOrDefault().CollectionID, Is.EqualTo(1));
-            Assert.That(extendedpublishers.FirstOrDefault().IsSeries, Is.EqualTo(c1.IsSeries));
-            Assert.IsNull(extendedpublishers.FirstOrDefault().Price);
-            Assert.IsNull(extendedpublishers.FirstOrDefault().Rating);
-            Assert.IsEmpty(extendedpublishers.FirstOrDefault().Books);
-            Assert.AreEqual(Enumerable.Empty<Author>(), extendedpublishers.FirstOrDefault().Authors);
         }
 
         [Test]
@@ -462,17 +417,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
             Assert.That(logic.SelectCollection(BookFilter.LeastExpensive, CollectionFilter.Series), Is.EqualTo(new KeyValuePair<double?, Collection>(null, null)));
-
-            Assert.IsNull(logic.ConvertCollectionToExtendedCollection(null));
-            var convertedpublisher = logic.ConvertCollectionToExtendedCollection(c3);
-            Assert.That(convertedpublisher.CollectionID, Is.EqualTo(3));
-            Assert.That(convertedpublisher.IsSeries, Is.EqualTo(c3.IsSeries));
-            Assert.IsNull(convertedpublisher.Price);
-            Assert.IsNull(convertedpublisher.Rating);
-            Assert.IsEmpty(convertedpublisher.Books);
-            Assert.AreEqual(Enumerable.Empty<Author>(), convertedpublisher.Authors);
-
-            Assert.AreEqual(Enumerable.Empty<ExtendedCollection>(), logic.GetAllAsExtendedCollection());
         }
     }
 }
