@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace QGXUN0_HFT_2023241.Models.Models
 {
@@ -14,31 +16,48 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookCollectionConnectorID { get; set; }
+        [JsonPropertyName("BookCollectionConnectorID")]
+        [JsonProperty("BookCollectionConnectorID")]
+        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BookCollectionConnectorID { get; set; }
 
         /// <summary>
         /// ID of the <see cref="Models.Book"/>
         /// </summary>
-        [Required] public int BookID { get; set; }
+        [JsonPropertyName("BookID")]
+        [JsonProperty("BookID")]
+        [Required]
+        public int BookID { get; set; }
 
         /// <summary>
         /// ID of the <see cref="Models.Collection"/>
         /// </summary>
-        [Required] public int CollectionID { get; set; }
+        [JsonPropertyName("CollectionID")]
+        [JsonProperty("CollectionID")]
+        [Required]
+        public int CollectionID { get; set; }
 
         /// <summary>
         /// Book instance
         /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual Book Book { get; private set; }
 
         /// <summary>
         /// Collection instance
         /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual Collection Collection { get; private set; }
 
         /// <summary>
         /// Position of the book in a series
         /// </summary>
+        [JsonPropertyName("PositionInSeries")]
+        [JsonProperty("PositionInSeries")]
         public int? PositionInSeries { get; set; }
 
 

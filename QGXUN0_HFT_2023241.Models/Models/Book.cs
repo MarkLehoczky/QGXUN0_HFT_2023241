@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QGXUN0_HFT_2023241.Models.Attributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using QGXUN0_HFT_2023241.Models.Attributes;
+using System.Text.Json.Serialization;
 
 namespace QGXUN0_HFT_2023241.Models.Models
 {
@@ -17,54 +19,84 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookID { get; set; }
+        [JsonPropertyName("BookID")]
+        [JsonProperty("BookID")]
+        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BookID { get; set; }
 
         /// <summary>
         /// Title of the book
         /// </summary>
-        [Required][StringLength(200, MinimumLength = 1)] public string Title { get; set; }
+        [JsonPropertyName("Title")]
+        [JsonProperty("Title")]
+        [Required]
+        [StringLength(200, MinimumLength = 1)]
+        public string Title { get; set; }
 
         /// <summary>
         /// Authors groups of the book
         /// </summary>
-        [Required][RequiredCollection] public virtual ICollection<Author> Authors { get; set; } = new List<Author>();
+        [JsonPropertyName("Authors")]
+        [JsonProperty("Authors")]
+        [Required]
+        public virtual ICollection<Author> Authors { get; set; } = new List<Author>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Author"></see> instances
         /// </summary>
+        [JsonPropertyName("AuthorConnector")]
+        [JsonProperty("AuthorConnector")]
         public virtual ICollection<BookAuthorConnector> AuthorConnector { get; set; }
 
         /// <summary>
         /// Release year of the book
         /// </summary>
-        [Required][Range(1950, 2050)] public int Year { get; set; }
+        [JsonPropertyName("Year")]
+        [JsonProperty("Year")]
+        [Required]
+        [Range(1950, 2050)]
+        public int Year { get; set; }
 
         /// <summary>
         /// ID of the <see cref="Models.Publisher"></see>
         /// </summary>
+        [JsonPropertyName("PublisherID")]
+        [JsonProperty("PublisherID")]
         public int? PublisherID { get; set; }
 
         /// <summary>
         /// <see cref="Models.Publisher"></see> of the book
         /// </summary>
+        [JsonPropertyName("Publisher")]
+        [JsonProperty("Publisher")]
         public virtual Publisher Publisher { get; set; }
 
         /// <summary>
         /// <see cref="Collection"></see> groups which contains the book
         /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<Collection> Collections { get; set; } = new List<Collection>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Collection"></see> instances
         /// </summary>
+        [JsonPropertyName("CollectionConnector")]
+        [JsonProperty("CollectionConnector")]
         public virtual ICollection<BookCollectionConnector> CollectionConnector { get; set; }
 
         /// <summary>
         /// Price of the book
         /// </summary>
+        [JsonPropertyName("Price")]
+        [JsonProperty("Price")]
         public double? Price { get; set; }
 
         /// <summary>
         /// Rating of the book
         /// </summary>
+        [JsonPropertyName("Rating")]
+        [JsonProperty("Rating")]
         [Range(1.0, 5.0)] public double? Rating { get; set; }
 
 
@@ -189,7 +221,7 @@ namespace QGXUN0_HFT_2023241.Models.Models
                 book = new Book(bookID, title, year);
 
             if (restrictionCheck)
-                book.Validate(typeof(RequiredCollectionAttribute));
+                book.Validate();
 
             return book;
 
@@ -289,7 +321,7 @@ namespace QGXUN0_HFT_2023241.Models.Models
             else if (Title != other.Title) return false;
             else if (!Authors.SequenceEqual(other.Authors)) return false;
             else if (Year != other.Year) return false;
-            else if (Publisher != other.Publisher) return false;
+            else if (!Publisher.Equals(other.Publisher)) return false;
             else if (Price != other.Price) return false;
             else if (Rating != other.Rating) return false;
             else return true;

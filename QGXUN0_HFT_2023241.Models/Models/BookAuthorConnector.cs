@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace QGXUN0_HFT_2023241.Models.Models
 {
@@ -14,26 +16,41 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int BookAuthorConnectorID { get; set; }
+        [JsonPropertyName("BookAuthorConnectorID")]
+        [JsonProperty("BookAuthorConnectorID")]
+        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int BookAuthorConnectorID { get; set; }
 
         /// <summary>
         /// ID of the <see cref="Models.Book"/>
         /// </summary>
-        [Required] public int BookID { get; set; }
+        [JsonPropertyName("BookID")]
+        [JsonProperty("BookID")]
+        [Required]
+        public int BookID { get; set; }
 
         /// <summary>
         /// ID of the <see cref="Models.Author"/>
         /// </summary>
-        [Required] public int AuthorID { get; set; }
+        [JsonPropertyName("AuthorID")]
+        [JsonProperty("AuthorID")]
+        [Required]
+        public int AuthorID { get; set; }
 
         /// <summary>
         /// Book instance
         /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual Book Book { get; private set; }
 
         /// <summary>
         /// Author instance
         /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual Author Author { get; private set; }
 
 

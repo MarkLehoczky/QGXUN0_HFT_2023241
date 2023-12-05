@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QGXUN0_HFT_2023241.Models.Attributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using QGXUN0_HFT_2023241.Models.Attributes;
+using System.Text.Json.Serialization;
 
 namespace QGXUN0_HFT_2023241.Models.Models
 {
@@ -17,25 +19,40 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int CollectionID { get; set; }
+        [JsonPropertyName("CollectionID")]
+        [JsonProperty("CollectionID")]
+        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CollectionID { get; set; }
 
         /// <summary>
         /// Name of the collection
         /// </summary>
-        [Required][StringLength(50, MinimumLength = 1)] public string CollectionName { get; set; }
+        [JsonPropertyName("CollectionName")]
+        [JsonProperty("CollectionName")]
+        [Required]
+        [StringLength(50, MinimumLength = 1)]
+        public string CollectionName { get; set; }
 
         /// <summary>
         /// Books of the collection
         /// </summary>
+        [JsonPropertyName("Books")]
+        [JsonProperty("Books")]
         public virtual ICollection<Book> Books { get; set; } = new List<Book>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Collection"></see> instances
         /// </summary>
+        [JsonPropertyName("BookConnector")]
+        [JsonProperty("BookConnector")]
         public virtual ICollection<BookCollectionConnector> BookConnector { get; set; }
 
         /// <summary>
         /// <see langword="true"/> if the collection is a book series, otherwise <see langword="false"/>
         /// </summary>
+        [JsonPropertyName("IsSeries")]
+        [JsonProperty("IsSeries")]
         public bool? IsSeries { get; set; }
 
 

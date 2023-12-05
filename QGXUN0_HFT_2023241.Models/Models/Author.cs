@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QGXUN0_HFT_2023241.Models.Attributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using QGXUN0_HFT_2023241.Models.Attributes;
+using System.Text.Json.Serialization;
 
 namespace QGXUN0_HFT_2023241.Models.Models
 {
@@ -17,20 +19,33 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int AuthorID { get; set; }
+        [JsonPropertyName("AuthorID")]
+        [JsonProperty("AuthorID")]
+        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int AuthorID { get; set; }
 
         /// <summary>
         /// Name of the author
         /// </summary>
-        [Required][StringLength(50, MinimumLength = 1)] public string AuthorName { get; set; }
+        [JsonPropertyName("AuthorName")]
+        [JsonProperty("AuthorName")]
+        [Required]
+        [StringLength(50, MinimumLength = 1)]
+        public string AuthorName { get; set; }
 
         /// <summary>
         /// Books of the author
         /// </summary>
-        [Required] public virtual ICollection<Book> Books { get; set; } = new List<Book>();
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
+        public virtual ICollection<Book> Books { get; set; } = new List<Book>();
         /// <summary>
         /// Connector for the <see cref="Book"></see> and <see cref="Author"></see> instances
         /// </summary>
+        [JsonPropertyName("BookConnector")]
+        [JsonProperty("BookConnector")]
         public virtual ICollection<BookAuthorConnector> BookConnector { get; set; }
 
 
@@ -120,7 +135,7 @@ namespace QGXUN0_HFT_2023241.Models.Models
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return HashCode.Combine(AuthorName, Books);
+            return HashCode.Combine(AuthorName);
         }
 
 

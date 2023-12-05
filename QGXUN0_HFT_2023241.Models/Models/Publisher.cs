@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QGXUN0_HFT_2023241.Models.Attributes;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using QGXUN0_HFT_2023241.Models.Attributes;
+using System.Text.Json.Serialization;
 
 namespace QGXUN0_HFT_2023241.Models.Models
 {
@@ -17,22 +19,37 @@ namespace QGXUN0_HFT_2023241.Models.Models
         /// Unique key value
         /// </summary>
         /// <remarks>Database Key</remarks>
-        [Required][Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)] public int PublisherID { get; set; }
+        [JsonPropertyName("PublisherID")]
+        [JsonProperty("PublisherID")]
+        [Required]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int PublisherID { get; set; }
 
         /// <summary>
         /// Name of the publisher
         /// </summary>
-        [Required][StringLength(50, MinimumLength = 1)] public string PublisherName { get; set; }
+        [JsonPropertyName("PublisherName")]
+        [JsonProperty("PublisherName")]
+        [Required]
+        [StringLength(50, MinimumLength = 1)]
+        public string PublisherName { get; set; }
 
         /// <summary>
         /// Books of the publisher
         /// </summary>
+        [System.Text.Json.Serialization.JsonIgnore]
+        [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 
         /// <summary>
         /// Website of the publisher
         /// </summary>
-        [Website][StringLength(250, MinimumLength = 1)] public string Website { get; set; }
+        [JsonPropertyName("Website")]
+        [JsonProperty("Website")]
+        [StringLength(250, MinimumLength = 1)]
+        [Website]
+        public string Website { get; set; }
 
 
         /// <summary>

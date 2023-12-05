@@ -82,7 +82,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         /// <returns><see cref="Book.BookID"/> of the <paramref name="book"/> if the book is valid, otherwise <see langword="null"/></returns>
         public int? Create(Book book, IEnumerable<Author> authors)
         {
-            if (book == null || !book.IsValid(typeof(RequiredCollectionAttribute)))
+            if (book == null || !book.IsValid())
                 return null;
 
             var prevAuthors = book.Authors;
