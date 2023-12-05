@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace QGXUN0_HFT_2023241.Models.Attributes
+namespace QGXUN0_HFT_2023241.Models.Extensions
 {
     /// <summary>
     /// Attribute which checks whether a string is a correct website

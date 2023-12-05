@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using QGXUN0_HFT_2023241.Models.Attributes;
+using QGXUN0_HFT_2023241.Models.Extensions;
 using System;
 using System.ComponentModel.DataAnnotations;
 

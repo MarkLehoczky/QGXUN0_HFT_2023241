@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 
-namespace QGXUN0_HFT_2023241.Models.Attributes
+namespace QGXUN0_HFT_2023241.Models.Extensions
 {
     /// <summary>
     /// Extension methods for the models

@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using QGXUN0_HFT_2023241.Logic.Interface;
 using QGXUN0_HFT_2023241.Logic.Logic;
+using QGXUN0_HFT_2023241.Models.Extensions;
 using QGXUN0_HFT_2023241.Models.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
