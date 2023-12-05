@@ -241,7 +241,9 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
 
             Assert.IsNull(logic.Create(null));
             Assert.IsNull(logic.Create(incorrect));
-            Assert.IsNull(logic.Create(book1));
+            Assert.That(logic.Create(book1), Is.EqualTo(16));
+            bookMock.Setup(b => b.Read(16)).Returns(book1);
+            bookMock.Setup(b => b.ReadAll()).Returns(books.Append(book1).AsQueryable());
             Assert.That(logic.Create(book2), Is.EqualTo(20));
             bookMock.Setup(b => b.Read(20)).Returns(book2);
             bookMock.Setup(b => b.ReadAll()).Returns(books.Append(book2).AsQueryable());
@@ -251,9 +253,9 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             Assert.IsNull(logic.Create(incorrect, a1, a2));
 
             bookMock.Verify(b => b.Create(incorrect), Times.Never);
-            bookMock.Verify(b => b.Create(book1), Times.Never);
+            bookMock.Verify(b => b.Create(book1), Times.Once);
             bookMock.Verify(b => b.Create(book2), Times.Once);
-            bookMock.Verify(b => b.Read(1), Times.Never);
+            bookMock.Verify(b => b.Read(1), Times.Once);
             bookMock.Verify(b => b.Read(20), Times.Once);
             bookMock.Verify(b => b.Read(21), Times.Never);
         }

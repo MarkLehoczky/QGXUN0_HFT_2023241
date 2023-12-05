@@ -321,7 +321,8 @@ namespace QGXUN0_HFT_2023241.Models.Models
             else if (Title != other.Title) return false;
             else if (!Authors.SequenceEqual(other.Authors)) return false;
             else if (Year != other.Year) return false;
-            else if (!Publisher.Equals(other.Publisher)) return false;
+            else if ((Publisher == null && other.Publisher != null) || (Publisher != null && other.Publisher == null)) return false;
+            else if (Publisher != null && other.Publisher != null && !Publisher.Equals(other.Publisher)) return false;
             else if (Price != other.Price) return false;
             else if (Rating != other.Rating) return false;
             else return true;
