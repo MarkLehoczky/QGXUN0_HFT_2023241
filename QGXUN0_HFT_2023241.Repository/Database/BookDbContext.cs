@@ -72,25 +72,25 @@ namespace QGXUN0_HFT_2023241.Repository.Database
                         .HasOne(connector => connector.Author)
                         .WithMany()
                         .HasForeignKey(connector => connector.AuthorID)
-                        .OnDelete(DeleteBehavior.NoAction),
+                        .OnDelete(DeleteBehavior.Cascade),
                     book => book
                         .HasOne(connector => connector.Book)
                         .WithMany()
                         .HasForeignKey(connector => connector.BookID)
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                 );
 
             modelBuilder.Entity<BookAuthorConnector>()
                 .HasOne(connector => connector.Author)
                 .WithMany(author => author.BookConnector)
                 .HasForeignKey(connector => connector.AuthorID)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BookAuthorConnector>()
                 .HasOne(connector => connector.Book)
                 .WithMany(author => author.AuthorConnector)
                 .HasForeignKey(connector => connector.BookID)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
 
@@ -104,25 +104,25 @@ namespace QGXUN0_HFT_2023241.Repository.Database
                         .HasOne(connector => connector.Collection)
                         .WithMany()
                         .HasForeignKey(connector => connector.CollectionID)
-                        .OnDelete(DeleteBehavior.NoAction),
+                        .OnDelete(DeleteBehavior.Cascade),
                     book => book
                         .HasOne(connector => connector.Book)
                         .WithMany()
                         .HasForeignKey(connector => connector.BookID)
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                 );
 
             modelBuilder.Entity<BookCollectionConnector>()
                 .HasOne(connector => connector.Collection)
                 .WithMany(collection => collection.BookConnector)
                 .HasForeignKey(connector => connector.CollectionID)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BookCollectionConnector>()
                 .HasOne(connector => connector.Book)
                 .WithMany(book => book.CollectionConnector)
                 .HasForeignKey(connector => connector.BookID)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
 
@@ -132,7 +132,7 @@ namespace QGXUN0_HFT_2023241.Repository.Database
                 .HasOne(book => book.Publisher)
                 .WithMany(publisher => publisher.Books)
                 .HasForeignKey(book => book.PublisherID)
-                .OnDelete(DeleteBehavior.NoAction)
+                .OnDelete(DeleteBehavior.Cascade)
                 );
 
             #endregion
