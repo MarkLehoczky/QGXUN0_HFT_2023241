@@ -42,7 +42,7 @@ namespace QGXUN0_HFT_2023241.Models.Extensions
         /// <summary>
         /// Regular expression for a website
         /// </summary>
-        protected static Regex websiteRegex = new(@"^((https?:)?(\/\/)?(www\.)?([a-zA-Z0-9\-]+\.)?([a-zA-Z0-9\-]+\.)([a-zA-Z]{2,4})(:\d*)(\/?[a-zA-Z0-9\-_]*))$");
+        protected static Regex websiteRegex = new(@"^((https?:)?(//)?(www\.)?([a-zA-Z0-9\-]+\.)?([a-zA-Z0-9\-]+\.)([a-zA-Z]{2,4})(:\d{1,5})?(/[a-zA-Z0-9\-_]*)?)$");
 
 
         /// <inheritdoc/>
