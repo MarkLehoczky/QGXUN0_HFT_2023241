@@ -22,10 +22,8 @@ namespace QGXUN0_HFT_2023241.Repository.ModelRepository
         public override void Update(Collection element)
         {
             var old = Read(element.CollectionID);
-
-            foreach (var prop in old.GetType().GetProperties())
-                if (prop.GetAccessors().FirstOrDefault(t => t.IsVirtual) == null)
-                    prop.SetValue(old, prop.GetValue(element));
+            old.CollectionName = element.CollectionName;
+            old.IsSeries = element.IsSeries;
 
             context.SaveChanges();
         }

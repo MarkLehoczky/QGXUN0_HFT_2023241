@@ -22,10 +22,9 @@ namespace QGXUN0_HFT_2023241.Repository.ModelRepository
         public override void Update(BookCollectionConnector element)
         {
             var old = Read(element.BookCollectionConnectorID);
-
-            foreach (var prop in old.GetType().GetProperties())
-                if (prop.GetAccessors().FirstOrDefault(t => t.IsVirtual) == null)
-                    prop.SetValue(old, prop.GetValue(element));
+            old.BookID = element.BookID;
+            old.CollectionID = element.CollectionID;
+            old.PositionInSeries = element.PositionInSeries;
 
             context.SaveChanges();
         }

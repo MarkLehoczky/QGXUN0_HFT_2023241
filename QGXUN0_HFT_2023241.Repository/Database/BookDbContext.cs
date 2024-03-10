@@ -4,42 +4,42 @@ using QGXUN0_HFT_2023241.Models.Models;
 namespace QGXUN0_HFT_2023241.Repository.Database
 {
     /// <summary>
-    /// Database context for the <see cref="Book"/>, <see cref="Author"/>, <see cref="Collection"/>, <see cref="Publisher"/>, and their connection
+    /// Specifies the tables and their connections of a <see cref="DbContext"/>.
     /// </summary>
     public class BookDbContext : DbContext
     {
         /// <summary>
-        /// Books of the database
+        /// Gets or sets the book table of the <see cref="BookDbContext"/>
         /// </summary>
         public DbSet<Book> Books { get; set; }
 
         /// <summary>
-        /// Authors of the database
+        /// Gets or sets the author table of the <see cref="BookDbContext"/>
         /// </summary>
         public DbSet<Author> Authors { get; set; }
 
         /// <summary>
-        /// Connector for the <see cref="Book"></see> instances and <see cref="Author"></see> instances 
+        /// Gets or sets the book and author connector table of the <see cref="BookDbContext"/>
         /// </summary>
         public DbSet<BookAuthorConnector> BookAuthorConnectors { get; set; }
 
         /// <summary>
-        /// Collections of the database
+        /// Gets or sets the collection table of the <see cref="BookDbContext"/>
         /// </summary>
         public DbSet<Collection> Collections { get; set; }
 
         /// <summary>
-        /// Connector for the <see cref="Book"></see> instances and <see cref="Collection"></see> instances 
+        /// Gets or sets the book and collection connector table of the <see cref="BookDbContext"/>
         /// </summary>
         public DbSet<BookCollectionConnector> BookCollectionConnectors { get; set; }
 
         /// <summary>
-        /// Publishers of the database
+        /// Gets or sets the publisher table of the <see cref="BookDbContext"/>
         /// </summary>
         public DbSet<Publisher> Publishers { get; set; }
 
         /// <summary>
-        /// Empty constructor, which ensures the database creation
+        /// Initializes a new instance of the <see cref="Collection"/> <see langword="class"/> by ensuring the creation of the database.
         /// </summary>
         public BookDbContext()
         {
@@ -47,9 +47,10 @@ namespace QGXUN0_HFT_2023241.Repository.Database
         }
 
         /// <summary>
-        /// Configures for InMemoryDatabase and LazyLoading
+        /// Specifies the configuration of the database.
         /// </summary>
-        /// <param name="optionsBuilder">Options builder</param>
+        /// <remarks>Sets the database to be <see langword="InMemory Database"/> and use <see langword="Lazy Loading"/></remarks>
+        /// <param name="optionsBuilder">Options builder of the <see cref="BookDbContext"/></param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -57,9 +58,10 @@ namespace QGXUN0_HFT_2023241.Repository.Database
         }
 
         /// <summary>
-        /// Creates the database model
+        /// Specifies the actions of the database during creation.
         /// </summary>
-        /// <param name="modelBuilder">Database model</param>
+        /// <remarks>Sets the database table connections and loads the default values</remarks>
+        /// <param name="modelBuilder">Database model builder of the <see cref="BookDbContext"/></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region Book-Author connector

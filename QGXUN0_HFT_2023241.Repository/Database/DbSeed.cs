@@ -3,12 +3,12 @@
 namespace QGXUN0_HFT_2023241.Repository.Database
 {
     /// <summary>
-    /// Seeds the default data for the <see cref="BookDbContext"/>
+    /// Seeds the default database values for the <see cref="BookDbContext"/>.
     /// </summary>
     public class DbSeed
     {
         /// <summary>
-        /// Seeds the default <see cref="Author"/> data for the <see cref="BookDbContext.Authors"/>
+        /// Gets the default <see cref="Author"/> values.
         /// </summary>
         public static Author[] Authors
         {
@@ -202,7 +202,7 @@ namespace QGXUN0_HFT_2023241.Repository.Database
         }
 
         /// <summary>
-        /// Seeds the default <see cref="Book"/> data for the <see cref="BookDbContext.Authors"/>
+        /// Gets the default <see cref="Book"/> values.
         /// </summary>
         public static Book[] Books
         {
@@ -380,7 +380,45 @@ namespace QGXUN0_HFT_2023241.Repository.Database
         }
 
         /// <summary>
-        /// Seeds the default <see cref="BookAuthorConnector"/> data for the <see cref="BookDbContext.BookAuthorConnectors"/>
+        /// Gets the default <see cref="Collection"/> values.
+        /// </summary>
+        public static Collection[] Collections
+        {
+            get
+            {
+                return new Collection[]
+                {
+                    new Collection(1, "Imperfect Girl", true),
+                    new Collection(2, "Katanagatari", true),
+                    new Collection(3, "Manga", false),
+                    new Collection(4, "Monogatari", true),
+                    new Collection(5, "The MIT Press Essential Knowledge", false),
+                    new Collection(6, "Zaregoto")
+                };
+            }
+        }
+
+        /// <summary>
+        /// Gets the default <see cref="Publisher"/> values.
+        /// </summary>
+        public static Publisher[] Publishers
+        {
+            get
+            {
+                return new Publisher[]
+                {
+                    new Publisher(1, "Kodansha"),
+                    new Publisher(2, "No Starch Press", "https://www.nostarch.com/"),
+                    new Publisher(3, "Packt Publishing", "https://www.packt.com/"),
+                    new Publisher(4, "The MIT Press"),
+                    new Publisher(5, "Vertical"),
+                    new Publisher(6, "Wiley", "https://www.wiley.com/")
+                };
+            }
+        }
+
+        /// <summary>
+        /// Gets the default <see cref="BookAuthorConnector"/> values.
         /// </summary>
         public static BookAuthorConnector[] BookAuthorConnectors
         {
@@ -624,7 +662,7 @@ namespace QGXUN0_HFT_2023241.Repository.Database
         }
 
         /// <summary>
-        /// Seeds the default <see cref="BookCollectionConnector"/> data for the <see cref="BookDbContext.BookCollectionConnectors"/>
+        /// Gets the default <see cref="BookCollectionConnector"/> values.
         /// </summary>
         public static BookCollectionConnector[] BookCollectionConnectors
         {
@@ -689,44 +727,6 @@ namespace QGXUN0_HFT_2023241.Repository.Database
                     new BookCollectionConnector(55, 160, 4, 14),
                     new BookCollectionConnector(56, 162, 5),
                     new BookCollectionConnector(57, 165, 4, 20)
-                };
-            }
-        }
-
-        /// <summary>
-        /// Seeds the default <see cref="Collection"/> data for the <see cref="BookDbContext.Collections"/>
-        /// </summary>
-        public static Collection[] Collections
-        {
-            get
-            {
-                return new Collection[]
-                {
-                    new Collection(1, "Imperfect Girl", true),
-                    new Collection(2, "Katanagatari", true),
-                    new Collection(3, "Manga", false),
-                    new Collection(4, "Monogatari", true),
-                    new Collection(5, "The MIT Press Essential Knowledge", false),
-                    new Collection(6, "Zaregoto")
-                };
-            }
-        }
-
-        /// <summary>
-        /// Seeds the default <see cref="Publisher"/> data for the <see cref="BookDbContext.Publishers"/>
-        /// </summary>
-        public static Publisher[] Publishers
-        {
-            get
-            {
-                return new Publisher[]
-                {
-                    new Publisher(1, "Kodansha"),
-                    new Publisher(2, "No Starch Press", "https://www.nostarch.com/"),
-                    new Publisher(3, "Packt Publishing", "https://www.packt.com/"),
-                    new Publisher(4, "The MIT Press"),
-                    new Publisher(5, "Vertical"),
-                    new Publisher(6, "Wiley", "https://www.wiley.com/")
                 };
             }
         }

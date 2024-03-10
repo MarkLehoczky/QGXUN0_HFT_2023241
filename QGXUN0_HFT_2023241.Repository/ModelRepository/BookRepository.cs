@@ -22,10 +22,11 @@ namespace QGXUN0_HFT_2023241.Repository.ModelRepository
         public override void Update(Book element)
         {
             var old = Read(element.BookID);
-
-            foreach (var prop in old.GetType().GetProperties())
-                if (prop.GetAccessors().FirstOrDefault(t => t.IsVirtual) == null)
-                    prop.SetValue(old, prop.GetValue(element));
+            old.Title = element.Title;
+            old.Year = element.Year;
+            old.PublisherID = element.PublisherID;
+            old.Price = element.Price;
+            old.Rating = element.Rating;
 
             context.SaveChanges();
         }

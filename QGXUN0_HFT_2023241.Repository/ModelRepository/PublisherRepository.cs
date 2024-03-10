@@ -22,10 +22,8 @@ namespace QGXUN0_HFT_2023241.Repository.ModelRepository
         public override void Update(Publisher element)
         {
             var old = Read(element.PublisherID);
-
-            foreach (var prop in old.GetType().GetProperties())
-                if (prop.GetAccessors().FirstOrDefault(t => t.IsVirtual) == null)
-                    prop.SetValue(old, prop.GetValue(element));
+            old.PublisherName = element.PublisherName;
+            old.Website = element.Website;
 
             context.SaveChanges();
         }
