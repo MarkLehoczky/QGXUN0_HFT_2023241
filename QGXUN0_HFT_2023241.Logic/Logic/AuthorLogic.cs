@@ -4,49 +4,46 @@ using QGXUN0_HFT_2023241.Models.Models;
 using QGXUN0_HFT_2023241.Repository.Template;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QGXUN0_HFT_2023241.Logic.Logic
 {
+    /// <summary>
+    /// Specifies the <see langword="CRUD"/> and <see langword="Non-CRUD"/> methods of the <see cref="Author"/> <see langword="class"/>
+    /// </summary>
     public class AuthorLogic : IAuthorLogic
     {
-        /// <summary>
-        /// Repository for the <see cref="Author"/> database context
-        /// </summary>
-        private readonly IRepository<Author> authorRepository;
-
-        /// <summary>
-        /// Counts the number of <see cref="Author"/> instances
-        /// </summary>
-        /// <value>number of <see cref="Author"/> instances</value>
+        /// <inheritdoc/>
         public int Count { get => ReadAll().Count(); }
-        /// <summary>
-        /// Determines whether there are <see cref="Author"/> instances in the database
-        /// </summary>
-        /// <value><see langword="true"/> if there are <see cref="Author"/> instances in the database, otherwise <see langword="false"/></value>
+
+        /// <inheritdoc/>
         public bool IsEmpty { get => Count == 0; }
 
+        /// <summary>
+        /// Specifies an instance of the <see cref="Repository{Author}"/>
+        /// </summary>
+        private readonly IRepository<Author> _authorRepository;
+
 
         /// <summary>
-        /// Constructor with the database repositories
+        /// Initializes a new instance of the <see cref="Author"/> <see langword="class"/> by the <see cref="Repository{Author}"/> instance.
         /// </summary>
-        /// <param name="authorRepository"><see cref="Author"/> repository</param>
+        /// <param name="authorRepository"><see cref="Author"/> repository instance</param>
         public AuthorLogic(IRepository<Author> authorRepository)
         {
-            this.authorRepository = authorRepository;
+            _authorRepository = authorRepository;
         }
 
 
         /// <summary>
-        /// Creates a <paramref name="author"/>
+        /// Creates an <see cref="Author"/> instance.
         /// </summary>
-        /// <remarks>The <see cref="Author.AuthorID"/> may be changed if another <see cref="Author"/> instance has the same <see langword="key"/></remarks>
-        /// <param name="author">new author</param>
-        /// <returns><see cref="Author.AuthorID"/> of the <paramref name="author"/> if the author is valid, otherwise <see langword="null"/></returns>
+        /// <remarks>The <see cref="Author.AuthorID"/> of the <see cref="Author"/> instance may be changed</remarks>
+        /// <param name="author">New <see cref="Author"/> instance</param>
+        /// <returns><see cref="Author.AuthorID"/> of the <paramref name="author"/> instance if the creating was successful; otherwise, <see langword="null"/></returns>
         public int? Create(Author author)
         {
-            if (!author.IsValid(typeof(RequiredAttribute)))
+            if (!author.IsValid())
                 return null;
 
             if (ReadAll().Contains(author))
@@ -55,63 +52,78 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             if (Read(author.AuthorID) != null)
                 author.AuthorID = ReadAll().Max(t => t.AuthorID) + 1;
 
-            authorRepository.Create(author);
+            _authorRepository.Create(author);
             return author.AuthorID;
         }
 
         /// <summary>
-        /// Reads a <see cref="Author"/> with the same <paramref name="authorID"/> value
+        /// Reads an <see cref="Author"/> instance.
         /// </summary>
-        /// <param name="authorID"><see cref="Author.AuthorID"/> value of the author</param>
-        /// <returns><see cref="Author"/> if the author exists, otherwise <see langword="null"/></returns>
+        /// <param name="authorID"><see cref="Author.AuthorID"/> of the read <see cref="Author"/> instance</param>
+        /// <returns><see cref="Author"/> instance if the instance is found; otherwise, <see langword="null"/></returns>
         public Author Read(int authorID)
         {
-            try { return authorRepository.Read(authorID); }
+            try { return _authorRepository.Read(authorID); }
             catch (InvalidOperationException) { return null; }
         }
 
-        /// <summary>
-        /// Updates a <paramref name="author"/> with the same <see cref="Author.AuthorID"/> value
-        /// </summary>
-        /// <remarks>The <see cref="Author.AuthorID"/> value of the <paramref name="author"/> must be the same as the one intended to update</remarks>
-        /// <param name="author">updated author</param>
-        /// <returns><see langword="true"/> if the update was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool Update(Author author)
         {
             if (!author.IsValid() || Read(author.AuthorID) == null)
                 return false;
-            authorRepository.Update(author);
+            _authorRepository.Update(author);
 
             return true;
         }
 
-        /// <summary>
-        /// Deletes a <see cref="Author"/> with the same <paramref name="author"/>
-        /// </summary>
-        /// <param name="author"><see cref="Author"/> instance</param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool Delete(Author author)
         {
             if (author == null) return false;
-            try { authorRepository.Delete(author.AuthorID); return true; }
+            try { _authorRepository.Delete(author.AuthorID); return true; }
             catch { return false; }
         }
 
-        /// <summary>
-        /// Reads all <see cref="Author"/>
-        /// </summary>
-        /// <returns>all <see cref="Author"/> instances as <c><see cref="IQueryable"/></c></returns>
+        /// <inheritdoc/>
         public IQueryable<Author> ReadAll()
         {
-            return authorRepository.ReadAll();
+            return _authorRepository.ReadAll();
         }
 
-        /// <summary>
-        /// Selects a book based on the given <paramref name="bookFilter"/> from an <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">author</param>
-        /// <param name="bookFilter">book filter</param>
-        /// <returns>selected book</returns>
+
+        /// <inheritdoc/>
+        public KeyValuePair<double?, Author> GetHighestRatedAuthor()
+        {
+            var temp = ReadAll()
+                .Where(t => t.Books.Any(t => t.Rating != null))
+                .OrderByDescending(t => t.Books.Average(u => u.Rating))
+                .FirstOrDefault();
+            return new KeyValuePair<double?, Author>(temp?.Books.Average(t => t.Rating), temp);
+        }
+
+        /// <inheritdoc/>
+        public KeyValuePair<double?, Author> GetLowestRatedAuthor()
+        {
+            var temp = ReadAll()
+                .Where(t => t.Books.Any(t => t.Rating != null))
+                .OrderBy(t => t.Books.Average(u => u.Rating))
+                .FirstOrDefault();
+            return new KeyValuePair<double?, Author>(temp?.Books.Average(t => t.Rating), temp);
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<Collection> GetSeriesOfAuthor(Author author)
+        {
+            if (author == null) return Enumerable.Empty<Collection>();
+            return author.Books
+                .SelectMany(t => t.Collections, (t, collections) => collections)
+                .Where(t => t.IsSeries.HasValue == true && t.IsSeries == true)
+                .Distinct()
+                .ToList();
+        }
+
+        /// <inheritdoc/>
         public Book SelectBookFromAuthor(Author author, BookFilter bookFilter)
         {
             if (author == null || author.Books == null) return null;
@@ -124,41 +136,6 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
                 case BookFilter.LowestRated: return author.Books.OrderBy(t => t.Rating).FirstOrDefault();
                 default: return null;
             }
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Author"/> which has the highest average <see cref="Author.Books"/> rating
-        /// </summary>
-        /// <returns>highest rated author, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Author"/></returns>
-        public KeyValuePair<double?, Author> GetHighestRatedAuthor()
-        {
-            var temp = ReadAll().Where(t => t.Books.Any(t => t.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
-            return new KeyValuePair<double?, Author>(temp?.Books.Average(t => t.Rating), temp);
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Author"/> which has the lowest average <see cref="Author.Books"/> rating
-        /// </summary>
-        /// <returns>lowest rated author, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Author"/></returns>
-        public KeyValuePair<double?, Author> GetLowestRatedAuthor()
-        {
-            var temp = ReadAll().Where(t => t.Books.Any(t => t.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
-            return new KeyValuePair<double?, Author>(temp?.Books.Average(t => t.Rating), temp);
-        }
-
-        /// <summary>
-        /// Returns the series of an <paramref name="author"/>
-        /// </summary>
-        /// <param name="author">author</param>
-        /// <returns>series of an <paramref name="author"/></returns>
-        public IEnumerable<Collection> GetSeriesOfAuthor(Author author)
-        {
-            if (author == null) return Enumerable.Empty<Collection>();
-            return author.Books
-                .SelectMany(t => t.Collections, (t, collections) => collections)
-                .Where(t => t.IsSeries.HasValue == true && t.IsSeries == true)
-                .Distinct()
-                .ToList();
         }
     }
 }

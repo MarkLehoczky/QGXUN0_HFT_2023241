@@ -13,51 +13,48 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
     /// </summary>
     public class CollectionLogic : ICollectionLogic
     {
-        /// <summary>
-        /// Repository for the <see cref="Collection"/> database context
-        /// </summary>
-        private readonly IRepository<Collection> collectionRepository;
-        /// <summary>
-        /// Repository for the <see cref="Book"/> database context
-        /// </summary>
-        private readonly IRepository<Book> bookRepository;
-        /// <summary>
-        /// Repository for the <see cref="BookCollectionConnector"/> database context
-        /// </summary>
-        private readonly IRepository<BookCollectionConnector> connectorRepository;
-
-        /// <summary>
-        /// Counts the number of <see cref="Collection"/> instances
-        /// </summary>
-        /// <value>number of <see cref="Collection"/> instances</value>
+        /// <inheritdoc/>
         public int Count { get => ReadAll().Count(); }
-        /// <summary>
-        /// Determines whether there are <see cref="Collection"/> instances in the database
-        /// </summary>
-        /// <value><see langword="true"/> if there are <see cref="Collection"/> instances in the database, otherwise <see langword="false"/></value>
+
+        /// <inheritdoc/>
         public bool IsEmpty { get => Count == 0; }
 
+        /// <summary>
+        /// Specifies an instance of the <see cref="Repository{Collection}"/>
+        /// </summary>
+        private readonly IRepository<Collection> _collectionRepository;
 
         /// <summary>
-        /// Constructor with the database repositories
+        /// Specifies an instance of the <see cref="Repository{Book}"/>
         /// </summary>
-        /// <param name="collectionRepository"><see cref="Collection"/> repository</param>
-        /// <param name="bookRepository"><see cref="Book"/> repository</param>
-        /// <param name="connectorRepository"><see cref="BookCollectionConnector"/> repository</param>
+        private readonly IRepository<Book> _bookRepository;
+
+        /// <summary>
+        /// Specifies an instance of the <see cref="Repository{BookCollectionConnector}"/>
+        /// </summary>
+        private readonly IRepository<BookCollectionConnector> _connectorRepository;
+
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Collection"/> <see langword="class"/> by the <see cref="Repository{Book}"/>, <see cref="Repository{Author}"/> and <see cref="Repository{BookAuthorConnector}"/> instances.
+        /// </summary>
+        /// <param name="collectionRepository"><see cref="Collection"/> repository instance</param>
+        /// <param name="bookRepository"><see cref="Book"/> repository instance</param>
+        /// <param name="connectorRepository"><see cref="BookCollectionConnector"/> repository instance</param>
         public CollectionLogic(IRepository<Collection> collectionRepository, IRepository<Book> bookRepository, IRepository<BookCollectionConnector> connectorRepository)
         {
-            this.collectionRepository = collectionRepository;
-            this.bookRepository = bookRepository;
-            this.connectorRepository = connectorRepository;
+            _collectionRepository = collectionRepository;
+            _bookRepository = bookRepository;
+            _connectorRepository = connectorRepository;
         }
 
 
         /// <summary>
-        /// Creates an empty <paramref name="collection"/>
+        /// Creates an <see cref="Collection"/> instance.
         /// </summary>
-        /// <remarks>The <see cref="Collection.CollectionID"/> may be changed if another <see cref="Collection"/> instance has the same <see langword="key"/></remarks>
-        /// <param name="collection">new collection</param>
-        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
+        /// <remarks>The <see cref="Collection.CollectionID"/> of the <see cref="Collection"/> instance may be changed</remarks>
+        /// <param name="collection">New <see cref="Collection"/> instance</param>
+        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> instance if the creating was successful; otherwise, <see langword="null"/></returns>
         public int? Create(Collection collection)
         {
             if (!collection.IsValid())
@@ -69,16 +66,16 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             if (Read(collection.CollectionID) != null)
                 collection.CollectionID = ReadAll().Max(t => t.CollectionID) + 1;
 
-            collectionRepository.Create(collection);
+            _collectionRepository.Create(collection);
             return collection.CollectionID;
         }
         /// <summary>
-        /// Creates a <paramref name="collection"/> with books
+        /// Creates an <see cref="Collection"/> instance, then adds <see cref="Book"/> instances to the <see cref="Collection"/> instance.
         /// </summary>
-        /// <remarks><para>The <see cref="Collection.CollectionID"/> may be changed if another <see cref="Collection"/> instance has the same <see langword="key"/></para><para>The books must be in the database</para></remarks>
-        /// <param name="collection">new collection</param>
-        /// <param name="books">books in the collection</param>
-        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
+        /// <remarks>The <see cref="Collection.CollectionID"/> of the <see cref="Collection"/> instance may be changed</remarks>
+        /// <param name="collection">New <see cref="Collection"/> instance</param>
+        /// <param name="books"><see cref="Book"/> instances for the <see cref="Collection"/> instance</param>
+        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> instance if the creating was successful; otherwise, <see langword="null"/></returns>
         public int? Create(Collection collection, IEnumerable<Book> books)
         {
             var created = Create(collection);
@@ -88,170 +85,162 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             return created;
         }
         /// <summary>
-        /// Creates a <paramref name="collection"/> with books
+        /// Creates an <see cref="Collection"/> instance, then adds <see cref="Book"/> instances to the <see cref="Collection"/> instance.
         /// </summary>
-        /// <remarks><para>The <see cref="Collection.CollectionID"/> may be changed if another <see cref="Collection"/> instance has the same <see langword="key"/></para><para>The books must be in the database</para></remarks>
-        /// <param name="collection">new collection</param>
-        /// <param name="books">books in the collection</param>
-        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> if the collection is valid, otherwise <see langword="null"/></returns>
+        /// <remarks>The <see cref="Collection.CollectionID"/> of the <see cref="Collection"/> instance may be changed</remarks>
+        /// <param name="collection">New <see cref="Collection"/> instance</param>
+        /// <param name="books"><see cref="Book"/> instances for the <see cref="Collection"/> instance</param>
+        /// <returns><see cref="Collection.CollectionID"/> of the <paramref name="collection"/> instance if the creating was successful; otherwise, <see langword="null"/></returns>
         public int? Create(Collection collection, params Book[] books)
         {
             return Create(collection, books.AsEnumerable());
         }
 
         /// <summary>
-        /// Reads a <see cref="Collection"/> with the same <paramref name="collectionID"/> value
+        /// Reads an <see cref="Collection"/> instance.
         /// </summary>
-        /// <param name="collectionID"><see cref="Collection.CollectionID"/> value of the collection</param>
-        /// <returns><see cref="Collection"/> if the collection exists, otherwise <see langword="null"/></returns>
+        /// <param name="collectionID"><see cref="Collection.CollectionID"/> of the read <see cref="Collection"/> instance</param>
+        /// <returns><see cref="Collection"/> instance if the instance is found; otherwise, <see langword="null"/></returns>
         public Collection Read(int collectionID)
         {
-            try { return collectionRepository.Read(collectionID); }
+            try { return _collectionRepository.Read(collectionID); }
             catch (InvalidOperationException) { return null; }
         }
 
-        /// <summary>
-        /// Updates a <paramref name="collection"/> with the same <see cref="Collection.CollectionID"/> value
-        /// </summary>
-        /// <remarks>The <see cref="Collection.CollectionID"/> value of the <paramref name="collection"/> must be the same as the one intended to update</remarks>
-        /// <param name="collection">updated collection</param>
-        /// <returns><see langword="true"/> if the update was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool Update(Collection collection)
         {
             if (!collection.IsValid() || Read(collection.CollectionID) == null)
                 return false;
 
-            collectionRepository.Update(collection);
+            _collectionRepository.Update(collection);
             return true;
         }
 
-        /// <summary>
-        /// Deletes a <see cref="Collection"/> with the same <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection"><see cref="Collection"/> instance</param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool Delete(Collection collection)
         {
             if (collection == null) return false;
-            try { collectionRepository.Delete(collection.CollectionID); return true; }
+            try { _collectionRepository.Delete(collection.CollectionID); return true; }
             catch { return false; }
         }
 
-        /// <summary>
-        /// Reads all <see cref="Collection"/>
-        /// </summary>
-        /// <returns>all <see cref="Collection"/> instances as <c><see cref="IQueryable"/></c></returns>
+        /// <inheritdoc/>
         public IQueryable<Collection> ReadAll()
         {
-            return collectionRepository.ReadAll();
+            return _collectionRepository.ReadAll();
         }
 
 
-        /// <summary>
-        /// Adds books to a <paramref name="collection"/>
-        /// </summary>
-        /// <remarks>The books must be in the database</remarks>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="books">addable books</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool AddBooksToCollection(Collection collection, IEnumerable<Book> books)
         {
             if (collection == null || Read(collection.CollectionID) == null)
                 return false;
 
-            foreach (var item in bookRepository.ReadAll().Where(t => books.Contains(t)).Intersect(bookRepository.ReadAll().Where(t => !collection.Books.Contains(t))))
-                connectorRepository.Create(new BookCollectionConnector(
-                    connectorRepository.ReadAll().Max(t => t.BookCollectionConnectorID) + 1,
+            foreach (var item in _bookRepository.ReadAll().Where(t => books.Contains(t)).Except(collection.Books))
+                _connectorRepository.Create(new BookCollectionConnector(
+                    _connectorRepository.ReadAll().Max(t => t.BookCollectionConnectorID) + 1,
                     item.BookID,
                     collection.CollectionID
                 ));
 
             return books.All(t => collection.Books.Contains(t));
         }
-        /// <summary>
-        /// Adds books to a <paramref name="collection"/>
-        /// </summary>
-        /// <remarks>The books must be in the database</remarks>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="books">addable books</param>
-        /// <returns><see langword="true"/> if all the addition was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool AddBooksToCollection(Collection collection, params Book[] books)
         {
             return AddBooksToCollection(collection, books.AsEnumerable());
         }
 
-        /// <summary>
-        /// Removes books from a <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="books">removable books</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool RemoveBooksFromCollection(Collection collection, IEnumerable<Book> books)
         {
             if (collection == null || Read(collection.CollectionID) == null)
                 return false;
 
-            foreach (var item in connectorRepository.ReadAll().Where(t => t.Collection == collection && books.Contains(t.Book)))
-                connectorRepository.Delete(item.BookCollectionConnectorID);
+            foreach (var item in _connectorRepository.ReadAll().Where(t => t.Collection == collection && books.Contains(t.Book)))
+                _connectorRepository.Delete(item.BookCollectionConnectorID);
 
-            return books.All(t => bookRepository.ReadAll().Contains(t)) && !books.Any(t => collection.Books.Contains(t));
+            return books.All(t => _bookRepository.ReadAll().Contains(t)) && !books.Any(t => collection.Books.Contains(t));
         }
-        /// <summary>
-        /// Removes books from a <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection of the books</param>
-        /// <param name="books">removable books</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool RemoveBooksFromCollection(Collection collection, params Book[] books)
         {
             return RemoveBooksFromCollection(collection, books.AsEnumerable());
         }
-        /// <summary>
-        /// Removes all books from a <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection of the books</param>
-        /// <returns><see langword="true"/> if all the removal was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool RemoveAllBookFromCollection(Collection collection)
         {
             return RemoveBooksFromCollection(collection, collection.Books);
         }
 
 
-        /// <summary>
-        /// Returns all <see cref="Collection"/> which is a series
-        /// </summary>
-        /// <returns>all series collections</returns>
-        public IEnumerable<Collection> GetAllSeries()
-        {
-            return ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries.Value == true).ToList();
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Collection"/> which is not a series
-        /// </summary>
-        /// <returns>all non-series collections</returns>
+        /// <inheritdoc/>
         public IEnumerable<Collection> GetAllNonSeries()
         {
             return ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries.Value == false).ToList();
         }
 
-        /// <summary>
-        /// Select the collections based on the given <paramref name="bookFilter"/> and <paramref name="collectionFilter"/>
-        /// </summary>
-        /// <param name="bookFilter">book filter</param>
-        /// <param name="collectionFilter">collection filter</param>
-        /// <returns>selected collection, where the <see langword="Key"/> is the <paramref name="bookFilter"/> option's value and the <see langword="Value"/> is the <see cref="Collection"/></returns>
+        /// <inheritdoc/>
+        public IEnumerable<Collection> GetAllSeries()
+        {
+            return ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries.Value == true).ToList();
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear)
+        {
+            return ReadAll().Where(t => t.Books.Any() && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear).ToList();
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<Collection> GetCollectionsInYear(int year)
+        {
+            return ReadAll().Where(t => t.Books.Any() && t.Books.Any(u => u.Year == year)).ToList();
+        }
+
+        /// <inheritdoc/>
+        public double? GetPriceOfCollection(Collection collection)
+        {
+            if (collection == null || !collection.Books.Any()) return null;
+            return collection.Books.Sum(t => t.Price);
+        }
+
+        /// <inheritdoc/>
+        public double? GetRatingOfCollection(Collection collection)
+        {
+            if (collection == null || !collection.Books.Any()) return null;
+            return collection.Books.Average(t => t.Rating);
+        }
+
+        /// <inheritdoc/>
+        public Book SelectBookFromCollection(Collection collection, BookFilter bookFilter)
+        {
+            if (collection == null) return null;
+
+            return bookFilter switch
+            {
+                BookFilter.MostExpensive => collection.Books.Where(t => t.Price != null).OrderByDescending(t => t.Price).FirstOrDefault(),
+                BookFilter.HighestRated => collection.Books.Where(t => t.Rating != null).OrderByDescending(t => t.Rating).FirstOrDefault(),
+                BookFilter.LeastExpensive => collection.Books.Where(t => t.Price != null).OrderBy(t => t.Price).FirstOrDefault(),
+                BookFilter.LowestRated => collection.Books.Where(t => t.Rating != null).OrderBy(t => t.Rating).FirstOrDefault(),
+                _ => null,
+            };
+        }
+
+        /// <inheritdoc/>
         public KeyValuePair<double?, Collection> SelectCollection(BookFilter bookFilter, CollectionFilter collectionFilter = CollectionFilter.Collection)
         {
             IEnumerable<Collection> filtered = null;
 
-            switch (collectionFilter)
+            filtered = collectionFilter switch
             {
-                case CollectionFilter.Series: filtered = ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries == true); break;
-                case CollectionFilter.NonSeries: filtered = ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries == false); break;
-                case CollectionFilter.Collection: filtered = ReadAll(); break;
-                default: filtered = Enumerable.Empty<Collection>(); break;
-            }
+                CollectionFilter.Series => ReadAll().Where(t => t.IsSeries.HasValue == true && t.IsSeries == true),
+                CollectionFilter.NonSeries => ReadAll().Where(t => t.IsSeries.HasValue == false || t.IsSeries == false),
+                CollectionFilter.Collection => ReadAll(),
+                _ => Enumerable.Empty<Collection>(),
+            };
 
             Collection temp;
 
@@ -273,72 +262,8 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
                     temp = filtered.Where(t => t.Books.Any(u => u.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
                     return new KeyValuePair<double?, Collection>(temp?.Books.Average(t => t.Rating), temp);
 
-
                 default: return new KeyValuePair<double?, Collection>(null, null);
             }
-        }
-
-        /// <summary>
-        /// Selects a book based on the given <paramref name="bookFilter"/> from an <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection</param>
-        /// <param name="bookFilter">book filter</param>
-        /// <returns>selected book</returns>
-        public Book SelectBookFromCollection(Collection collection, BookFilter bookFilter)
-        {
-            if (collection == null) return null;
-
-            switch (bookFilter)
-            {
-                case BookFilter.MostExpensive: return collection.Books.Where(t => t.Price != null).OrderByDescending(t => t.Price).FirstOrDefault();
-                case BookFilter.HighestRated: return collection.Books.Where(t => t.Rating != null).OrderByDescending(t => t.Rating).FirstOrDefault();
-                case BookFilter.LeastExpensive: return collection.Books.Where(t => t.Price != null).OrderBy(t => t.Price).FirstOrDefault();
-                case BookFilter.LowestRated: return collection.Books.Where(t => t.Rating != null).OrderBy(t => t.Rating).FirstOrDefault();
-                default: return null;
-            }
-        }
-
-        /// <summary>
-        /// Returns the summarized price of all the books of the <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection</param>
-        /// <returns>price of the collection</returns>
-        public double? GetPriceOfCollection(Collection collection)
-        {
-            if (collection == null || !collection.Books.Any()) return null;
-            return collection.Books.Sum(t => t.Price);
-        }
-
-        /// <summary>
-        /// Returns the average rating of all the books of the <paramref name="collection"/>
-        /// </summary>
-        /// <param name="collection">collection</param>
-        /// <returns>average rating of the collection</returns>
-        public double? GetRatingOfCollection(Collection collection)
-        {
-            if (collection == null || !collection.Books.Any()) return null;
-            return collection.Books.Average(t => t.Rating);
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Collection"/> with at least one <see cref="Book"/> released in the given <paramref name="year"/>
-        /// </summary>
-        /// <param name="year">value of the <see cref="Book.Year"/></param>
-        /// <returns>all collection in the given <paramref name="year"/></returns>
-        public IEnumerable<Collection> GetCollectionsInYear(int year)
-        {
-            return ReadAll().Where(t => t.Books.Any() && t.Books.Any(u => u.Year == year)).ToList();
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Collection"/> between the <paramref name="minimumYear"/> and <paramref name="maximumYear"/>
-        /// </summary>
-        /// <param name="minimumYear">minimum value of the <see cref="Book.Year"/></param>
-        /// <param name="maximumYear">maximum value of the <see cref="Book.Year"/></param>
-        /// <returns>all collection in the given interval</returns>
-        public IEnumerable<Collection> GetCollectionsBetweenYears(int minimumYear, int maximumYear)
-        {
-            return ReadAll().Where(t => t.Books.Any() && t.Books.Max(u => u.Year) >= minimumYear && t.Books.Min(u => u.Year) <= maximumYear).ToList();
         }
     }
 }

@@ -9,43 +9,38 @@ using System.Linq;
 namespace QGXUN0_HFT_2023241.Logic.Logic
 {
     /// <summary>
-    /// Implements all CRUD and non-crud methods for the <see cref="Publisher"/> model
+    /// Specifies the <see langword="CRUD"/> and <see langword="Non-CRUD"/> methods of the <see cref="Author"/> <see langword="class"/>
     /// </summary>
     public class PublisherLogic : IPublisherLogic
     {
-        /// <summary>
-        /// Repository for the <see cref="Publisher"/> database context
-        /// </summary>
-        private readonly IRepository<Publisher> publisherRepository;
-
-        /// <summary>
-        /// Counts the number of <see cref="Publisher"/> instances
-        /// </summary>
-        /// <value>number of <see cref="Publisher"/> instances</value>
+        /// <inheritdoc/>
         public int Count { get => ReadAll().Count(); }
-        /// <summary>
-        /// Determines whether there are <see cref="Publisher"/> instances in the database
-        /// </summary>
-        /// <value><see langword="true"/> if there are <see cref="Publisher"/> instances in the database, otherwise <see langword="false"/></value>
+
+        /// <inheritdoc/>
         public bool IsEmpty { get => Count == 0; }
 
+        /// <summary>
+        /// Specifies an instance of the <see cref="Repository{Publisher}"/>
+        /// </summary>
+        private readonly IRepository<Publisher> _publisherRepository;
+
 
         /// <summary>
-        /// Constructor with the database repositories
+        /// Initializes a new instance of the <see cref="Publisher"/> <see langword="class"/> by the <see cref="Repository{Author}"/> instance.
         /// </summary>
-        /// <param name="publisherRepository"><see cref="Publisher"/> repository</param>
+        /// <param name="publisherRepository"><see cref="Publisher"/> repository instance</param>
         public PublisherLogic(IRepository<Publisher> publisherRepository)
         {
-            this.publisherRepository = publisherRepository;
+            _publisherRepository = publisherRepository;
         }
 
 
         /// <summary>
-        /// Creates a <paramref name="publisher"/>
+        /// Creates an <see cref="Publisher"/> instance.
         /// </summary>
-        /// <remarks>The <see cref="Publisher.PublisherID"/> may be changed if another <see cref="Publisher"/> instance has the same <see langword="key"/></remarks>
-        /// <param name="publisher">new publisher</param>
-        /// <returns><see cref="Publisher.PublisherID"/> of the <paramref name="publisher"/> if the publisher is valid, otherwise <see langword="null"/></returns>
+        /// <remarks>The <see cref="Publisher.PublisherID"/> of the <see cref="Publisher"/> instance may be changed</remarks>
+        /// <param name="publisher">New <see cref="Publisher"/> instance</param>
+        /// <returns><see cref="Publisher.PublisherID"/> of the <paramref name="publisher"/> instance if the creating was successful; otherwise, <see langword="null"/></returns>
         public int? Create(Publisher publisher)
         {
             if (!publisher.IsValid())
@@ -57,138 +52,74 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
             if (Read(publisher.PublisherID) != null)
                 publisher.PublisherID = ReadAll().Max(t => t.PublisherID) + 1;
 
-            publisherRepository.Create(publisher);
+            _publisherRepository.Create(publisher);
             return publisher.PublisherID;
         }
 
         /// <summary>
-        /// Reads a <see cref="Publisher"/> with the same <paramref name="publisherID"/> value
+        /// Reads an <see cref="Publisher"/> instance.
         /// </summary>
-        /// <param name="publisherID"><see cref="Publisher.PublisherID"/> value of the publisher</param>
-        /// <returns><see cref="Publisher"/> if the publisher exists, otherwise <see langword="null"/></returns>
+        /// <param name="publisherID"><see cref="Publisher.PublisherID"/> of the read <see cref="Publisher"/> instance</param>
+        /// <returns><see cref="Publisher"/> instance if the instance is found; otherwise, <see langword="null"/></returns>
         public Publisher Read(int publisherID)
         {
-            try { return publisherRepository.Read(publisherID); }
+            try { return _publisherRepository.Read(publisherID); }
             catch (InvalidOperationException) { return null; }
         }
 
-        /// <summary>
-        /// Updates a <paramref name="publisher"/> with the same <see cref="Publisher.PublisherID"/> value
-        /// </summary>
-        /// <remarks>The <see cref="Publisher.PublisherID"/> value of the <paramref name="publisher"/> must be the same as the one intended to update</remarks>
-        /// <param name="publisher">updated publisher</param>
-        /// <returns><see langword="true"/> if the update was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool Update(Publisher publisher)
         {
             if (!publisher.IsValid() || Read(publisher.PublisherID) == null)
                 return false;
-            publisherRepository.Update(publisher);
+            _publisherRepository.Update(publisher);
 
             return true;
         }
 
-        /// <summary>
-        /// Deletes a <see cref="Publisher"/> with the same <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher"><see cref="Publisher"/> instance</param>
-        /// <returns><see langword="true"/> if the deleting was successful, otherwise <see langword="false"/></returns>
+        /// <inheritdoc/>
         public bool Delete(Publisher publisher)
         {
             if (publisher == null) return false;
-            try { publisherRepository.Delete(publisher.PublisherID); return true; }
+            try { _publisherRepository.Delete(publisher.PublisherID); return true; }
             catch { return false; }
         }
 
-        /// <summary>
-        /// Reads all <see cref="Publisher"/>
-        /// </summary>
-        /// <returns>all <see cref="Publisher"/> instances as <c><see cref="IQueryable"/></c></returns>
+        /// <inheritdoc/>
         public IQueryable<Publisher> ReadAll()
         {
-            return publisherRepository.ReadAll();
+            return _publisherRepository.ReadAll();
         }
 
 
-        /// <summary>
-        /// Returns all <see cref="Publisher"/> who released at least one series
-        /// </summary>
-        /// <returns>series publishers</returns>
-        public IEnumerable<Publisher> GetSeriesPublishers()
-        {
-            return ReadAll().Where(t => t.Books.Any(u => u.Collections.Any(v => v.IsSeries.HasValue == true && v.IsSeries == true))).ToList();
-        }
-
-        /// <summary>
-        /// Returns all <see cref="Publisher"/> who only released series
-        /// </summary>
-        /// <returns>only series publishers</returns>
-        public IEnumerable<Publisher> GetOnlySeriesPublishers()
-        {
-            return ReadAll().Where(t => t.Books.Any() && t.Books.All(u => u.Collections.Any(v => v.IsSeries.HasValue == true && v.IsSeries == true))).ToList();
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Publisher"/> which has the highest average <see cref="Publisher.Books"/> rating
-        /// </summary>
-        /// <returns>highest rated publisher, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Publisher"/></returns>
-        public KeyValuePair<double?, Publisher> GetHighestRatedPublisher()
-        {
-            var temp = ReadAll().Where(t => t.Books.Any(u => u.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
-            return new KeyValuePair<double?, Publisher>(temp?.Books.Average(t => t.Rating), temp);
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Publisher"/> which has the lowest average <see cref="Publisher.Books"/> rating
-        /// </summary>
-        /// <returns>lowest rated publisher, where the <see langword="Key"/> is the average rating and the <see langword="Value"/> is the <see cref="Publisher"/></returns>
-        public KeyValuePair<double?, Publisher> GetLowestRatedPublisher()
-        {
-            var temp = ReadAll().Where(t => t.Books.Any(u => u.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
-            return new KeyValuePair<double?, Publisher>(temp?.Books.Average(t => t.Rating), temp);
-        }
-
-        /// <summary>
-        /// Returns the average rating of all the books of the <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">publisher</param>
-        /// <returns>average rating of the publisher</returns>
-        public double? GetRatingOfPublisher(Publisher publisher)
-        {
-            if (publisher == null) return null;
-            return publisher.Books.Average(t => t.Rating);
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Author"/> instances who published at least one <see cref="Book"/> at the <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">publisher</param>
-        /// <returns>authors of the publisher</returns>
+        /// <inheritdoc/>
         public IEnumerable<Author> GetAuthorsOfPublisher(Publisher publisher)
         {
             if (publisher == null) return Enumerable.Empty<Author>();
             return publisher.Books.SelectMany(t => t.Authors, (t, u) => u).Distinct().ToList();
         }
 
-        /// <summary>
-        /// Returns the <see cref="Author"/> instances who only published <see cref="Book"/> at the <paramref name="publisher"/>
-        /// </summary>
-        /// <param name="publisher">publisher</param>
-        /// <returns>permanent authors of the publisher</returns>
-        public IEnumerable<Author> GetPermanentAuthorsOfPublisher(Publisher publisher)
+        /// <inheritdoc/>
+        public KeyValuePair<double?, Publisher> GetHighestRatedPublisher()
         {
-            if (publisher == null) return Enumerable.Empty<Author>();
-            return publisher.Books
-                .SelectMany(book => book.Authors, (book, author) => author)
-                .Distinct()
-                .Where(author => author.Books.All(book => book.Publisher == publisher))
-                .Distinct()
-                .ToList();
+            var temp = ReadAll().Where(t => t.Books.Any(u => u.Rating != null)).OrderByDescending(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
+            return new KeyValuePair<double?, Publisher>(temp?.Books.Average(t => t.Rating), temp);
         }
 
-        /// <summary>
-        /// Returns the <see cref="Author"/> instances who only published at one <see cref="Publisher"/>
-        /// </summary>
-        /// <returns>permanent authors</returns>
+        /// <inheritdoc/>
+        public KeyValuePair<double?, Publisher> GetLowestRatedPublisher()
+        {
+            var temp = ReadAll().Where(t => t.Books.Any(u => u.Rating != null)).OrderBy(t => t.Books.Average(u => u.Rating)).FirstOrDefault();
+            return new KeyValuePair<double?, Publisher>(temp?.Books.Average(t => t.Rating), temp);
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<Publisher> GetOnlySeriesPublishers()
+        {
+            return ReadAll().Where(t => t.Books.Any() && t.Books.All(u => u.Collections.Any(v => v.IsSeries.HasValue == true && v.IsSeries == true))).ToList();
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<Author> GetPermanentAuthors()
         {
             return ReadAll()
@@ -200,6 +131,31 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
                 .ToList();
 
             // note: I know it would have been way easier if I would have passed through the AuthorRepository in the constructor, but why take the easy way?
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<Author> GetPermanentAuthorsOfPublisher(Publisher publisher)
+        {
+            if (publisher == null) return Enumerable.Empty<Author>();
+            return publisher.Books
+                .SelectMany(book => book.Authors, (book, author) => author)
+                .Distinct()
+                .Where(author => author.Books.All(book => book.Publisher == publisher))
+                .Distinct()
+                .ToList();
+        }
+
+        /// <inheritdoc/>
+        public double? GetRatingOfPublisher(Publisher publisher)
+        {
+            if (publisher == null) return null;
+            return publisher.Books.Average(t => t.Rating);
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<Publisher> GetSeriesPublishers()
+        {
+            return ReadAll().Where(t => t.Books.Any(u => u.Collections.Any(v => v.IsSeries.HasValue == true && v.IsSeries == true))).ToList();
         }
     }
 }
