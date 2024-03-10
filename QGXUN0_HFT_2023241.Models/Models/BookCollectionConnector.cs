@@ -8,23 +8,23 @@ using System.Text.Json.Serialization;
 namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
-    /// Connector for the <see cref="Models.Book"></see> and <see cref="Models.Collection"></see> instances
+    /// Specifies the <see cref="Models.Book"/> and <see cref="Models.Collection"/> connection of a <see cref="BookCollectionConnector"/>
     /// </summary>
-    public class BookCollectionConnector : IComparable<BookCollectionConnector>, IComparable<string>, IComparable
+    public class BookCollectionConnector : IComparable<BookCollectionConnector>, IComparable<string>, IComparable, IEquatable<BookCollectionConnector>
     {
         /// <summary>
-        /// Unique key value
+        /// Gets or sets the unique ID of the <see cref="Publisher"/>
         /// </summary>
-        /// <remarks>Database Key</remarks>
+        /// <remarks>The value of this property is used as the <see langword="unique key"/> in the database</remarks>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonPropertyName("BookCollectionConnectorID")]
         [JsonProperty("BookCollectionConnectorID")]
         [Required]
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BookCollectionConnectorID { get; set; }
 
         /// <summary>
-        /// ID of the <see cref="Models.Book"/>
+        /// Gets or sets the unique ID of the <see cref="Models.Book"/>
         /// </summary>
         [JsonPropertyName("BookID")]
         [JsonProperty("BookID")]
@@ -32,7 +32,7 @@ namespace QGXUN0_HFT_2023241.Models.Models
         public int BookID { get; set; }
 
         /// <summary>
-        /// ID of the <see cref="Models.Collection"/>
+        /// Gets or sets the unique ID of the <see cref="Models.Collection"/>
         /// </summary>
         [JsonPropertyName("CollectionID")]
         [JsonProperty("CollectionID")]
@@ -40,14 +40,14 @@ namespace QGXUN0_HFT_2023241.Models.Models
         public int CollectionID { get; set; }
 
         /// <summary>
-        /// Book instance
+        /// Gets the instance of the <see cref="Models.Book"/>
         /// </summary>
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public virtual Book Book { get; private set; }
 
         /// <summary>
-        /// Collection instance
+        /// Gets the instance of the <see cref="Models.Collection"/>
         /// </summary>
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
@@ -62,15 +62,15 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
 
         /// <summary>
-        /// Empty constructor
+        /// Initializes a new instance of the <see cref="Publisher"/> <see langword="class"/>.
         /// </summary>
         public BookCollectionConnector() { }
         /// <summary>
-        /// Constructor with required property values
+        /// Initializes a new instance of the <see cref="Publisher"/> <see langword="class"/> by using the required properties.
         /// </summary>
-        /// <param name="bookCollectionConnectorID">Unique key</param>
-        /// <param name="bookID">ID of the book</param>
-        /// <param name="collectionID">ID of the collection</param>
+        /// <param name="bookCollectionConnectorID">Unique ID of the <see cref="BookCollectionConnector"/></param>
+        /// <param name="bookID">Unique ID of a <see cref="Models.Book"/> instance of the <see cref="BookCollectionConnector"/></param>
+        /// <param name="collectionID">Unique ID of a <see cref="Models.Collection"/> instance of the <see cref="BookCollectionConnector"/></param>
         public BookCollectionConnector(int bookCollectionConnectorID, int bookID, int collectionID)
         {
             BookCollectionConnectorID = bookCollectionConnectorID;
@@ -78,13 +78,13 @@ namespace QGXUN0_HFT_2023241.Models.Models
             CollectionID = collectionID;
         }
         /// <summary>
-        /// Constructor with required and optional property values
+        /// Initializes a new instance of the <see cref="BookCollectionConnector"/> <see langword="class"/> by using the required and optional properties.
         /// </summary>
-        /// <param name="bookCollectionConnectorID">Unique key</param>
-        /// <param name="bookID">ID of the book</param>
-        /// <param name="collectionID">ID of the collection</param>
-        /// <param name="positionInSeries">position of the book in the series</param>
-        public BookCollectionConnector(int bookCollectionConnectorID, int bookID, int collectionID, int positionInSeries)
+        /// <param name="bookCollectionConnectorID">Unique ID of the <see cref="BookCollectionConnector"/></param>
+        /// <param name="bookID">Unique ID of a <see cref="Models.Book"/> instance of the <see cref="BookCollectionConnector"/></param>
+        /// <param name="collectionID">Unique ID of a <see cref="Models.Collection"/> instance of the <see cref="BookCollectionConnector"/></param>
+        /// <param name="positionInSeries">Position of the <see cref="Models.Book"/> in the series of the <see cref="BookCollectionConnector"/></param>
+        public BookCollectionConnector(int bookCollectionConnectorID, int bookID, int collectionID, int? positionInSeries)
         {
             BookCollectionConnectorID = bookCollectionConnectorID;
             BookID = bookID;
@@ -102,16 +102,14 @@ namespace QGXUN0_HFT_2023241.Models.Models
         ///<inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (obj == null || obj is not BookCollectionConnector) return false;
-            else if (Book != (obj as BookCollectionConnector).Book) return false;
-            else if (Collection != (obj as BookCollectionConnector).Collection) return false;
-            else return true;
+            if (obj is not BookCollectionConnector connector) return false;
+            else return Equals(connector);
         }
 
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return ToString().GetHashCode();
+            return HashCode.Combine(Book, Collection);
         }
 
 
@@ -124,13 +122,11 @@ namespace QGXUN0_HFT_2023241.Models.Models
             comparer = Comparer.Default.Compare(Collection, other.Collection);
             return comparer;
         }
-
         /// <inheritdoc/>
         public int CompareTo(string other)
         {
             return CompareTo(other as object);
         }
-
         /// <inheritdoc/>
         public int CompareTo(object obj)
         {
@@ -138,6 +134,15 @@ namespace QGXUN0_HFT_2023241.Models.Models
                 return Comparer.Default.Compare(ToString(), obj.ToString());
             else
                 return CompareTo(obj as BookCollectionConnector);
+        }
+
+        /// <inheritdoc/>
+        public bool Equals(BookCollectionConnector other)
+        {
+            if (other == null) return false;
+            else if (!Book.Equals(other.Book)) return false;
+            else if (!Collection.Equals(other.Collection)) return false;
+            else return true;
         }
     }
 }

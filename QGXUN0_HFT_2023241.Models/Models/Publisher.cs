@@ -11,67 +11,67 @@ using System.Text.Json.Serialization;
 namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
-    /// Contains a publisher's name, books, and optionally website
+    /// Specifies the unique ID, name and website of a <see cref="Publisher"/>.
     /// </summary>
     public class Publisher : IComparable<Publisher>, IComparable<string>, IComparable, IEquatable<Publisher>
     {
         /// <summary>
-        /// Unique key value
+        /// Gets or sets the unique ID of the <see cref="Publisher"/>
         /// </summary>
-        /// <remarks>Database Key</remarks>
+        /// <remarks>The value of this property is used as the <see langword="unique key"/> in the database</remarks>.
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonPropertyName("PublisherID")]
         [JsonProperty("PublisherID")]
         [Required]
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int PublisherID { get; set; }
 
         /// <summary>
-        /// Name of the publisher
+        /// Gets or sets the name of the <see cref="Publisher"/>.
         /// </summary>
+        [StringLength(50, MinimumLength = 1)]
         [JsonPropertyName("PublisherName")]
         [JsonProperty("PublisherName")]
         [Required]
-        [StringLength(50, MinimumLength = 1)]
         public string PublisherName { get; set; }
 
         /// <summary>
-        /// Books of the publisher
+        /// Gets or sets the books of the <see cref="Publisher"/>.
         /// </summary>
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<Book> Books { get; set; } = new List<Book>();
 
         /// <summary>
-        /// Website of the publisher
+        /// Gets or sets the website of the <see cref="Publisher"/>.
         /// </summary>
+        [StringLength(250, MinimumLength = 1)]
         [JsonPropertyName("Website")]
         [JsonProperty("Website")]
-        [StringLength(250, MinimumLength = 1)]
         [Website]
         public string Website { get; set; }
 
 
         /// <summary>
-        /// Empty constructor
+        /// Initializes a new instance of the <see cref="Publisher"/> <see langword="class"/>.
         /// </summary>
         public Publisher() { }
         /// <summary>
-        /// Constructor with required property values
+        /// Initializes a new instance of the <see cref="Publisher"/> <see langword="class"/> by using the required properties.
         /// </summary>
-        /// <param name="publisherID">Unique key</param>
-        /// <param name="publisherName">Publisher name</param>
+        /// <param name="publisherID">Unique ID of the <see cref="Publisher"/></param>
+        /// <param name="publisherName">Name of the <see cref="Publisher"/></param>
         public Publisher(int publisherID, string publisherName)
         {
             PublisherID = publisherID;
             PublisherName = publisherName;
         }
         /// <summary>
-        /// Constructor with required and optional property values
+        /// Initializes a new instance of the <see cref="Publisher"/> <see langword="class"/> by using the required and optional properties.
         /// </summary>
-        /// <param name="publisherID">Unique PublisherID key</param>
-        /// <param name="publisherName">Publisher name</param>
-        /// <param name="website">Publisher website</param>
+        /// <param name="publisherID">Unique ID of the <see cref="Publisher"/></param>
+        /// <param name="publisherName">Name of the <see cref="Publisher"/></param>
+        /// <param name="website">Website of the <see cref="Publisher"/></param>
         public Publisher(int publisherID, string publisherName, string website)
         {
             PublisherID = publisherID;
@@ -81,19 +81,20 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
 
         /// <summary>
-        /// Converts a <see cref="string"/> representation of a <see cref="Publisher"/> instance to a <see cref="Publisher"/> object
+        /// Converts the <see cref="string"/> representation of a <see cref="Publisher"/>.
         /// </summary>
-        /// <param name="data">Parsable data</param>
-        /// <param name="splitString">Splitting string (default = ";")</param>
-        /// <param name="restrictionCheck">Check for attribute restrictions (default = false)</param>
-        /// <returns><see cref="Publisher"/> representation of the <paramref name="data"/> <see cref="string"/></returns>
-        /// <exception cref="ArgumentException">Error during parsing</exception>
+        /// <param name="data">A <see cref="string"/> containing a <see cref="Publisher"/> to convert</param>
+        /// <param name="splitString">Specifies a <see cref="string"/> instance which determines where to split the specified <paramref name="data"/> (default = ";")</param>
+        /// <param name="validate">Determines whether to validate the attributes (default = true)</param>
+        /// <returns><see cref="Publisher"/> representation of the <paramref name="data"/></returns>
+        /// <exception cref="ArgumentException">An error occurred during parsing</exception>
+        /// <exception cref="ValidationException">The specified <paramref name="data"/> is not valid</exception>
         /// <example><code>
         /// Publisher p1 = Publisher.Parse("1;Publisher name;www.website.com");
         /// Publisher p2 = Publisher.Parse("2$Publisher name", "$");
-        /// Publisher p3 = Publisher.Parse("3;Publisher name;www.website.com", ";", true);
+        /// Publisher p3 = Publisher.Parse("3;Publisher name;www.website.com", ";", false);
         /// </code></example>
-        public static Publisher Parse(string data, string splitString = ";", bool restrictionCheck = false)
+        public static Publisher Parse(string data, string splitString = ";", bool validate = true)
         {
             string[] splitData = data.Split(splitString);
             if (splitData.Length < 2)
@@ -104,40 +105,32 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
             string publisherName = splitData[1];
 
-            bool hasWebsite = splitData.Length > 2;
-            string website = hasWebsite ? splitData[2] : "";
+            string website = splitData.Length > 2 ? splitData[2] : null;
 
-            Publisher publisher;
-
-            if (hasWebsite)
-                publisher = new Publisher(publisherID, publisherName, website);
-            else
-                publisher = new Publisher(publisherID, publisherName);
-
-            if (restrictionCheck)
-                publisher.Validate();
+            Publisher publisher = new Publisher(publisherID, publisherName, website);
+            if (validate) publisher.Validate();
 
             return publisher;
         }
 
         /// <summary>
-        /// Attempts to convert a <see cref="string"/> representation of a <see cref="Publisher"/> instance to a <see cref="Publisher"/> object
+        /// Converts the <see cref="string"/> representation of a <see cref="Publisher"/>. A return value indicates whether the conversion succeeded.
         /// </summary>
-        /// <param name="data">Parsable data</param>
-        /// <param name="publisher"><see cref="Publisher"/> representation of the <paramref name="data"/> <see cref="string"/> or <see langword="null"/></param>
-        /// <param name="splitString">Splitting string (default = ";")</param>
-        /// <param name="restrictionCheck">Check for attribute restrictions (default = false)</param>
-        /// <returns><see langword="true"/> if the parsing was successful, otherwise <see langword="false"/></returns>
+        /// <param name="data">A <see cref="string"/> containing a <see cref="Publisher"/> to convert</param>
+        /// <param name="publisher"><see cref="Publisher"/> representation of the <paramref name="data"/> if the parsing was successful; otherwise, <see langword="null"/></param>
+        /// <param name="splitString">Specifies a <see cref="string"/> instance which determines where to split the specified <paramref name="data"/> (default = ";")</param>
+        /// <param name="validate">Determines whether to validate the attributes (default = true)</param>
+        /// <returns><see langword="true"/> if the parsing was successful; otherwise, <see langword="false"/></returns>
         /// <example><code>
         /// bool isPublisher = Publisher.TryParse("1;Publisher name;www.website.com", out Publisher p1);
         /// Publisher p2 = null; Publisher.TryParse("2$Publisher name", out p2, "$");
-        /// if (!Publisher.TryParse("3;Publisher name;www.website.com", out Publisher p3, ";", true)) { }
+        /// if (Publisher.TryParse("3;Publisher name;www.website.com", out Publisher p3, ";", false)) { }
         /// </code></example>
-        public static bool TryParse(string data, out Publisher publisher, string splitString = ";", bool restrictionCheck = false)
+        public static bool TryParse(string data, out Publisher publisher, string splitString = ";", bool validate = true)
         {
             publisher = null;
 
-            try { publisher = Parse(data, splitString, restrictionCheck); return true; }
+            try { publisher = Parse(data, splitString, validate); return true; }
             catch { return false; }
         }
 
@@ -161,7 +154,7 @@ namespace QGXUN0_HFT_2023241.Models.Models
         ///<inheritdoc/>
         public override int GetHashCode()
         {
-            return HashCode.Combine(PublisherName, Books);
+            return HashCode.Combine(PublisherName, Website);
         }
 
 
@@ -174,7 +167,6 @@ namespace QGXUN0_HFT_2023241.Models.Models
             comparer = Comparer.Default.Compare(Website, other.Website);
             return comparer;
         }
-
         /// <inheritdoc/>
         public int CompareTo(string other)
         {
@@ -183,7 +175,6 @@ namespace QGXUN0_HFT_2023241.Models.Models
             else
                 return CompareTo(otherBook);
         }
-
         /// <inheritdoc/>
         public int CompareTo(object obj)
         {

@@ -11,38 +11,38 @@ using System.Text.Json.Serialization;
 namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
-    /// Contains a author's name and books
+    /// Specifies the unique ID and name of an <see cref="Author"/>.
     /// </summary>
     public class Author : IComparable<Author>, IComparable<string>, IComparable, IEquatable<Author>
     {
         /// <summary>
-        /// Unique key value
+        /// Gets or sets the unique ID of the <see cref="Author"/>.
         /// </summary>
-        /// <remarks>Database Key</remarks>
+        /// <remarks>The value of this property is used as the <see langword="unique key"/> in the database</remarks>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonPropertyName("AuthorID")]
         [JsonProperty("AuthorID")]
         [Required]
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AuthorID { get; set; }
 
         /// <summary>
-        /// Name of the author
+        /// Gets or sets the name of the <see cref="Author"/>.
         /// </summary>
+        [StringLength(50, MinimumLength = 1)]
         [JsonPropertyName("AuthorName")]
         [JsonProperty("AuthorName")]
         [Required]
-        [StringLength(50, MinimumLength = 1)]
         public string AuthorName { get; set; }
 
         /// <summary>
-        /// Books of the author
+        /// Gets or sets the books of the <see cref="Author"/>.
         /// </summary>
         [System.Text.Json.Serialization.JsonIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public virtual ICollection<Book> Books { get; set; } = new List<Book>();
         /// <summary>
-        /// Connector for the <see cref="Book"></see> and <see cref="Author"></see> instances
+        /// Gets or sets the connector for the books of the <see cref="Author"/>.
         /// </summary>
         [JsonPropertyName("BookConnector")]
         [JsonProperty("BookConnector")]
@@ -50,14 +50,14 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
 
         /// <summary>
-        /// Empty constructor
+        /// Initializes a new instance of the <see cref="Author"/> <see langword="class"/>.
         /// </summary>
         public Author() { }
         /// <summary>
-        /// Constructor with required property values
+        /// Initializes a new instance of the <see cref="Author"/> <see langword="class"/> by using the required properties.
         /// </summary>
-        /// <param name="authorID">Unique key</param>
-        /// <param name="authorName">Name of the author</param>
+        /// <param name="authorID">Unique ID of the <see cref="Author"/></param>
+        /// <param name="authorName">Name of the <see cref="Author"/></param>
         public Author(int authorID, string authorName)
         {
             AuthorID = authorID;
@@ -66,19 +66,20 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
 
         /// <summary>
-        /// Converts a <see cref="string"/> representation of a <see cref="Author"/> instance to a <see cref="Author"/> object
+        /// Converts the <see cref="string"/> representation of a <see cref="Author"/>.
         /// </summary>
-        /// <param name="data">Parsable data</param>
-        /// <param name="splitString">Splitting string (default = ";")</param>
-        /// <param name="restrictionCheck">Check for attribute restrictions (default = false)</param>
+        /// <param name="data">A <see cref="string"/> containing a <see cref="Author"/> to convert</param>
+        /// <param name="splitString">Specifies a <see cref="string"/> instance which determines where to split the specified <paramref name="data"/> (default = ";")</param>
+        /// <param name="validate">Determines whether to validate the attributes (default = true)</param>
         /// <returns><see cref="Author"/> representation of the <paramref name="data"/> <see cref="string"/></returns>
-        /// <exception cref="ArgumentException">Error during parsing</exception>
+        /// <exception cref="ArgumentException">An error occurred during parsing</exception>
+        /// <exception cref="ValidationException">The specified <paramref name="data"/> is not valid</exception>
         /// <example><code>
         /// Author a1 = Author.Parse("1;Author name");
         /// Author a2 = Author.Parse("2$Author name", "$");
-        /// Author a3 = Author.Parse("3;Author name", ";", true);
+        /// Author a3 = Author.Parse("3;Author name", ";", false);
         /// </code></example>
-        public static Author Parse(string data, string splitString = ";", bool restrictionCheck = false)
+        public static Author Parse(string data, string splitString = ";", bool validate = true)
         {
             string[] splitData = data.Split(splitString);
             if (splitData.Length < 2)
@@ -90,31 +91,29 @@ namespace QGXUN0_HFT_2023241.Models.Models
             string authorName = splitData[1];
 
             Author author = new Author(authorID, authorName);
-
-            if (restrictionCheck)
-                author.Validate(typeof(RequiredAttribute));
+            if (validate) author.Validate();
 
             return author;
         }
 
         /// <summary>
-        /// Attempts to convert a <see cref="string"/> representation of a <see cref="Author"/> instance to a <see cref="Author"/> object
+        /// Converts the <see cref="string"/> representation of a <see cref="Author"/>. A return value indicates whether the conversion succeeded.
         /// </summary>
-        /// <param name="data">Parsable data</param>
-        /// <param name="author"><see cref="Author"/> representation of the <paramref name="data"/> <see cref="string"/> or <see langword="null"/></param>
-        /// <param name="splitString">Splitting string (default = ";")</param>
-        /// <param name="restrictionCheck">Check for attribute restrictions (default = false)</param>
-        /// <returns><see langword="true"/> if the parsing was successful, otherwise <see langword="false"/></returns>
+        /// <param name="data">A <see cref="string"/> containing a <see cref="Author"/> to convert</param>
+        /// <param name="author"><see cref="Author"/> representation of the <paramref name="data"/> if the parsing was successful; otherwise, <see langword="null"/></param>
+        /// <param name="splitString">Specifies a <see cref="string"/> instance which determines where to split the specified <paramref name="data"/> (default = ";")</param>
+        /// <param name="validate">Determines whether to validate the attributes (default = true)</param>
+        /// <returns><see langword="true"/> if the parsing was successful; otherwise, <see langword="false"/></returns>
         /// <example><code>
-        /// bool Author = Author.TryParse("1;Author name", out Collection a1);
+        /// bool Author = Author.TryParse("1;Author name", out Author a1);
         /// Author a2 = null; Author.TryParse("2$Author name$true", out a2, "$");
-        /// if (!Author.TryParse("3;Author name;false", out Author a3, ";", true)) { }
+        /// if (!Author.TryParse("3;Author name;false", out Author a3, ";", false)) { }
         /// </code></example>
-        public static bool TryParse(string data, out Author author, string splitString = ";", bool restrictionCheck = false)
+        public static bool TryParse(string data, out Author author, string splitString = ";", bool validate = true)
         {
             author = null;
 
-            try { author = Parse(data, splitString, restrictionCheck); return true; }
+            try { author = Parse(data, splitString, validate); return true; }
             catch { return false; }
         }
 
@@ -145,7 +144,6 @@ namespace QGXUN0_HFT_2023241.Models.Models
             int comparer = Comparer.Default.Compare(AuthorName, other.AuthorName);
             return comparer;
         }
-
         /// <inheritdoc/>
         public int CompareTo(string other)
         {
@@ -154,7 +152,6 @@ namespace QGXUN0_HFT_2023241.Models.Models
             else
                 return CompareTo(otherBook);
         }
-
         /// <inheritdoc/>
         public int CompareTo(object obj)
         {

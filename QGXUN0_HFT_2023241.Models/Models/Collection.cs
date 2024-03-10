@@ -11,71 +11,72 @@ using System.Text.Json.Serialization;
 namespace QGXUN0_HFT_2023241.Models.Models
 {
     /// <summary>
-    /// Contains a collection's name, books, and optionally whether it is a series
+    /// Specifies the unique ID, name and series status of a <see cref="Collection"/>.
     /// </summary>
     public class Collection : IComparable<Collection>, IComparable<string>, IComparable, IEquatable<Collection>
     {
         /// <summary>
-        /// Unique key value
+        /// Gets or sets the unique ID of the <see cref="Collection"/>.
         /// </summary>
-        /// <remarks>Database Key</remarks>
+        /// <remarks>The value of this property is used as the <see langword="unique key"/> in the database</remarks>
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonPropertyName("CollectionID")]
         [JsonProperty("CollectionID")]
         [Required]
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CollectionID { get; set; }
 
         /// <summary>
-        /// Name of the collection
+        /// Gets or sets the name of the <see cref="Collection"/>.
         /// </summary>
+        [StringLength(50, MinimumLength = 1)]
         [JsonPropertyName("CollectionName")]
         [JsonProperty("CollectionName")]
         [Required]
-        [StringLength(50, MinimumLength = 1)]
         public string CollectionName { get; set; }
 
         /// <summary>
-        /// Books of the collection
+        /// Gets or sets the books of the <see cref="Collection"/>.
         /// </summary>
         [JsonPropertyName("Books")]
         [JsonProperty("Books")]
         public virtual ICollection<Book> Books { get; set; } = new List<Book>();
         /// <summary>
-        /// Connector for the <see cref="Book"></see> and <see cref="Collection"></see> instances
+        /// Gets or sets the connector for the books of the <see cref="Collection"/>.
         /// </summary>
         [JsonPropertyName("BookConnector")]
         [JsonProperty("BookConnector")]
         public virtual ICollection<BookCollectionConnector> BookConnector { get; set; }
 
         /// <summary>
-        /// <see langword="true"/> if the collection is a book series, otherwise <see langword="false"/>
+        /// Gets or sets the series status of the <see cref="Collection"/>.
         /// </summary>
+        /// <value><see langword="true"/> if the collection is a book series; otherwise, <see langword="false"/> or <see langword="null"/></value>
         [JsonPropertyName("IsSeries")]
         [JsonProperty("IsSeries")]
         public bool? IsSeries { get; set; }
 
 
         /// <summary>
-        /// Empty constructor
+        /// Initializes a new instance of the <see cref="Collection"/> <see langword="class"/>.
         /// </summary>
         public Collection() { }
         /// <summary>
-        /// Constructor with required property values
+        /// Initializes a new instance of the <see cref="Collection"/> <see langword="class"/> by using the required properties.
         /// </summary>
-        /// <param name="collectionID">Unique key</param>
-        /// <param name="collectionName">Name of the collection</param>
+        /// <param name="collectionID">Unique ID of the <see cref="Collection"/></param>
+        /// <param name="collectionName">Name of the <see cref="Collection"/></param>
         public Collection(int collectionID, string collectionName)
         {
             CollectionID = collectionID;
             CollectionName = collectionName;
         }
         /// <summary>
-        /// Constructor with required and optional property values
+        /// Initializes a new instance of the <see cref="Collection"/> <see langword="class"/> by using the required and optional properties.
         /// </summary>
-        /// <param name="collectionID">Unique CollectionID key</param>
-        /// <param name="collectionName">Name of the collection</param>
-        /// <param name="isSeries">Check whether the bok collection is a series</param>
+        /// <param name="collectionID">Unique ID of the <see cref="Collection"/></param>
+        /// <param name="collectionName">Name of the <see cref="Collection"/></param>
+        /// <param name="isSeries">Series status of the <see cref="Collection"/></param>
         public Collection(int collectionID, string collectionName, bool? isSeries)
         {
             CollectionID = collectionID;
@@ -85,19 +86,20 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
 
         /// <summary>
-        /// Converts a <see cref="string"/> representation of a <see cref="Collection"/> instance to a <see cref="Collection"/> object
+        /// Converts the <see cref="string"/> representation of a <see cref="Collection"/>.
         /// </summary>
-        /// <param name="data">Parsable data</param>
-        /// <param name="splitString">Splitting string (default = ";")</param>
-        /// <param name="restrictionCheck">Check for attribute restrictions (default = false)</param>
+        /// <param name="data">A <see cref="string"/> containing a <see cref="Collection"/> to convert</param>
+        /// <param name="splitString">Specifies a <see cref="string"/> instance which determines where to split the specified <paramref name="data"/> (default = ";")</param>
+        /// <param name="validate">Determines whether to validate the attributes (default = true)</param>
         /// <returns><see cref="Collection"/> representation of the <paramref name="data"/> <see cref="string"/></returns>
-        /// <exception cref="ArgumentException">Error during parsing</exception>
+        /// <exception cref="ArgumentException">An error occurred during parsing</exception>
+        /// <exception cref="ValidationException">The specified <paramref name="data"/> is not valid</exception>
         /// <example><code>
         /// Collection c1 = Collection.Parse("1;Collection name");
         /// Collection c2 = Collection.Parse("2$Collection name$true", "$");
-        /// Collection c3 = Collection.Parse("3;Collection name;false", ";", true);
+        /// Collection c3 = Collection.Parse("3;Collection name;false", ";", false);
         /// </code></example>
-        public static Collection Parse(string data, string splitString = ";", bool restrictionCheck = false)
+        public static Collection Parse(string data, string splitString = ";", bool validate = true)
         {
             string[] splitData = data.Split(splitString);
 
@@ -109,42 +111,35 @@ namespace QGXUN0_HFT_2023241.Models.Models
 
             string collectionName = splitData[1];
 
-            bool isSeries = false;
-            bool hasIsSeries = splitData.Length > 2;
-            if (hasIsSeries && !bool.TryParse(splitData[2], out isSeries))
-                throw new ArgumentException("The 'IsSeries' property cannot be parsed to an 'bool' type", nameof(data));
+            bool? isSeries = null;
+            if (splitData.Length > 2 && bool.TryParse(splitData[2], out bool temp1)) isSeries = temp1;
+            else if (splitData.Length > 2 && splitData[2] != "")
+                throw new ArgumentException("The 'IsSeries' property cannot be parsed to a 'bool' type", nameof(data));
 
-            Collection collection;
-
-            if (hasIsSeries)
-                collection = new Collection(collectionID, collectionName, isSeries);
-            else
-                collection = new Collection(collectionID, collectionName);
-
-            if (restrictionCheck)
-                collection.Validate();
+            Collection collection = new Collection(collectionID, collectionName, isSeries);
+            if (validate) collection.Validate();
 
             return collection;
         }
 
         /// <summary>
-        /// Attempts to convert a <see cref="string"/> representation of a <see cref="Collection"/> instance to a <see cref="Collection"/> object
+        /// Converts the <see cref="string"/> representation of a <see cref="Collection"/>. A return value indicates whether the conversion succeeded.
         /// </summary>
-        /// <param name="data">Parsable data</param>
-        /// <param name="collection"><see cref="Collection"/> representation of the <paramref name="data"/> <see cref="string"/> or <see langword="null"/></param>
-        /// <param name="splitString">Splitting string (default = ";")</param>
-        /// <param name="restrictionCheck">Check for attribute restrictions (default = false)</param>
-        /// <returns><see langword="true"/> if the parsing was successful, otherwise <see langword="false"/></returns>
+        /// <param name="data">A <see cref="string"/> containing a <see cref="Collection"/> to convert</param>
+        /// <param name="collection"><see cref="Collection"/> representation of the <paramref name="data"/> if the parsing was successful; otherwise, <see langword="null"/></param>
+        /// <param name="splitString">Specifies a <see cref="string"/> instance which determines where to split the specified <paramref name="data"/> (default = ";")</param>
+        /// <param name="validate">Determines whether to validate the attributes (default = true)</param>
+        /// <returns><see langword="true"/> if the parsing was successful; otherwise, <see langword="false"/></returns>
         /// <example><code>
         /// bool Collection = Collection.TryParse("1;Collection name", out Collection c1);
         /// Collection c2 = null; Collection.TryParse("2$Collection name$true", out c2, "$");
         /// if (!Collection.TryParse("3;Collection name;false", out Collection c3, ";", true)) { }
         /// </code></example>
-        public static bool TryParse(string data, out Collection collection, string splitString = ";", bool restrictionCheck = false)
+        public static bool TryParse(string data, out Collection collection, string splitString = ";", bool validate = true)
         {
             collection = null;
 
-            try { collection = Parse(data, splitString, restrictionCheck); return true; }
+            try { collection = Parse(data, splitString, validate); return true; }
             catch { return false; }
         }
 
@@ -181,7 +176,6 @@ namespace QGXUN0_HFT_2023241.Models.Models
             comparer = Comparer.Default.Compare(IsSeries, other.IsSeries);
             return comparer;
         }
-
         /// <inheritdoc/>
         public int CompareTo(string other)
         {
@@ -190,7 +184,6 @@ namespace QGXUN0_HFT_2023241.Models.Models
             else
                 return CompareTo(otherBook);
         }
-
         /// <inheritdoc/>
         public int CompareTo(object obj)
         {
