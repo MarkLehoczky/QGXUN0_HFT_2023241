@@ -4,9 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Collection list" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
+        Height="720" Width="1280" WindowStartupLocation="CenterScreen">
     <Grid>
-        <DataGrid x:Name="datagrid_collection" ItemsSource="{Binding Collections}" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" MouseDoubleClick="ConfrimedSelection" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray">
+        <DataGrid x:Name="datagrid_collection" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" MouseDoubleClick="ConfrimedSelection" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding CollectionName}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
                 <DataGridTextColumn Header="Books" Binding="{Binding Books}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>

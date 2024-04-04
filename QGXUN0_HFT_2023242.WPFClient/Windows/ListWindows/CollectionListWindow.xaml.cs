@@ -1,16 +1,7 @@
-﻿using System;
+﻿using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace QGXUN0_HFT_2023242.WPFClient
 {
@@ -19,9 +10,35 @@ namespace QGXUN0_HFT_2023242.WPFClient
     /// </summary>
     public partial class CollectionListWindow : Window
     {
-        public CollectionListWindow()
+        private Collection? selected;
+
+        public CollectionListWindow(IList<Collection> items, string windowName = "Collection list")
         {
             InitializeComponent();
+            Title = windowName;
+            datagrid_collection.ItemsSource = items;
+            selected = null;
+        }
+
+
+        public void Show(out Collection? selected)
+        {
+            Show();
+            selected = this.selected;
+        }
+
+        public bool? ShowDialog(out Collection? selected)
+        {
+            ShowDialog();
+            selected = this.selected;
+            return DialogResult;
+        }
+
+        private void ConfrimedSelection(object sender, MouseButtonEventArgs e)
+        {
+            DialogResult = true;
+            selected = datagrid_collection.SelectedItem as Collection;
+            Close();
         }
     }
 }
