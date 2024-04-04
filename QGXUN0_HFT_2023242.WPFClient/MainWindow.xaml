@@ -3,15 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:QGXUN0_HFT_2023242.WPFClient"
         xmlns:converter="clr-namespace:QGXUN0_HFT_2023242.WPFClient.Converters"
         xmlns:viewmodel="clr-namespace:QGXUN0_HFT_2023242.WPFClient.ViewModels"
         mc:Ignorable="d"
         Title="Book Manager" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
+    
     <Window.DataContext>
         <!-- View Model -->
         <viewmodel:MenuViewModel/>
     </Window.DataContext>
+    
     <Window.Resources>
         <!-- Converters -->
         <converter:ActiveMenuToMainMenuHeightConverter x:Key="MainMenuHeight"/>
@@ -68,12 +69,15 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
+    
     <Grid>
+        <!-- Determines which menu is displayed -->
         <Grid.RowDefinitions>
             <RowDefinition Height="{Binding ActiveMenu, Converter={StaticResource MainMenuHeight}}"/>
             <RowDefinition Height="{Binding ActiveMenu, Converter={StaticResource SubMenuHeight}}"/>
         </Grid.RowDefinitions>
-
+        
+        <!-- Main menu -->
         <Grid x:Name="main_menu" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -101,6 +105,7 @@
             <Button Style="{StaticResource ReturnButton}" Content="Exit" Click="Exit" Grid.Row="2"/>
         </Grid>
 
+        <!-- Sub menu -->
         <Grid x:Name="sub_menu" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
