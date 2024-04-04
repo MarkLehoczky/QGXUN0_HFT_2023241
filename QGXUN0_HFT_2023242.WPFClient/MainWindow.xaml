@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:converter="clr-namespace:QGXUN0_HFT_2023242.WPFClient.Converters"
         xmlns:viewmodel="clr-namespace:QGXUN0_HFT_2023242.WPFClient.ViewModels"
         mc:Ignorable="d"
         Title="Book Manager" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
@@ -12,67 +11,6 @@
         <!-- View Model -->
         <viewmodel:MenuViewModel/>
     </Window.DataContext>
-    
-    <Window.Resources>
-        <!-- Converters -->
-        <converter:ActiveMenuToMainMenuHeightConverter x:Key="MainMenuHeight"/>
-        <converter:ActiveMenuToSubMenuHeightConverter x:Key="SubMenuHeight"/>
-
-        <!-- Styles -->
-        <Style TargetType="Button" x:Key="DesignedButton">
-            <Setter Property="Background" Value="#F7EEDD"/>
-            <Setter Property="BorderBrush" Value="DarkGray"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="ClickMode" Value="Press"/>
-
-            <Setter Property="Content" Value=""/>
-            <Setter Property="FontFamily" Value="Cascadia Mono"/>
-            <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="Black"/>
-
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Padding" Value="15 10 15 10"/>
-
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#41C9E2"/>
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Foreground" Value="Black"/>
-                    <Setter Property="Background"  Value="LightGray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="Button" x:Key="ReturnButton">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderBrush" Value="DarkGray"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="ClickMode" Value="Press"/>
-
-            <Setter Property="Content" Value="Return"/>
-            <Setter Property="FontFamily" Value="Cascadia Mono"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Foreground" Value="DimGray"/>
-
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="Padding" Value="10 5 10 5"/>
-
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="LightGray"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Resources>
     
     <Grid>
         <!-- Determines which menu is displayed -->
@@ -89,7 +27,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Content="B O O K   M A N A G E R" FontSize="35" FontFamily="Elephant" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
+            <Label Content="B O O K   M A N A G E R" FontSize="35" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
             
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
                 <ItemsControl ItemsSource="{Binding MainMenuActions}">
@@ -100,13 +38,13 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource DesignedButton}" FontSize="25"/>
+                            <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonCustomDesignStyle}" FontSize="25"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
 
-            <Button Style="{StaticResource ReturnButton}" Content="Exit" Click="Exit" Grid.Row="2"/>
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Exit" Click="Exit" Grid.Row="2"/>
         </Grid>
 
         <!-- Sub menu -->
@@ -117,7 +55,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Content="{Binding SubMenuTitle}" FontSize="30" FontFamily="Elephant" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
+            <Label Content="{Binding SubMenuTitle}" FontSize="30" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
 
             <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
                 <StackPanel Orientation="Vertical">
@@ -129,7 +67,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource DesignedButton}"/>
+                                <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonCustomDesignStyle}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -144,14 +82,14 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource DesignedButton}"/>
+                                <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonCustomDesignStyle}"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
             </ScrollViewer>
 
-            <Button Command="{Binding ReturnCommand}" Style="{StaticResource ReturnButton}" Grid.Row="2"/>
+            <Button Command="{Binding ReturnCommand}" Style="{StaticResource ButtonReturnStyle}" Grid.Row="2"/>
         </Grid>
     </Grid>
 </Window>

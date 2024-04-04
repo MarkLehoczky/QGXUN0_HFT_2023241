@@ -1,0 +1,16 @@
+﻿<Window x:Class="QGXUN0_HFT_2023242.WPFClient.AuthorListWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Author list" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <DataGrid x:Name="datagrid_author" ItemsSource="{Binding Authors}" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" MouseDoubleClick="ConfrimedSelection" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding AuthorName}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
+                <DataGridTextColumn Header="Books" Binding="{Binding Books}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\QGXUN0_HFT_2023241.Models\QGXUN0_HFT_2023241.Models.csproj" />
   </ItemGroup>
 
