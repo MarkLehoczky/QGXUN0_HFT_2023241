@@ -8,7 +8,7 @@
     <Grid>
         <DataGrid x:Name="datagrid_book" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" MouseDoubleClick="ConfrimedSelection" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Authors" Binding="{Binding Authors}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
+                <DataGridTextColumn Header="Authors" Binding="{Binding Authors, Converter={StaticResource AuthorsToString}}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
                 <DataGridTextColumn Header="Year" Binding="{Binding Year}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
                 <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher.PublisherName}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>

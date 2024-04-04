@@ -1,0 +1,21 @@
+﻿<Window x:Class="QGXUN0_HFT_2023242.WPFClient.Windows.EntityWindows.CollectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QGXUN0_HFT_2023242.WPFClient.Windows.EntityWindows"
+        mc:Ignorable="d"
+        Title="Collection" Height="300" Width="400">
+    <Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock Text="Name" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
+                <TextBlock Text="{Binding CollectionName}" Style="{StaticResource TextBlockEntityValueStyle}"/>
+                <TextBlock Text="Books" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
+                <TextBlock Text="{Binding Books, Converter={StaticResource BooksToString}}" Style="{StaticResource TextBlockEntityValueStyle}"/>
+                <TextBlock Text="Is it series?" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
+                <TextBlock Text="{Binding IsSeries}" Style="{StaticResource TextBlockEntityValueStyle}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>
