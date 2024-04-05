@@ -8,10 +8,22 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
     /// </summary>
     public partial class AuthorUpdateWindow : Window
     {
-        public AuthorUpdateWindow(ref Author author)
+        public AuthorUpdateWindow()
         {
             InitializeComponent();
+        }
+
+
+        public void Show(ref Author author)
+        {
             DataContext = author;
+            base.Show();
+        }
+
+        public bool? ShowDialog(ref Author author)
+        {
+            DataContext = author;
+            return base.ShowDialog();
         }
     }
 }

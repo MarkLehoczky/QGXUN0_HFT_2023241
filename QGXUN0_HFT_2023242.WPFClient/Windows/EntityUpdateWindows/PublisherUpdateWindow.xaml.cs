@@ -13,5 +13,18 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
             InitializeComponent();
             DataContext = publisher;
         }
+
+
+        public void Show(ref Publisher publisher)
+        {
+            DataContext = publisher;
+            base.Show();
+        }
+
+        public bool? ShowDialog(ref Publisher publisher)
+        {
+            DataContext = publisher;
+            return base.ShowDialog();
+        }
     }
 }

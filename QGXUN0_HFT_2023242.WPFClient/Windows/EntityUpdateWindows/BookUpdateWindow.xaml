@@ -14,7 +14,7 @@
                 <TextBlock Text="Year" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBox Text="{Binding Year, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
                 <TextBlock Text="Publisher" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <ComboBox x:Name="publisher_box" SelectedItem="{Binding Publisher, Mode=TwoWay}" Style="{StaticResource ComboBoxEntityStyle}"/>
+                <ComboBox x:Name="publisher_box" Style="{StaticResource ComboBoxEntityStyle}" SelectionChanged="SelectionChanged"/>
                 <TextBlock Text="Price" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBox Text="{Binding Price, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
                 <TextBlock Text="Rating" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>

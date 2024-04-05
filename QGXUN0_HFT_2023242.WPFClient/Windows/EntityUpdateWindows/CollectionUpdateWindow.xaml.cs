@@ -8,10 +8,22 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
     /// </summary>
     public partial class CollectionUpdateWindow : Window
     {
-        public CollectionUpdateWindow(ref Collection collection)
+        public CollectionUpdateWindow()
         {
             InitializeComponent();
+        }
+
+
+        public void Show(ref Collection collection)
+        {
             DataContext = collection;
+            base.Show();
+        }
+
+        public bool? ShowDialog(ref Collection collection)
+        {
+            DataContext = collection;
+            return base.ShowDialog();
         }
     }
 }
