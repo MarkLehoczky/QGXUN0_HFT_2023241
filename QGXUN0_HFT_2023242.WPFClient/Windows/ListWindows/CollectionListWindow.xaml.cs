@@ -1,7 +1,7 @@
 ﻿using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Input;
+using System.Windows.Controls;
 
 namespace QGXUN0_HFT_2023242.WPFClient
 {
@@ -10,34 +10,61 @@ namespace QGXUN0_HFT_2023242.WPFClient
     /// </summary>
     public partial class CollectionListWindow : Window
     {
-        private Collection? selected;
+        private Collection? selectedItem;
+        private IList<Collection> selectedItems;
 
         public CollectionListWindow(IList<Collection> items, string windowName = "Collection list")
         {
             InitializeComponent();
             Title = windowName;
-            datagrid_collection.ItemsSource = items;
-            selected = null;
+            datagrid.ItemsSource = items;
+            selectedItem = null;
+            selectedItems = new List<Collection>();
         }
 
 
-        public void Show(out Collection? selected)
+        public void Show(out Collection? selectedItem)
         {
+            datagrid.SelectionMode = DataGridSelectionMode.Single;
             Show();
-            selected = this.selected;
+            selectedItem = this.selectedItem;
+        }
+        public void Show(out IEnumerable<Collection> selectedItems)
+        {
+            datagrid.SelectionMode = DataGridSelectionMode.Extended;
+            Show();
+            selectedItems = this.selectedItems;
         }
 
-        public bool? ShowDialog(out Collection? selected)
+        public bool? ShowDialog(out Collection? selectedItem)
         {
+            datagrid.SelectionMode = DataGridSelectionMode.Single;
             ShowDialog();
-            selected = this.selected;
+            selectedItem = this.selectedItem;
+            return DialogResult;
+        }
+        public bool? ShowDialog(out IEnumerable<Collection> selectedItems)
+        {
+            datagrid.SelectionMode = DataGridSelectionMode.Extended;
+            ShowDialog();
+            selectedItems = this.selectedItems;
             return DialogResult;
         }
 
-        private void ConfrimedSelection(object sender, MouseButtonEventArgs e)
+        private void SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedItem = datagrid.SelectedItem as Collection;
+            selectedItems = datagrid.SelectedItems as IList<Collection> ?? new List<Collection>();
+        }
+
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+        private void ConfirmButtonClick(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
-            selected = datagrid_collection.SelectedItem as Collection;
             Close();
         }
     }

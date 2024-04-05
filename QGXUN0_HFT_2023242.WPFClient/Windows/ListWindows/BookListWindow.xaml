@@ -6,7 +6,12 @@
         mc:Ignorable="d"
         Height="720" Width="1280" WindowStartupLocation="CenterScreen">
     <Grid>
-        <DataGrid x:Name="datagrid_book" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" MouseDoubleClick="ConfrimedSelection" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid x:Name="datagrid" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" SelectionChanged="SelectionChanged" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray" Grid.Row="0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Authors" Binding="{Binding Authors, Converter={StaticResource AuthorsToString}}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
                 <DataGridTextColumn Header="Title" Binding="{Binding Title}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
@@ -16,5 +21,10 @@
                 <DataGridTextColumn Header="Rating" Binding="{Binding Rating, StringFormat={}{0:0.0}/5.0}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
             </DataGrid.Columns>
         </DataGrid>
+
+        <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1">
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Cancel" Click="CancelButtonClick" Margin="30 0 30 0"/>
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Confirm" Click="ConfirmButtonClick" Margin="30 0 30 0"/>
+        </StackPanel>
     </Grid>
 </Window>
