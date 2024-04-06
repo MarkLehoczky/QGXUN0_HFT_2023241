@@ -4,6 +4,7 @@ using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
 using System;
 using QGXUN0_HFT_2023241.Models.Extensions;
+using Microsoft.AspNetCore.SignalR;
 
 namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
 {
@@ -12,13 +13,49 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
     public class BookLogicController : ControllerBase
     {
         private readonly IBookLogic logic;
+        private readonly IHubContext<SignalHub> hub;
 
-        public BookLogicController(IBookLogic logic) { this.logic = logic; }
+        public BookLogicController(IBookLogic logic, IHubContext<SignalHub> hub)
+        {
+            this.logic = logic;
+            this.hub = hub;
+        }
 
-        [Route("enum")][HttpPut] public bool AddAuthors([FromBody] Tuple<Book, IEnumerable<Author>> tuple) => logic.AddAuthorsToBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
-        [Route("array")][HttpPut] public bool AddAuthors([FromBody] Tuple<Book, Author[]> tuple) => logic.AddAuthorsToBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
-        [Route("enum")][HttpPut] public bool RemoveAuthors([FromBody] Tuple<Book, IEnumerable<Author>> tuple) => logic.RemoveAuthorsFromBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
-        [Route("array")][HttpPut] public bool RemoveAuthors([FromBody] Tuple<Book, Author[]> tuple) => logic.RemoveAuthorsFromBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
+        [Route("enum")]
+        [HttpPut]
+        public bool AddAuthors([FromBody] Tuple<Book, IEnumerable<Author>> tuple)
+        {
+            var temp = logic.AddAuthorsToBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
+            hub.Clients.All.SendAsync("Authors added to Book", tuple.Item1);
+            return temp;
+        }
+
+        [Route("array")]
+        [HttpPut]
+        public bool AddAuthors([FromBody] Tuple<Book, Author[]> tuple)
+        {
+            var temp = logic.AddAuthorsToBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
+            hub.Clients.All.SendAsync("Authors added to Book", tuple.Item1);
+            return temp;
+        }
+
+        [Route("enum")]
+        [HttpPut]
+        public bool RemoveAuthors([FromBody] Tuple<Book, IEnumerable<Author>> tuple)
+        {
+            var temp = logic.RemoveAuthorsFromBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
+            hub.Clients.All.SendAsync("Authors removed from Book", tuple.Item1);
+            return temp;
+        }
+
+        [Route("array")]
+        [HttpPut]
+        public bool RemoveAuthors([FromBody] Tuple<Book, Author[]> tuple)
+        {
+            var temp = logic.RemoveAuthorsFromBook(logic.Read(tuple.Item1.BookID), tuple.Item2);
+            hub.Clients.All.SendAsync("Authors removed from Book", tuple.Item1);
+            return temp;
+        }
 
         [HttpGet] public IEnumerable<Book> InYear([FromQuery] int year) => logic.GetBooksInYear(year);
         [HttpGet] public IEnumerable<Book> BetweenYears([FromQuery] int min, [FromQuery] int max) => logic.GetBooksBetweenYears(min, max);

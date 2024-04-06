@@ -33,6 +33,8 @@ namespace QGXUN0_HFT_2023241.Endpoint
             services.AddTransient<ICollectionLogic, CollectionLogic>();
             services.AddTransient<IPublisherLogic, PublisherLogic>();
 
+            services.AddSignalR();
+
             services.AddControllers();
         }
 
@@ -62,6 +64,7 @@ namespace QGXUN0_HFT_2023241.Endpoint
                     await context.Response.WriteAsync("Hello World!");
                 });
                 endpoints.MapControllers();
+                endpoints.MapHub<SignalHub>("/api");
             });
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using QGXUN0_HFT_2023241.Logic.Interface;
 using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
@@ -10,13 +11,46 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
     public class AuthorController : ControllerBase
     {
         private readonly IAuthorLogic logic;
+        private readonly IHubContext<SignalHub> hub;
 
-        public AuthorController(IAuthorLogic logic) { this.logic = logic; }
+        public AuthorController(IAuthorLogic logic, IHubContext<SignalHub> hub)
+        {
+            this.logic = logic;
+            this.hub = hub;
+        }
 
-        [HttpPost] public void Post([FromBody] Author value) => logic.Create(value);
-        [HttpGet("{id}")] public Author Get(int id) => logic.Read(id);
-        [HttpPut] public void Put([FromBody] Author value) => logic.Update(value);
-        [HttpDelete("{id}")] public void Delete(int id) => logic.Delete(logic.Read(id));
-        [HttpGet] public IEnumerable<Author> ReadAll() => logic.ReadAll();
+        [HttpPost]
+        public void Post([FromBody] Author value)
+        {
+            logic.Create(value);
+            hub.Clients.All.SendAsync("Author created", value);
+        }
+
+        [HttpGet("{id}")]
+        public Author Get(int id)
+        {
+            return logic.Read(id);
+        }
+
+        [HttpPut]
+        public void Put([FromBody] Author value)
+        {
+            logic.Update(value);
+            hub.Clients.All.SendAsync("Author updated", value);
+        }
+
+        [HttpDelete("{id}")]
+        public void Delete(int id)
+        {
+            var temp = logic.Read(id);
+            logic.Delete(logic.Read(id));
+            hub.Clients.All.SendAsync("Author deleted", temp);
+        }
+
+        [HttpGet]
+        public IEnumerable<Author> ReadAll()
+        {
+            return logic.ReadAll();
+        }
     }
 }
