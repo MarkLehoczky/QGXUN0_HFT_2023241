@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="Update book" Height="300" Width="400">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock Text="Title" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
@@ -14,12 +19,17 @@
                 <TextBlock Text="Year" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBox Text="{Binding Year, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
                 <TextBlock Text="Publisher" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <ComboBox x:Name="publisher_box" Style="{StaticResource ComboBoxEntityStyle}" SelectionChanged="SelectionChanged"/>
+                <ComboBox x:Name="publisher_box" Style="{StaticResource ComboBoxEntityStyle}" SelectionChanged="PublisherSelectionChanged"/>
                 <TextBlock Text="Price" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBox Text="{Binding Price, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
                 <TextBlock Text="Rating" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBox Text="{Binding Rating, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
             </StackPanel>
         </ScrollViewer>
+
+        <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1">
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Cancel" Click="CancelButtonClick" Margin="30 0 30 0"/>
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Confirm" Click="ConfirmButtonClick" Margin="30 0 30 0"/>
+        </StackPanel>
     </Grid>
 </Window>

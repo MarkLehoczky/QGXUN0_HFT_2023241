@@ -1,6 +1,7 @@
 ﻿using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
 {
@@ -37,9 +38,20 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
         }
 
 
-        private void SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void PublisherSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             reference.PublisherID = (sender as Publisher)?.PublisherID;
+        }
+
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+        private void ConfirmButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
         }
     }
 }

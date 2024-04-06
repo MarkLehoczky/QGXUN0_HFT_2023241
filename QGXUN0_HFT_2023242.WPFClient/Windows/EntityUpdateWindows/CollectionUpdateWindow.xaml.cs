@@ -25,5 +25,16 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
             DataContext = collection;
             return base.ShowDialog();
         }
+
+        private void CancelButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+        private void ConfirmButtonClick(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+        }
     }
 }

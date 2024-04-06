@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="Update collection" Height="300" Width="400">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock Text="Name" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
@@ -15,5 +20,10 @@
                 <CheckBox x:Name="checkBox" Content="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource CheckStatusToString}}" IsChecked="{Binding IsSeries, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
             </StackPanel>
         </ScrollViewer>
+
+        <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1">
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Cancel" Click="CancelButtonClick" Margin="30 0 30 0"/>
+            <Button Style="{StaticResource ButtonReturnStyle}" Content="Confirm" Click="ConfirmButtonClick" Margin="30 0 30 0"/>
+        </StackPanel>
     </Grid>
 </Window>
