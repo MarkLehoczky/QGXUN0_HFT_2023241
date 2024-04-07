@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Services
 {
-    class WebService
+    public class WebService
     {
         private HttpClient client;
 
-        public WebService(string url, string endpoint = "")
+        public WebService(string url = "http://localhost:43016/", string endpoint = "")
         {
             while (!Ping(url + endpoint)) ;
 
