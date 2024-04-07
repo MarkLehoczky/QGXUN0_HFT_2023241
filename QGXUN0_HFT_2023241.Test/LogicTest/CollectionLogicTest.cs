@@ -169,7 +169,6 @@ namespace QGXUN0_HFT_2023241.Test.LogicTest
             connectorMock.Setup(t => t.ReadAll()).Returns(bookcollectionconnectors.AsQueryable());
             connectorMock.Setup(t => t.Update(It.IsNotIn(bookcollectionconnectors))).Throws(new InvalidOperationException());
             connectorMock.Setup(t => t.Delete(It.IsNotIn(bookcollectionconnectors.Select(t => t.BookCollectionConnectorID)))).Throws(new InvalidOperationException());
-            connectorMock.Setup(t => t.SaveChanges());
 
 
             logic = new CollectionLogic(collectionMock.Object, bookMock.Object, connectorMock.Object);
