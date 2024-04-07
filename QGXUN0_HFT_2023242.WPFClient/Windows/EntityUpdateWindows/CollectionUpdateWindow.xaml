@@ -15,7 +15,7 @@
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <TextBlock Text="Name" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <TextBox Text="{Binding AuthorName, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
+                <TextBox Text="{Binding CollectionName, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
                 <TextBlock Text="Is it series?" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <CheckBox x:Name="checkBox" Content="{Binding IsChecked, ElementName=checkBox, Converter={StaticResource CheckStatusToString}}" IsChecked="{Binding IsSeries, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10"/>
             </StackPanel>

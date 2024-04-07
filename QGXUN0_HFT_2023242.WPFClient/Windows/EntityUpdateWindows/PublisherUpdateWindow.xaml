@@ -15,7 +15,7 @@
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="0">
             <StackPanel>
                 <TextBlock Text="Name" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <TextBox Text="{Binding AuthorName, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
+                <TextBox Text="{Binding PublisherName, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
                 <TextBlock Text="Website" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBox Text="{Binding Website, Mode=TwoWay}" Style="{StaticResource TextBoxUpdateEntityStyle}"/>
             </StackPanel>
