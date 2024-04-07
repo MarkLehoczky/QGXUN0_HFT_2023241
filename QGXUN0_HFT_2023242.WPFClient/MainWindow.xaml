@@ -43,8 +43,6 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollViewer>
-
-            <Button Style="{StaticResource ButtonReturnStyle}" Content="Exit" Click="Exit" Grid.Row="2"/>
         </Grid>
 
         <!-- Sub menu -->

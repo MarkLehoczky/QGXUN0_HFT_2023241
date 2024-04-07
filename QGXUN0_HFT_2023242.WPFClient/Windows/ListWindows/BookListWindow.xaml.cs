@@ -11,9 +11,9 @@ namespace QGXUN0_HFT_2023242.WPFClient
     public partial class BookListWindow : Window
     {
         private Book? selectedItem;
-        private IList<Book> selectedItems;
+        private IEnumerable<Book> selectedItems;
 
-        public BookListWindow(IList<Book> items, string windowName = "Book list")
+        public BookListWindow(IEnumerable<Book> items, string windowName = "Book list")
         {
             InitializeComponent();
             Title = windowName;

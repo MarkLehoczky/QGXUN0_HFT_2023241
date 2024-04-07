@@ -11,8 +11,6 @@
             <StackPanel>
                 <TextBlock Text="Name" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBlock Text="{Binding PublisherName}" Style="{StaticResource TextBlockEntityValueStyle}"/>
-                <TextBlock Text="Books" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <TextBlock Text="{Binding Books, Converter={StaticResource BooksToString}}" Style="{StaticResource TextBlockEntityValueStyle}"/>
                 <TextBlock Text="Website" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBlock Text="{Binding Website}" Style="{StaticResource TextBlockEntityValueStyle}"/>
             </StackPanel>

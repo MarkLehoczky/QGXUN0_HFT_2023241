@@ -11,9 +11,9 @@ namespace QGXUN0_HFT_2023242.WPFClient
     public partial class AuthorListWindow : Window
     {
         private Author? selectedItem;
-        private IList<Author> selectedItems;
+        private IEnumerable<Author> selectedItems;
 
-        public AuthorListWindow(IList<Author> items, string windowName = "Author list")
+        public AuthorListWindow(IEnumerable<Author> items, string windowName = "Author list")
         {
             InitializeComponent();
             Title = windowName;

@@ -11,9 +11,9 @@ namespace QGXUN0_HFT_2023242.WPFClient
     public partial class PublisherListWindow : Window
     {
         private Publisher? selectedItem;
-        private IList<Publisher> selectedItems;
+        private IEnumerable<Publisher> selectedItems;
 
-        public PublisherListWindow(IList<Publisher> items, string windowName = "Publisher list")
+        public PublisherListWindow(IEnumerable<Publisher> items, string windowName = "Publisher list")
         {
             InitializeComponent();
             Title = windowName;

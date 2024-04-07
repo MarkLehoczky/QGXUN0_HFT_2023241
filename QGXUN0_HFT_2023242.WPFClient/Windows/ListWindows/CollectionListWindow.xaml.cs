@@ -11,9 +11,9 @@ namespace QGXUN0_HFT_2023242.WPFClient
     public partial class CollectionListWindow : Window
     {
         private Collection? selectedItem;
-        private IList<Collection> selectedItems;
+        private IEnumerable<Collection> selectedItems;
 
-        public CollectionListWindow(IList<Collection> items, string windowName = "Collection list")
+        public CollectionListWindow(IEnumerable<Collection> items, string windowName = "Collection list")
         {
             InitializeComponent();
             Title = windowName;

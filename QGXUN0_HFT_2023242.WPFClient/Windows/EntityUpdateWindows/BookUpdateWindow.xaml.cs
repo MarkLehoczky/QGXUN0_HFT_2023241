@@ -19,7 +19,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
         }
 
 
-        public void Show(ref Book book, IList<Publisher> publishers)
+        public void Show(ref Book book, IEnumerable<Publisher> publishers)
         {
             reference = book;
             publisher_box.ItemsSource = publishers;
@@ -28,7 +28,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
             base.Show();
         }
 
-        public bool? ShowDialog(ref Book book, IList<Publisher> publishers)
+        public bool? ShowDialog(ref Book book, IEnumerable<Publisher> publishers)
         {
             reference = book;
             publisher_box.ItemsSource = publishers;

@@ -10,19 +10,20 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace QGXUN0_HFT_2023242.WPFClient
+namespace QGXUN0_HFT_2023242.WPFClient.Windows
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for SimpleOutput.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class SimpleOutput : Window
     {
-        public MainWindow()
+        public SimpleOutput(object description, object value)
         {
             InitializeComponent();
+            desc.Text = description.ToString();
+            val.Text = value.ToString();
         }
     }
 }

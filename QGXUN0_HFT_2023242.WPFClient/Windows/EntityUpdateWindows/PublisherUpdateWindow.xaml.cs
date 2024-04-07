@@ -8,10 +8,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
     /// </summary>
     public partial class PublisherUpdateWindow : Window
     {
-        public PublisherUpdateWindow(ref Publisher publisher)
+        public PublisherUpdateWindow()
         {
             InitializeComponent();
-            DataContext = publisher;
         }
 
 

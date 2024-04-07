@@ -14,7 +14,6 @@
         <DataGrid x:Name="datagrid" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" SelectionChanged="SelectionChanged" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray" Grid.Row="0">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding PublisherName}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
-                <DataGridTextColumn Header="Books" Binding="{Binding Books, Converter={StaticResource BooksToString}}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
                 <DataGridTextColumn Header="Website" Binding="{Binding Website}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
             </DataGrid.Columns>
         </DataGrid>
