@@ -26,7 +26,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
         public bool AddBooks([FromBody] Tuple<Collection, IEnumerable<Book>> tuple)
         {
             var temp = logic.AddBooksToCollection(logic.Read(tuple.Item1.CollectionID), tuple.Item2);
-            hub.Clients.All.SendAsync("Books added to collection", tuple.Item1);
+            hub.Clients.All.SendAsync("CollectionBooksUpdate", tuple.Item1);
             return temp;
         }
 
@@ -35,7 +35,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
         public bool AddBooks([FromBody] Tuple<Collection, Book[]> tuple)
         {
             var temp = logic.AddBooksToCollection(logic.Read(tuple.Item1.CollectionID), tuple.Item2);
-            hub.Clients.All.SendAsync("Books added to collection", tuple.Item1);
+            hub.Clients.All.SendAsync("CollectionBooksUpdate", tuple.Item1);
             return temp;
         }
 
@@ -44,7 +44,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
         public bool RemoveBooks([FromBody] Tuple<Collection, IEnumerable<Book>> tuple)
         {
             var temp = logic.RemoveBooksFromCollection(logic.Read(tuple.Item1.CollectionID), tuple.Item2);
-            hub.Clients.All.SendAsync("Books removed from collection", tuple.Item1);
+            hub.Clients.All.SendAsync("CollectionBooksUpdate", tuple.Item1);
             return temp;
         }
 
@@ -53,7 +53,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
         public bool RemoveBooks([FromBody] Tuple<Collection, Book[]> tuple)
         {
             var temp = logic.RemoveBooksFromCollection(logic.Read(tuple.Item1.CollectionID), tuple.Item2);
-            hub.Clients.All.SendAsync("Books removed from collection", tuple.Item1);
+            hub.Clients.All.SendAsync("CollectionBooksUpdate", tuple.Item1);
             return temp;
         }
 

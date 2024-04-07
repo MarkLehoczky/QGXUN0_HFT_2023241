@@ -23,7 +23,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
         public void Post([FromBody] Publisher value)
         {
             logic.Create(value);
-            hub.Clients.All.SendAsync("Publisher created", value);
+            hub.Clients.All.SendAsync("PublisherCreate", value);
         }
 
         [HttpGet("{id}")]
@@ -36,7 +36,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
         public void Put([FromBody] Publisher value)
         {
             logic.Update(value);
-            hub.Clients.All.SendAsync("Publisher updated", value);
+            hub.Clients.All.SendAsync("PublisherUpdate", value);
         }
 
         [HttpDelete("{id}")]
@@ -44,7 +44,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
         {
             var temp = logic.Read(id);
             logic.Delete(logic.Read(id));
-            hub.Clients.All.SendAsync("Publisher deleted", temp);
+            hub.Clients.All.SendAsync("PublisherDelete", temp);
         }
 
         [HttpGet]

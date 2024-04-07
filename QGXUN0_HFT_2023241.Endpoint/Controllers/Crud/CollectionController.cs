@@ -23,7 +23,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
         public void Post([FromBody] Collection value)
         {
             logic.Create(value);
-            hub.Clients.All.SendAsync("Collection created", value);
+            hub.Clients.All.SendAsync("CollectionCreate", value);
         }
 
         [HttpGet("{id}")]
@@ -36,7 +36,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
         public void Put([FromBody] Collection value)
         {
             logic.Update(value);
-            hub.Clients.All.SendAsync("Collection updated", value);
+            hub.Clients.All.SendAsync("CollectionUpdate", value);
         }
 
         [HttpDelete("{id}")]
@@ -44,7 +44,7 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.Crud
         {
             var temp = logic.Read(id);
             logic.Delete(logic.Read(id));
-            hub.Clients.All.SendAsync("Collection deleted", temp);
+            hub.Clients.All.SendAsync("CollectionDelete", temp);
         }
 
         [HttpGet]
