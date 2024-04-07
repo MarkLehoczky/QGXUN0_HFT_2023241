@@ -137,7 +137,7 @@ namespace QGXUN0_HFT_2023241.Logic.Logic
         {
             if (book == null || Read(book.BookID) == null) return false;
 
-            foreach (var item in _authorRepository.ReadAll().Where(t => authors.Contains(t)).Except(book.Authors))
+            foreach (var item in _authorRepository.ReadAll().Where(t => authors.Contains(t)).AsEnumerable().Except(book.Authors))
                 _connectorRepository.Create(new BookAuthorConnector(
                     _connectorRepository.ReadAll().Max(t => t.BookAuthorConnectorID) + 1,
                     book.BookID,
