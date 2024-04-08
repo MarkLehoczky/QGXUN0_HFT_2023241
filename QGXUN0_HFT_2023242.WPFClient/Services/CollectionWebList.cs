@@ -9,13 +9,11 @@ using System.Threading.Tasks;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Services
 {
-    public class CollectionWebList : WebService, INotifyCollectionChanged, IEnumerable<Collection>
+    public class CollectionWebList : WebService
     {
-        public ObservableCollection<Collection> Items = new ObservableCollection<Collection>();
+        public IList<Collection> Items = new List<Collection>();
         public int Count => Items?.Count ?? 0;
         public Collection this[int index] => Items[index];
-
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         private NotifyService notifyService;
 
@@ -23,26 +21,10 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         {
             notifyService = new NotifyService(url + hub);
 
-            notifyService.AddHandler<Collection>("CollectionCreate", item =>
-            {
-                Items.Add(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
-                CollectionCommand.NotifyChanges();
-            });
-            notifyService.AddHandler<Collection>("CollectionUpdate", item =>
-            {
-                Init();
-            });
-            notifyService.AddHandler<Collection>("CollectionDelete", item =>
-            {
-                Items.Remove(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
-                CollectionCommand.NotifyChanges();
-            });
-            notifyService.AddHandler<Collection>("CollectionBooksUpdate", item =>
-            {
-                Init();
-            });
+            notifyService.AddHandler<Collection>("CollectionCreate", item => { Init(); });
+            notifyService.AddHandler<Collection>("CollectionUpdate", item => { Init(); });
+            notifyService.AddHandler<Collection>("CollectionDelete", item => { Init(); });
+            notifyService.AddHandler<Collection>("CollectionBooksUpdate", item => { Init(); });
 
             notifyService.Init();
             Init();
@@ -51,10 +33,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
 
         private async Task Init()
         {
-            Items.Clear();
-            foreach (var item in await base.GetListAsync<Collection>("Collection"))
-                Items.Add(item);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            Items = (IList<Collection>)await base.GetListAsync<Collection>("Collection");
             CollectionCommand.NotifyChanges();
         }
 
@@ -81,17 +60,6 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         public IEnumerable<Collection> ReadAll()
         {
             return base.GetList<Collection>("Collection");
-        }
-
-
-        public IEnumerator<Collection> GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Collection>().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Collection>().GetEnumerator();
         }
     }
 }

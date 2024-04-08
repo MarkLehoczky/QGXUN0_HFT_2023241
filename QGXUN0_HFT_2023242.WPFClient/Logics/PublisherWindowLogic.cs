@@ -33,7 +33,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Update()
         {
-            if (new PublisherListWindow(publisherList, "Select publisher to update").ShowDialog(out Publisher? publisher) == true && publisher != null)
+            if (new PublisherListWindow(publisherList.Items, "Select publisher to update").ShowDialog(out Publisher? publisher) == true && publisher != null)
             {
                 new PublisherUpdateWindow().ShowDialog(ref publisher);
                 publisherList?.Update(publisher);
@@ -42,7 +42,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Delete()
         {
-            if (new PublisherListWindow(publisherList, "Select publisher to delete").ShowDialog(out Publisher? publisher) == true && publisher != null)
+            if (new PublisherListWindow(publisherList.Items, "Select publisher to delete").ShowDialog(out Publisher? publisher) == true && publisher != null)
             {
                 publisherList?.Delete(publisher?.PublisherID ?? int.MinValue);
             }
@@ -66,23 +66,23 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void HighestRated()
         {
-            new PublisherWindow(publisherList.Get<KeyValuePair<double?, Publisher>>("Publisher/HighestRated").Value);
+            new PublisherWindow(publisherList.Get<KeyValuePair<double?, Publisher>>("Publisher/HighestRated").Value).ShowDialog();
         }
 
         public void LowestRated()
         {
-            new PublisherWindow(publisherList.Get<KeyValuePair<double?, Publisher>>("Publisher/LowestRated").Value);
+            new PublisherWindow(publisherList.Get<KeyValuePair<double?, Publisher>>("Publisher/LowestRated").Value).ShowDialog();
         }
 
         public void Rating()
         {
-            if (new PublisherListWindow(publisherList, "Select publisher to get it's rating").ShowDialog(out Publisher? publisher) == true && publisher != null)
+            if (new PublisherListWindow(publisherList.Items, "Select publisher to get it's rating").ShowDialog(out Publisher? publisher) == true && publisher != null)
                 new SimpleOutput($"Rating of publisher '{publisher.PublisherName}'", publisherList.Post<double?>("Publisher/Rating", publisher)).ShowDialog();
         }
 
         public void Authors()
         {
-            if (new PublisherListWindow(publisherList, "Select publisher to get it's authors").ShowDialog(out Publisher? publisher) == true && publisher != null)
+            if (new PublisherListWindow(publisherList.Items, "Select publisher to get it's authors").ShowDialog(out Publisher? publisher) == true && publisher != null)
                 new AuthorListWindow(publisherList.Post<IEnumerable<Author>>("Publisher/Authors", publisher), $"Authors of publisher '{publisher.PublisherName}'").ShowDialog();
         }
 
@@ -93,7 +93,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void PermanentAuthorsOfPublisher()
         {
-            if (new PublisherListWindow(publisherList, "Select publisher to get it's permanent authors").ShowDialog(out Publisher? publisher) == true && publisher != null)
+            if (new PublisherListWindow(publisherList.Items, "Select publisher to get it's permanent authors").ShowDialog(out Publisher? publisher) == true && publisher != null)
                 new AuthorListWindow(publisherList.Post<IEnumerable<Author>>("Publisher/PermanentAuthors", publisher), $"Permanent authors of publisher '{publisher.PublisherName}'").ShowDialog();
         }
 

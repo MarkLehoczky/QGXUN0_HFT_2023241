@@ -9,13 +9,11 @@ using System.Threading.Tasks;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Services
 {
-    public class PublisherWebList : WebService, INotifyCollectionChanged, IEnumerable<Publisher>
+    public class PublisherWebList : WebService
     {
-        public ObservableCollection<Publisher> Items = new ObservableCollection<Publisher>();
+        public IList<Publisher> Items = new List<Publisher>();
         public int Count => Items?.Count ?? 0;
         public Publisher this[int index] => Items[index];
-
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         private NotifyService notifyService;
 
@@ -23,22 +21,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         {
             notifyService = new NotifyService(url + hub);
 
-            notifyService.AddHandler<Publisher>("PublisherCreate", item =>
-            {
-                Items.Add(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
-                PublisherCommand.NotifyChanges();
-            });
-            notifyService.AddHandler<Publisher>("PublisherUpdate", item =>
-            {
-                Init();
-            });
-            notifyService.AddHandler<Publisher>("PublisherDelete", item =>
-            {
-                Items.Remove(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
-                PublisherCommand.NotifyChanges();
-            });
+            notifyService.AddHandler<Publisher>("PublisherCreate", item => { Init(); });
+            notifyService.AddHandler<Publisher>("PublisherUpdate", item => { Init(); });
+            notifyService.AddHandler<Publisher>("PublisherDelete", item => { Init(); });
 
             notifyService.Init();
             Init();
@@ -47,10 +32,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
 
         private async Task Init()
         {
-            Items.Clear();
-            foreach (var item in await base.GetListAsync<Publisher>("Publisher"))
-                Items.Add(item);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            Items = (IList<Publisher>)await base.GetListAsync<Publisher>("Publisher");
             PublisherCommand.NotifyChanges();
         }
 
@@ -77,17 +59,6 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         public IEnumerable<Publisher> ReadAll()
         {
             return base.GetList<Publisher>("Publisher");
-        }
-
-
-        public IEnumerator<Publisher> GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Publisher>().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Publisher>().GetEnumerator();
         }
     }
 }

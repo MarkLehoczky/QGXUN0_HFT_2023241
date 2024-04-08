@@ -9,13 +9,11 @@ using System.Threading.Tasks;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Services
 {
-    public class AuthorWebList : WebService, INotifyCollectionChanged, IEnumerable<Author>
+    public class AuthorWebList : WebService
     {
-        public ObservableCollection<Author> Items = new ObservableCollection<Author>();
+        public IList<Author> Items = new List<Author>();
         public int Count => Items?.Count ?? 0;
         public Author this[int index] => Items[index];
-
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         private NotifyService notifyService;
 
@@ -23,22 +21,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         {
             notifyService = new NotifyService(url + hub);
 
-            notifyService.AddHandler<Author>("AuthorCreate", item =>
-            {
-                Items.Add(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
-                AuthorCommand.NotifyChanges();
-            });
-            notifyService.AddHandler<Author>("AuthorUpdate", item =>
-            {
-                Init();
-            });
-            notifyService.AddHandler<Author>("AuthorDelete", item =>
-            {
-                Items.Remove(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
-                AuthorCommand.NotifyChanges();
-            });
+            notifyService.AddHandler<Author>("AuthorCreate", item => { Init(); });
+            notifyService.AddHandler<Author>("AuthorUpdate", item => { Init(); });
+            notifyService.AddHandler<Author>("AuthorDelete", item => { Init(); });
 
             notifyService.Init();
             Init();
@@ -47,10 +32,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
 
         private async Task Init()
         {
-            Items.Clear();
-            foreach (var item in await base.GetListAsync<Author>("Author"))
-                Items.Add(item);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            Items = (IList<Author>)await base.GetListAsync<Author>("Author");
             AuthorCommand.NotifyChanges();
         }
 
@@ -77,17 +59,6 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         public IEnumerable<Author> ReadAll()
         {
             return base.GetList<Author>("Author");
-        }
-
-
-        public IEnumerator<Author> GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Author>().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Author>().GetEnumerator();
         }
     }
 }

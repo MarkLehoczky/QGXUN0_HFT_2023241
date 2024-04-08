@@ -34,7 +34,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Update()
         {
-            if (new AuthorListWindow(authorList, "Select author to update").ShowDialog(out Author? author) == true && author != null)
+            if (new AuthorListWindow(authorList.Items, "Select author to update").ShowDialog(out Author? author) == true && author != null)
             {
                 new AuthorUpdateWindow().ShowDialog(ref author);
                 authorList?.Update(author);
@@ -43,7 +43,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Delete()
         {
-            if (new AuthorListWindow(authorList, "Select author to delete").ShowDialog(out Author? author) == true && author != null)
+            if (new AuthorListWindow(authorList.Items, "Select author to delete").ShowDialog(out Author? author) == true && author != null)
             {
                 authorList?.Delete(author?.AuthorID ?? int.MinValue);
             }

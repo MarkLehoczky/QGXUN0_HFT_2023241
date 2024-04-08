@@ -6,6 +6,7 @@ using QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityWindows;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
@@ -34,7 +35,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Update()
         {
-            if (new CollectionListWindow(collectionList, "Select collection to update").ShowDialog(out Collection? collection) == true && collection != null)
+            if (new CollectionListWindow(collectionList.Items, "Select collection to update").ShowDialog(out Collection? collection) == true && collection != null)
             {
                 new CollectionUpdateWindow().ShowDialog(ref collection);
                 collectionList?.Update(collection);
@@ -43,7 +44,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Delete()
         {
-            if (new CollectionListWindow(collectionList, "Select collection to delete").ShowDialog(out Collection? collection) == true && collection != null)
+            if (new CollectionListWindow(collectionList.Items, "Select collection to delete").ShowDialog(out Collection? collection) == true && collection != null)
             {
                 collectionList?.Delete(collection?.CollectionID ?? int.MinValue);
             }
@@ -58,14 +59,14 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         public void AddBooks()
         {
             if (new CollectionListWindow(collectionList.Items, "Select a collection to add books").ShowDialog(out Collection? collection) == true && collection != null
-                && new BookListWindow(collectionList.GetList<Book>("Author"), "Select books to add to the collection").ShowDialog(out IEnumerable<Book> books) == true)
+                && new BookListWindow(collectionList.GetList<Book>("Book"), "Select books to add to the collection").ShowDialog(out IEnumerable<Book> books) == true)
                 collectionList.Put<bool>("Collection/AddBooks/enum", new Tuple<Collection, IEnumerable<Book>>(collection, books));
         }
 
         public void RemoveBooks()
         {
             if (new CollectionListWindow(collectionList.Items, "Select a collection to remove books").ShowDialog(out Collection? collection) == true && collection != null
-                && new BookListWindow(collectionList.GetList<Book>("Author"), "Select books to remove from the collection").ShowDialog(out IEnumerable<Book> books) == true)
+                && new BookListWindow(collection.Books, "Select books to remove from the collection").ShowDialog(out IEnumerable<Book> books) == true)
                 collectionList.Put<bool>("Collection/RemoveBooks/enum", new Tuple<Collection, IEnumerable<Book>>(collection, books));
         }
 
@@ -88,7 +89,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         public void InYear()
         {
             if (new NumberInputWindow("Enter the year").ShowDialog(out int? year) == true && year != null)
-                new CollectionListWindow(collectionList.Get<IEnumerable<Collection>>($"Book/InYear?year={year}"), $"Collections in year {year}").ShowDialog();
+                new CollectionListWindow(collectionList.Get<IEnumerable<Collection>>($"Collection/InYear?year={year}"), $"Collections in year {year}").ShowDialog();
         }
 
         public void BetweenYears()

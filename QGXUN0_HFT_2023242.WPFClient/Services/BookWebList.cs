@@ -9,13 +9,11 @@ using System.Threading.Tasks;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Services
 {
-    public class BookWebList : WebService, INotifyCollectionChanged, IEnumerable<Book>
+    public class BookWebList : WebService
     {
-        public ObservableCollection<Book> Items = new ObservableCollection<Book>();
+        public IList<Book> Items = new List<Book>();
         public int Count => Items?.Count ?? 0;
         public Book this[int index] => Items[index];
-
-        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         private NotifyService notifyService;
 
@@ -23,26 +21,10 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         {
             notifyService = new NotifyService(url + hub);
 
-            notifyService.AddHandler<Book>("BookCreate", item =>
-            {
-                Items.Add(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
-                BookCommand.NotifyChanges();
-            });
-            notifyService.AddHandler<Book>("BookUpdate", item =>
-            {
-                Init();
-            });
-            notifyService.AddHandler<Book>("BookDelete", item =>
-            {
-                Items.Remove(item);
-                CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
-                BookCommand.NotifyChanges();
-            });
-            notifyService.AddHandler<Book>("BookAuthorsUpdate", item =>
-            {
-                Init();
-            });
+            notifyService.AddHandler<Book>("BookCreate", item => { Init(); });
+            notifyService.AddHandler<Book>("BookUpdate", item => { Init(); });
+            notifyService.AddHandler<Book>("BookDelete", item => { Init(); });
+            notifyService.AddHandler<Book>("BookAuthorsUpdate", item => { Init(); });
 
             notifyService.Init();
             Init();
@@ -51,10 +33,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
 
         private async Task Init()
         {
-            Items.Clear();
-            foreach (var item in await base.GetListAsync<Book>("Book"))
-                Items.Add(item);
-            CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            Items = (IList<Book>) await base.GetListAsync<Book>("Book");
             BookCommand.NotifyChanges();
         }
 
@@ -81,17 +60,6 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
         public IEnumerable<Book> ReadAll()
         {
             return base.GetList<Book>("Book");
-        }
-
-
-        public IEnumerator<Book> GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Book>().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Items?.GetEnumerator() ?? new ObservableCollection<Book>().GetEnumerator();
         }
     }
 }

@@ -6,6 +6,7 @@ using QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityWindows;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
@@ -34,7 +35,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Update()
         {
-            if (new BookListWindow(bookList, "Select book to update").ShowDialog(out Book? book) == true && book != null)
+            if (new BookListWindow(bookList.Items, "Select book to update").ShowDialog(out Book? book) == true && book != null)
             {
                 new BookUpdateWindow().ShowDialog(ref book, bookList.GetList<Publisher>("Publisher"));
                 bookList?.Update(book);
@@ -43,7 +44,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 
         public void Delete()
         {
-            if (new BookListWindow(bookList, "Select book to delete").ShowDialog(out Book? book) == true && book != null)
+            if (new BookListWindow(bookList.Items, "Select book to delete").ShowDialog(out Book? book) == true && book != null)
             {
                 bookList?.Delete(book?.BookID ?? int.MinValue);
             }
@@ -65,7 +66,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         public void RemoveAuthors()
         {
             if (new BookListWindow(bookList.Items, "Select a book to remove authors").ShowDialog(out Book? book) == true && book != null
-                && new AuthorListWindow(bookList.GetList<Author>("Author"), "Select authors to remove from the book").ShowDialog(out IEnumerable<Author> authors) == true)
+                && new AuthorListWindow(book.Authors, "Select authors to remove from the book").ShowDialog(out IEnumerable<Author> authors) == true)
                 bookList.Put<bool>("Book/RemoveAuthors/enum", new Tuple<Book, IEnumerable<Author>>(book, authors));
         }
 
