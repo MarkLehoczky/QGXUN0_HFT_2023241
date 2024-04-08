@@ -8,17 +8,21 @@
         Title="Titles" Height="300" Width="400">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBox x:Name="text" Style="{StaticResource TextBoxUpdateEntityStyle}" AcceptsReturn="True" AcceptsTab="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10" Grid.Row="0"/>
-        <TextBlock Text="Enter the titles here" TextAlignment="Center" Foreground="LightGray" VerticalAlignment="Top" Margin="15" Grid.Row="0"/>
-        <TextBlock Text="Separate the titles with new lines" TextAlignment="Center" Foreground="LightGray" VerticalAlignment="Bottom" Margin="15" Grid.Row="0"/>
+        <StackPanel Margin="5">
+            <TextBlock Text="Enter the titles here" TextAlignment="Center" FontFamily="Cascadia mono" FontSize="10" Foreground="Gray" FontStyle="Italic"/>
+            <TextBlock Text="Separate the titles with new lines" TextAlignment="Center" FontFamily="Cascadia mono" FontSize="10" Foreground="Gray" FontStyle="Italic"/>
+        </StackPanel>
+        
+        <TextBox x:Name="text" Style="{StaticResource TextBoxUpdateEntityStyle}" AcceptsReturn="True" AcceptsTab="True" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="5" Grid.Row="1"/>
 
-        <StackPanel Orientation="Horizontal" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1">
-            <Button Style="{StaticResource ButtonReturnStyle}" FontSize="12" Content="Cancel" Click="CancelButtonClick" Margin="30 0 30 0"/>
-            <Button Style="{StaticResource ButtonReturnStyle}" FontSize="12" Content="Confirm" Click="ConfirmButtonClick" Margin="30 0 30 0"/>
+        <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="2">
+            <Button Style="{StaticResource ButtonCancelStyle}" Click="CancelButtonClick"/>
+            <Button Style="{StaticResource ButtonConfirmStyle}" Click="ConfirmButtonClick"/>
         </StackPanel>
     </Grid>
 </Window>

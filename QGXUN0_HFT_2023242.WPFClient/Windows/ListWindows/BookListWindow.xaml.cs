@@ -1,5 +1,6 @@
 ﻿using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,52 +11,42 @@ namespace QGXUN0_HFT_2023242.WPFClient
     /// </summary>
     public partial class BookListWindow : Window
     {
-        private Book? selectedItem;
-        private IEnumerable<Book> selectedItems;
-
         public BookListWindow(IEnumerable<Book> items, string windowName = "Book list")
         {
             InitializeComponent();
             Title = windowName;
             datagrid.ItemsSource = items;
-            selectedItem = null;
-            selectedItems = new List<Book>();
         }
 
 
-        public void Show(out Book? selectedItem)
+        public void Show(out Book? SelectedItem)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Single;
             Show();
-            selectedItem = this.selectedItem;
+            SelectedItem = datagrid.SelectedItem as Book;
         }
-        public void Show(out IEnumerable<Book> selectedItems)
+        public void Show(out IEnumerable<Book> SelectedItems)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Extended;
             Show();
-            selectedItems = this.selectedItems;
+            SelectedItems = Enumerable.Cast<Book>(datagrid.SelectedItems);
         }
 
-        public bool? ShowDialog(out Book? selectedItem)
+        public bool? ShowDialog(out Book? SelectedItem)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Single;
             ShowDialog();
-            selectedItem = this.selectedItem;
+            SelectedItem = datagrid.SelectedItem as Book;
             return DialogResult;
         }
-        public bool? ShowDialog(out IEnumerable<Book> selectedItems)
+        public bool? ShowDialog(out IEnumerable<Book> SelectedItems)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Extended;
             ShowDialog();
-            selectedItems = this.selectedItems;
+            SelectedItems = Enumerable.Cast<Book>(datagrid.SelectedItems);
             return DialogResult;
         }
 
-        private void SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            selectedItem = datagrid.SelectedItem as Book;
-            selectedItems = datagrid.SelectedItems as IList<Book> ?? new List<Book>();
-        }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {

@@ -14,15 +14,13 @@
                 <TextBlock Text="Year" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBlock Text="{Binding Year}" Style="{StaticResource TextBlockEntityValueStyle}"/>
                 <TextBlock Text="Publisher" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <TextBlock Text="{Binding Publisher}" Style="{StaticResource TextBlockEntityValueStyle}"/>
+                <TextBlock Text="{Binding Publisher.PublisherName}" Style="{StaticResource TextBlockEntityValueStyle}"/>
                 <TextBlock Text="Price" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBlock Text="{Binding Price, StringFormat={}${0:#0.00}}" Style="{StaticResource TextBlockEntityValueStyle}"/>
                 <TextBlock Text="Rating" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBlock Text="{Binding Rating, StringFormat={}{0:0.0}/5.0}" Style="{StaticResource TextBlockEntityValueStyle}"/>
                 <TextBlock Text="Authors" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
                 <TextBlock Text="{Binding Authors, Converter={StaticResource AuthorsToString}}" Style="{StaticResource TextBlockEntityValueStyle}"/>
-                <TextBlock Text="Collections" Style="{StaticResource TextBlockEntityDesctiptionStyle}"/>
-                <TextBlock Text="{Binding Collections, Converter={StaticResource CollectionsToString}}" Style="{StaticResource TextBlockEntityValueStyle}"/>
             </StackPanel>
         </ScrollViewer>
     </Grid>

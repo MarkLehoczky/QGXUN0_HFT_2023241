@@ -1,5 +1,6 @@
 ﻿using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,6 +12,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
     public partial class BookUpdateWindow : Window
     {
         private Book reference;
+        private IEnumerable<Publisher> publishers;
 
         public BookUpdateWindow()
         {
@@ -31,8 +33,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
         public bool? ShowDialog(ref Book book, IEnumerable<Publisher> publishers)
         {
             reference = book;
-            publisher_box.ItemsSource = publishers;
-            publisher_box.SelectedItem = book.Publisher;
+            this.publishers = publishers;
+            publisher_box.ItemsSource = publishers.Select(t => t.PublisherName);
+            publisher_box.SelectedItem = book.Publisher.PublisherName;
             DataContext = book;
             return base.ShowDialog();
         }
@@ -40,7 +43,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows
 
         private void PublisherSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            reference.PublisherID = (sender as Publisher)?.PublisherID;
+            reference.PublisherID = publishers.FirstOrDefault(t => (publisher_box.SelectedItem as string) == t.PublisherName)?.PublisherID;
         }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)

@@ -20,8 +20,8 @@
         </ScrollViewer>
 
         <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Grid.Row="1">
-            <Button Style="{StaticResource ButtonReturnStyle}" FontSize="12" Content="Cancel" Click="CancelButtonClick" Margin="30 0 30 0"/>
-            <Button Style="{StaticResource ButtonReturnStyle}" FontSize="12" Content="Confirm" Click="ConfirmButtonClick" Margin="30 0 30 0"/>
+            <Button Style="{StaticResource ButtonCancelStyle}" Click="CancelButtonClick"/>
+            <Button Style="{StaticResource ButtonConfirmStyle}" Click="ConfirmButtonClick"/>
         </StackPanel>
     </Grid>
 </Window>

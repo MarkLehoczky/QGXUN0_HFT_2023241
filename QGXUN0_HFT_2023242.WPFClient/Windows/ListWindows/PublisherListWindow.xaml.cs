@@ -1,5 +1,6 @@
 ﻿using QGXUN0_HFT_2023241.Models.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,52 +11,42 @@ namespace QGXUN0_HFT_2023242.WPFClient
     /// </summary>
     public partial class PublisherListWindow : Window
     {
-        private Publisher? selectedItem;
-        private IEnumerable<Publisher> selectedItems;
-
         public PublisherListWindow(IEnumerable<Publisher> items, string windowName = "Publisher list")
         {
             InitializeComponent();
             Title = windowName;
             datagrid.ItemsSource = items;
-            selectedItem = null;
-            selectedItems = new List<Publisher>();
         }
 
 
-        public void Show(out Publisher? selectedItem)
+        public void Show(out Publisher? SelectedItem)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Single;
             Show();
-            selectedItem = this.selectedItem;
+            SelectedItem = datagrid.SelectedItem as Publisher;
         }
-        public void Show(out IEnumerable<Publisher> selectedItems)
+        public void Show(out IEnumerable<Publisher> SelectedItems)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Extended;
             Show();
-            selectedItems = this.selectedItems;
+            SelectedItems = Enumerable.Cast<Publisher>(datagrid.SelectedItems);
         }
 
-        public bool? ShowDialog(out Publisher? selectedItem)
+        public bool? ShowDialog(out Publisher? SelectedItem)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Single;
             ShowDialog();
-            selectedItem = this.selectedItem;
+            SelectedItem = datagrid.SelectedItem as Publisher;
             return DialogResult;
         }
-        public bool? ShowDialog(out IEnumerable<Publisher> selectedItems)
+        public bool? ShowDialog(out IEnumerable<Publisher> SelectedItems)
         {
             datagrid.SelectionMode = DataGridSelectionMode.Extended;
             ShowDialog();
-            selectedItems = this.selectedItems;
+            SelectedItems = Enumerable.Cast<Publisher>(datagrid.SelectedItems);
             return DialogResult;
         }
 
-        private void SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            selectedItem = datagrid.SelectedItem as Publisher;
-            selectedItems = datagrid.SelectedItems as IList<Publisher> ?? new List<Publisher>();
-        }
 
         private void CancelButtonClick(object sender, RoutedEventArgs e)
         {
