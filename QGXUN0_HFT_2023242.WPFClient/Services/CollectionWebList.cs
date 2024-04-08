@@ -26,6 +26,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.Services
             notifyService.AddHandler<Collection>("CollectionDelete", item => { Init(); });
             notifyService.AddHandler<Collection>("CollectionBooksUpdate", item => { Init(); });
 
+            notifyService.AddHandler<Book>("BookUpdate", item => { Init(); });
+            notifyService.AddHandler<Book>("BookDelete", item => { Init(); });
+
             notifyService.Init();
             Init();
         }
