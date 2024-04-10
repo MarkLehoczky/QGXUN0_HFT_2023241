@@ -57,11 +57,11 @@ namespace QGXUN0_HFT_2023241.Endpoint.Controllers.NonCrud
             return temp;
         }
 
-        [HttpPost]
+        [HttpPut]
         public bool ClearBooks([FromBody] Collection collection)
         {
             var temp = logic.RemoveAllBookFromCollection(logic.Read(collection.CollectionID));
-            hub.Clients.All.SendAsync("Books removed from collection", collection);
+            hub.Clients.All.SendAsync("CollectionBooksUpdate", collection);
             return temp;
         }
 
