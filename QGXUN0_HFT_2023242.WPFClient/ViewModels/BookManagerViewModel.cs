@@ -31,9 +31,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
         public BookManagerViewModel() : this(
             (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue
             ? null
-            : Ioc.Default.GetService<IBookWindowLogic>())
+            : Ioc.Default.GetService<IBookManagerLogic>())
         { }
-        public BookManagerViewModel(IBookWindowLogic logic)
+        public BookManagerViewModel(IBookManagerLogic logic)
         {
             Items = new BookWebList();
             Items.CollectionChanged += NotifyChanges;
@@ -71,7 +71,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("Remove authors from the book",
                     () => logic.RemoveAuthors(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && SelectedItem.Authors.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
                 new("View books in a year",
                     () => logic.InYear(),
@@ -83,7 +83,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("View a book by filter",
                     () => logic.Select(),
-                    () => Items != null && Items.Count > 0
+                    () => Items != null && Items.Count > 1
                 ),
                 new("View books by titles",
                     () => logic.TitleContains(),

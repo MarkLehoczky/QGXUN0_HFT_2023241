@@ -4,13 +4,13 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
     public class MainMenuLogic : IMainMenuLogic
     {
-        private readonly AuthorManagerWindow authorManager;
-        private readonly BookManagerWindow bookManager;
-        private readonly CollectionManagerWindow collectionManager;
-        private readonly PublisherManagerWindow publisherManager;
+        private readonly AuthorManager authorManager;
+        private readonly BookManager bookManager;
+        private readonly CollectionManager collectionManager;
+        private readonly PublisherManager publisherManager;
 
 
-        public MainMenuLogic(AuthorManagerWindow authorManager, BookManagerWindow bookManager, CollectionManagerWindow collectionManager, PublisherManagerWindow publisherManager)
+        public MainMenuLogic(AuthorManager authorManager, BookManager bookManager, CollectionManager collectionManager, PublisherManager publisherManager)
         {
             this.authorManager = authorManager;
             this.bookManager = bookManager;
@@ -19,9 +19,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         }
 
 
-        public void OpenAuthorManager() => authorManager.Show();
-        public void OpenBookManager() => bookManager.Show();
-        public void OpenCollectionManager() => collectionManager.Show();
-        public void OpenPublisherManager() => publisherManager.Show();
+        public void OpenAuthorManager() => authorManager.Open();
+        public void OpenBookManager() => bookManager.Open();
+        public void OpenCollectionManager() => collectionManager.Open();
+        public void OpenPublisherManager() => publisherManager.Open();
     }
 }

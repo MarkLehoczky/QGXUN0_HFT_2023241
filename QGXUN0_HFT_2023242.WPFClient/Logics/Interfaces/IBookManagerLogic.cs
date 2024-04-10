@@ -3,7 +3,7 @@ using QGXUN0_HFT_2023242.WPFClient.Services;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics.Interfaces
 {
-    public interface IBookWindowLogic
+    public interface IBookManagerLogic
     {
         void AddAuthors(Book book);
         void BetweenYears();

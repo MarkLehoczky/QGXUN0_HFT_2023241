@@ -31,9 +31,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
         public PublisherManagerViewModel() : this(
             (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue
             ? null
-            : Ioc.Default.GetService<IPublisherWindowLogic>())
+            : Ioc.Default.GetService<IPublisherManagerLogic>())
         { }
-        public PublisherManagerViewModel(IPublisherWindowLogic logic)
+        public PublisherManagerViewModel(IPublisherManagerLogic logic)
         {
             Items = new PublisherWebList();
             Items.CollectionChanged += NotifyChanges;
@@ -75,11 +75,11 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("View the highest rated publisher",
                     () => logic.HighestRated(),
-                    () => Items != null && Items.Count > 0
+                    () => Items != null && Items.Count > 1
                 ),
                 new("View the lowest rated publisher",
                     () => logic.LowestRated(),
-                    () => Items != null && Items.Count > 0
+                    () => Items != null && Items.Count > 1
                 ),
                 new("View the rating of the publisher",
                     () => logic.Rating(SelectedItem),
@@ -87,7 +87,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("View the authors of the publisher",
                     () => logic.Authors(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && SelectedItem.Books.SelectMany(t => t.Authors).Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
                 new("View the permanent authors",
                     () => logic.PermanentAuthors(),
@@ -95,7 +95,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("View the permanent authors of the publisher",
                     () => logic.PermanentAuthorsOfPublisher(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && SelectedItem.Books.SelectMany(t => t.Authors).Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
             };
 

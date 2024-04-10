@@ -8,15 +8,15 @@ using System.Windows;
 
 namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
 {
-    public class MainViewModel : ObservableRecipient
+    public class MainMenuViewModel : ObservableRecipient
     {
         public List<CommandButton> Buttons { get; set; }
 
-        public MainViewModel() : this(
+        public MainMenuViewModel() : this(
             (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue
             ? null
             : Ioc.Default.GetService<IMainMenuLogic>()) { }
-        public MainViewModel(IMainMenuLogic logic)
+        public MainMenuViewModel(IMainMenuLogic logic)
         {
             Buttons = new List<CommandButton>()
             {

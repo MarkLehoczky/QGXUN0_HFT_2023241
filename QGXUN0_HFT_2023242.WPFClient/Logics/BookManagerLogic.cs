@@ -11,13 +11,13 @@ using System.Collections.Generic;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
-    public class BookWindowLogic : IBookWindowLogic
+    public class BookManagerLogic : IBookManagerLogic
     {
         private WebList<Book> webList;
         private IMessenger messenger;
 
 
-        public BookWindowLogic(IMessenger messenger)
+        public BookManagerLogic(IMessenger messenger)
         {
             this.messenger = messenger;
         }

@@ -3,7 +3,7 @@ using QGXUN0_HFT_2023242.WPFClient.Services;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics.Interfaces
 {
-    public interface IAuthorWindowLogic
+    public interface IAuthorManagerLogic
     {
         void Create();
         void Delete(Author author);

@@ -31,9 +31,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
         public AuthorManagerViewModel() : this(
             (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue
         ? null
-            : Ioc.Default.GetService<IAuthorWindowLogic>())
+            : Ioc.Default.GetService<IAuthorManagerLogic>())
         { }
-        public AuthorManagerViewModel(IAuthorWindowLogic logic)
+        public AuthorManagerViewModel(IAuthorManagerLogic logic)
         {
             Items = new AuthorWebList();
             Items.CollectionChanged += NotifyChanges;
@@ -67,11 +67,11 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
             {
                 new("View the highest rated author",
                     () => logic.HighestRated(),
-                    () => Items != null && Items.Count > 0
+                    () => Items != null && Items.Count > 1
                 ),
                 new("View the lowest rated author",
                     () => logic.LowestRated(),
-                    () => Items != null && Items.Count > 0
+                    () => Items != null && Items.Count > 1
                 ),
                 new("View the series of the author",
                     () => logic.Series(SelectedItem),
@@ -79,7 +79,7 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("View a book by filter from the author",
                     () => logic.SelectBook(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && SelectedItem.Books.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
             };
 

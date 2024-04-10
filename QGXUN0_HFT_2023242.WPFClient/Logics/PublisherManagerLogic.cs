@@ -10,13 +10,13 @@ using System.Collections.Generic;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
-    public class PublisherWindowLogic : IPublisherWindowLogic
+    public class PublisherManagerLogic : IPublisherManagerLogic
     {
         private WebList<Publisher> webList;
         private IMessenger messenger;
 
 
-        public PublisherWindowLogic(IMessenger messenger)
+        public PublisherManagerLogic(IMessenger messenger)
         {
             this.messenger = messenger;
         }

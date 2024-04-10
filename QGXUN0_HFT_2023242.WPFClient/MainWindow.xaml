@@ -8,7 +8,7 @@
         Title="BOOK DATABASE MANAGER" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
-        <viewmodel:MainViewModel/>
+        <viewmodel:MainMenuViewModel/>
     </Window.DataContext>
 
     <Grid>
@@ -17,7 +17,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <Label Content="B O O K   M A N A G E R" FontSize="35" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
+        <Label Content="B O O K   D A T A B A S E   M A N A G E R" FontSize="35" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
 
         <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
             <ItemsControl ItemsSource="{Binding Buttons}">

@@ -31,9 +31,9 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
         public CollectionManagerViewModel() : this(
             (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue
         ? null
-            : Ioc.Default.GetService<ICollectionWindowLogic>())
+            : Ioc.Default.GetService<ICollectionManagerLogic>())
         { }
-        public CollectionManagerViewModel(ICollectionWindowLogic logic)
+        public CollectionManagerViewModel(ICollectionManagerLogic logic)
         {
             Items = new CollectionWebList();
             Items.CollectionChanged += NotifyChanges;
@@ -71,11 +71,11 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("Remove books from the collection",
                     () => logic.RemoveBooks(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && selectedItem.Books.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
                 new("Remove all books from the collection",
                     () => logic.ClearBooks(SelectedItem),
-                    () => Items != null && Items.Count > 0 && selectedItem.Books.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
                 new("View series collections",
                     () => logic.Series(),
@@ -95,19 +95,19 @@ namespace QGXUN0_HFT_2023242.WPFClient.ViewModels
                 ),
                 new("View the price of the collection",
                     () => logic.Price(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && selectedItem.Books.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                     ),
                 new("View the rating of the collection",
                     () => logic.Rating(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && selectedItem.Books.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 ),
-                new("View a collection by filter",
+                new("View a collection by filters",
                     () => logic.Select(),
-                    () => Items != null && Items.Count > 0
+                    () => Items != null && Items.Count > 1
                 ),
                 new("View a book by filter from the collection",
                     () => logic.SelectBook(SelectedItem),
-                    () => Items != null && Items.Count > 0 && SelectedItem != null && selectedItem.Books.Any()
+                    () => Items != null && Items.Count > 0 && SelectedItem != null
                 )
             };
 

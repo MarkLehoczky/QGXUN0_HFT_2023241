@@ -18,15 +18,15 @@ namespace QGXUN0_HFT_2023242.WPFClient
 
                 .AddSingleton<IMainMenuLogic, MainMenuLogic>()
 
-                .AddSingleton<IAuthorWindowLogic, AuthorWindowLogic>()
-                .AddSingleton<IBookWindowLogic, BookWindowLogic>()
-                .AddSingleton<ICollectionWindowLogic, CollectionWindowLogic>()
-                .AddSingleton<IPublisherWindowLogic, PublisherWindowLogic>()
+                .AddSingleton<IAuthorManagerLogic, AuthorManagerLogic>()
+                .AddSingleton<IBookManagerLogic, BookManagerLogic>()
+                .AddSingleton<ICollectionManagerLogic, CollectionManagerLogic>()
+                .AddSingleton<IPublisherManagerLogic, PublisherManagerLogic>()
 
-                .AddSingleton<AuthorManagerWindow>()
-                .AddSingleton<BookManagerWindow>()
-                .AddSingleton<CollectionManagerWindow>()
-                .AddSingleton<PublisherManagerWindow>()
+                .AddSingleton<AuthorManager>()
+                .AddSingleton<BookManager>()
+                .AddSingleton<CollectionManager>()
+                .AddSingleton<PublisherManager>()
 
                 .AddSingleton<IMessenger>(WeakReferenceMessenger.Default)
                 
