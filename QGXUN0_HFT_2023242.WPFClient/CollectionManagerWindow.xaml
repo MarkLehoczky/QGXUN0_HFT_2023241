@@ -26,10 +26,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" SelectionMode="Single" SelectionUnit="FullRow" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray" Grid.Column="0">
+            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Style="{StaticResource DataGridStyle}" Grid.Column="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding CollectionName}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
-                    <DataGridTextColumn Header="Books" Binding="{Binding Books, Converter={StaticResource BooksToString}}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding CollectionName}" ElementStyle="{StaticResource DataGridCellMainStyle}" Width="1*"/>
+                    <DataGridTextColumn Header="Books" Binding="{Binding Books, Converter={StaticResource BooksToString}}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
                     <DataGridTextColumn Header="Is it series?" Binding="{Binding IsSeries}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
                 </DataGrid.Columns>
             </DataGrid>

@@ -26,10 +26,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" SelectionMode="Single" SelectionUnit="FullRow" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray" Grid.Column="0">
+            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Style="{StaticResource DataGridStyle}" Grid.Column="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Authors" Binding="{Binding Authors, Converter={StaticResource AuthorsToString}}" ElementStyle="{StaticResource DataGridCellMultiLineStyle}" Width="Auto"/>
-                    <DataGridTextColumn Header="Title" Binding="{Binding Title}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
+                    <DataGridTextColumn Header="Authors" Binding="{Binding Authors, Converter={StaticResource AuthorsToString}}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
+                    <DataGridTextColumn Header="Title" Binding="{Binding Title}" ElementStyle="{StaticResource DataGridCellMainStyle}" Width="1*"/>
                     <DataGridTextColumn Header="Year" Binding="{Binding Year}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
                     <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher.PublisherName}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>
                     <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat={}${0:#0.00}}" ElementStyle="{StaticResource DataGridCellCenterOrientedStyle}" Width="Auto"/>

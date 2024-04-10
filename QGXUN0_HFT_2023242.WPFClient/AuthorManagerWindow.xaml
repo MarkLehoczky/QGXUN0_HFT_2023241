@@ -26,9 +26,9 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" ColumnHeaderStyle="{StaticResource DataGridColumnHeaderStyle}" SelectionMode="Single" SelectionUnit="FullRow" AlternatingRowBackground="#F7EEDD" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserResizeRows="True" HorizontalGridLinesBrush="Gray" GridLinesVisibility="All" IsManipulationEnabled="False" IsReadOnly="True" IsTextSearchEnabled="True" VerticalGridLinesBrush="LightGray" Grid.Column="0">
+            <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Style="{StaticResource DataGridStyle}" Grid.Column="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding AuthorName}" ElementStyle="{StaticResource DataGridCellLeftOrientedStyle}" FontWeight="Bold" Width="1*"/>
+                    <DataGridTextColumn Header="Name" Binding="{Binding AuthorName}" ElementStyle="{StaticResource DataGridCellMainStyle}" Width="1*"/>
                 </DataGrid.Columns>
             </DataGrid>
 

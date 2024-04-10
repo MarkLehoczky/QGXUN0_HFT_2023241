@@ -197,28 +197,40 @@
 
         <!--#region DataGrid Styles-->
 
-        <Style TargetType="DataGridColumnHeader" x:Key="DataGridColumnHeaderStyle">
-            <Setter Property="FontFamily" Value="Stencil"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+        <Style TargetType="DataGrid" x:Key="DataGridStyle">
+            <Setter Property="ColumnHeaderStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="FontFamily" Value="Stencil"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
 
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="10 5 10 5"/>
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="DataGridCellMultiLineStyle">
-            <Setter Property="TextWrapping" Value="Wrap"/>
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Cascadia Mono"/>
-            <Setter Property="FontSize" Value="14"/>
-
-            <Setter Property="HorizontalAlignment" Value="Stretch"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="10 5 10 5"/>
-        </Style>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Stretch"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="10 5 10 5"/>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+                                   
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="SelectionUnit" Value="FullRow"/>
+            <Setter Property="AlternatingRowBackground" Value="#F7EEDD"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="CanUserReorderColumns" Value="True"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserSortColumns" Value="True"/>
+            <Setter Property="CanUserResizeRows" Value="True"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="Gray"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="IsManipulationEnabled" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="IsTextSearchEnabled" Value="True"/>
+            <Setter Property="VerticalGridLinesBrush" Value="LightGray"/>
+        </Style>        
 
         <Style TargetType="TextBlock" x:Key="DataGridCellLeftOrientedStyle">
             <Setter Property="TextWrapping" Value="Wrap"/>
@@ -226,22 +238,19 @@
             <Setter Property="FontFamily" Value="Cascadia Mono"/>
             <Setter Property="FontSize" Value="14"/>
 
-            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Padding" Value="10 5 10 5"/>
         </Style>
 
-        <Style TargetType="TextBlock" x:Key="DataGridCellCenterOrientedStyle">
-            <Setter Property="TextWrapping" Value="Wrap"/>
+        <Style TargetType="TextBlock" x:Key="DataGridCellCenterOrientedStyle" BasedOn="{StaticResource DataGridCellLeftOrientedStyle}">
             <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="FontFamily" Value="Cascadia Mono"/>
-            <Setter Property="FontSize" Value="14"/>
-
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="10 5 10 5"/>
         </Style>
 
+        <Style TargetType="TextBlock" x:Key="DataGridCellMainStyle" BasedOn="{StaticResource DataGridCellLeftOrientedStyle}">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        
         <!--#endregion-->
 
     </Application.Resources>
