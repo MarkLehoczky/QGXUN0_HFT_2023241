@@ -5,89 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodel="clr-namespace:QGXUN0_HFT_2023242.WPFClient.ViewModels"
         mc:Ignorable="d"
-        Title="Book Manager" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
-    
+        Title="BOOK DATABASE MANAGER" Height="720" Width="1280" WindowStartupLocation="CenterScreen">
+
     <Window.DataContext>
-        <!-- View Model -->
-        <viewmodel:MenuViewModel/>
+        <viewmodel:MainViewModel/>
     </Window.DataContext>
-    
+
     <Grid>
-        <!-- Determines which menu is displayed -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="{Binding ActiveMenu, Converter={StaticResource MainMenuHeight}}"/>
-            <RowDefinition Height="{Binding ActiveMenu, Converter={StaticResource SubMenuHeight}}"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        
-        <!-- Main menu -->
-        <Grid x:Name="main_menu" Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
 
-            <Label Content="B O O K   M A N A G E R" FontSize="35" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
-            
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
-                <ItemsControl ItemsSource="{Binding MainMenuActions}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonCustomDesignStyle}" FontSize="25"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
-        </Grid>
+        <Label Content="B O O K   M A N A G E R" FontSize="35" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
 
-        <!-- Sub menu -->
-        <Grid x:Name="sub_menu" Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <Label Content="{Binding SubMenuTitle}" FontSize="30" FontFamily="Stencil" FontWeight="Bold" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="0" Margin="20" Grid.Row="0"/>
-
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
-                <StackPanel Orientation="Vertical">
-                    <ItemsControl ItemsSource="{Binding CrudActions}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonCustomDesignStyle}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    
-                    <Separator Margin="10"/>
-                    
-                    <ItemsControl ItemsSource="{Binding NonCrudActions}">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center"/>
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonCustomDesignStyle}"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </StackPanel>
-            </ScrollViewer>
-
-            <Button Command="{Binding ReturnCommand}" Style="{StaticResource ButtonReturnStyle}" Grid.Row="2"/>
-        </Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <ItemsControl ItemsSource="{Binding Buttons}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}" Command="{Binding Command}" Style="{StaticResource ButtonMainMenuStyle}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Window>

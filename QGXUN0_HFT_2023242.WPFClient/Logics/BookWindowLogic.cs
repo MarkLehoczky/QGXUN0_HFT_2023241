@@ -1,109 +1,127 @@
-﻿using QGXUN0_HFT_2023241.Models.Extensions;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using QGXUN0_HFT_2023241.Models.Extensions;
 using QGXUN0_HFT_2023241.Models.Models;
+using QGXUN0_HFT_2023242.WPFClient.Logics.Interfaces;
 using QGXUN0_HFT_2023242.WPFClient.Services;
 using QGXUN0_HFT_2023242.WPFClient.Windows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
-    public class BookWindowLogic
+    public class BookWindowLogic : IBookWindowLogic
     {
-        private BookWebList bookList;
+        private WebList<Book> webList;
+        private IMessenger messenger;
 
-        public BookWindowLogic()
+
+        public BookWindowLogic(IMessenger messenger)
         {
-            bookList = new BookWebList();
+            this.messenger = messenger;
         }
 
 
         public void Create()
         {
             var book = new Book();
-            if (new BookUpdateWindow().ShowDialog(ref book, bookList.GetList<Publisher>("Publisher")) == true)
-                bookList?.Create(book).GetAwaiter();
-        }
-
-        public void Read()
-        {
-            if (new NumberInputWindow().ShowDialog(out int? id) == true && id != null)
-                new BookWindow(bookList.Read(id.Value)).ShowDialog();
-        }
-
-        public void Update()
-        {
-            if (new BookListWindow(bookList.Items, "Select book to update").ShowDialog(out Book? book) == true && book != null)
+            if (new BookUpdateWindow().ShowDialog(ref book, webList.GetList<Publisher>("Publisher")) == true)
             {
-                new BookUpdateWindow().ShowDialog(ref book, bookList.GetList<Publisher>("Publisher"));
-                bookList?.Update(book);
+                webList.Add(book);
+                messenger.Send("Book added", "BookModification");
             }
         }
 
-        public void Delete()
+        public void Read(Book book)
         {
-            if (new BookListWindow(bookList.Items, "Select book to delete").ShowDialog(out Book? book) == true && book != null)
+            new BookWindow(webList.Get(book.BookID)).ShowDialog();
+        }
+
+        public void Update(Book book)
+        {
+            if (new BookUpdateWindow().ShowDialog(ref book, webList.GetList<Publisher>("Publisher")) == true)
             {
-                bookList?.Delete(book?.BookID ?? int.MinValue);
+                webList.Replace(book);
+                messenger.Send("Book replaced", "BookModification");
             }
+        }
+
+        public void Delete(Book book)
+        {
+            webList.Remove(book.BookID);
+            messenger.Send("Book removed", "BookModification");
         }
 
         public void ReadAll()
         {
-            new BookListWindow(bookList.Items, "Books").ShowDialog();
+            new BookListWindow(webList).ShowDialog();
         }
 
 
-        public void AddAuthors()
+        public void Setup(WebList<Book> webList)
         {
-            if (new BookListWindow(bookList.Items, "Select a book to add authors").ShowDialog(out Book? book) == true && book != null
-                && new AuthorListWindow(bookList.GetList<Author>("Author"), "Select authors to add to the book").ShowDialog(out IEnumerable<Author> authors) == true)
-                bookList.Put<bool>("Book/AddAuthors/enum", new Tuple<Book, IEnumerable<Author>>(book, authors));
+            this.webList = webList;
         }
 
-        public void RemoveAuthors()
+
+        public void AddAuthors(Book book)
         {
-            if (new BookListWindow(bookList.Items, "Select a book to remove authors").ShowDialog(out Book? book) == true && book != null
-                && new AuthorListWindow(book.Authors, "Select authors to remove from the book").ShowDialog(out IEnumerable<Author> authors) == true)
-                bookList.Put<bool>("Book/RemoveAuthors/enum", new Tuple<Book, IEnumerable<Author>>(book, authors));
+            if (new AuthorListWindow(webList.GetList<Author>("Author"), "Select authors to add to the book").ShowDialog(out IEnumerable<Author> authors) == true)
+            {
+                webList.Put<bool>("Book/AddAuthors/enum", new Tuple<Book, IEnumerable<Author>>(book, authors));
+                messenger.Send("Authors added to book", "BookModification");
+            }
+        }
+
+        public void RemoveAuthors(Book book)
+        {
+            if (new AuthorListWindow(book.Authors, "Select authors to remove from the book").ShowDialog(out IEnumerable<Author> authors) == true)
+            {
+                webList.Put<bool>("Book/RemoveAuthors/enum", new Tuple<Book, IEnumerable<Author>>(book, authors));
+                messenger.Send("Authors removed from book", "BookModification");
+            }
         }
 
         public void InYear()
         {
-            if (new NumberInputWindow("Enter the year").ShowDialog(out int? year) == true && year != null)
-                new BookListWindow(bookList.Get<IEnumerable<Book>>($"Book/InYear?year={year}"), $"Books in year {year}").ShowDialog();
+            if (new NumberInputWindow("Enter the year").ShowDialog(out int? year) == true
+                && year != null)
+            {
+                new BookListWindow(webList.Get<IEnumerable<Book>>($"Book/InYear?year={year}"), $"Books in year {year}").ShowDialog();
+            }
         }
 
         public void BetweenYears()
         {
-            if (new NumberInputWindow("Enter the minimum year").ShowDialog(out int? minYear) == true && minYear != null
-                && new NumberInputWindow("Enter the maximum year").ShowDialog(out int? maxYear) == true && maxYear != null)
-                new BookListWindow(bookList.Get<IEnumerable<Book>>($"Book/BetweenYears?min={minYear}&max={maxYear}"), $"Books between year {minYear} & {maxYear}").ShowDialog();
+            if (new NumberInputWindow("Enter the minimum year").ShowDialog(out int? minYear) == true
+                && new NumberInputWindow("Enter the maximum year").ShowDialog(out int? maxYear) == true
+                && minYear != null
+                && maxYear != null)
+            {
+                new BookListWindow(webList.Get<IEnumerable<Book>>($"Book/BetweenYears?min={minYear}&max={maxYear}"), $"Books between year {minYear} & {maxYear}").ShowDialog();
+            }
         }
 
         public void TitleContains()
         {
             if (new TitleInputWindow().ShowDialog(out IEnumerable<string> titles) == true)
-                foreach (var item in bookList.Post<IDictionary<string, IEnumerable<Book>>>("Book/TitleContains/enum", titles))
+            {
+                foreach (var item in webList.Post<IDictionary<string, IEnumerable<Book>>>("Book/TitleContains/enum", titles))
+                {
                     new BookListWindow(item.Value, $"{item.Key} titles").ShowDialog();
+                }
+            }
         }
 
         public void Select()
         {
-            if (new ItemSelectorWindow(new List<object>(){
-                BookFilter.MostExpensive,
-                BookFilter.LeastExpensive,
-                BookFilter.HighestRated,
-                BookFilter.LowestRated,
-            }).ShowDialog(out object? filter) == true && filter != null && filter is BookFilter)
-                new BookWindow(bookList.Post<Book>("Book/Select",(BookFilter)filter)).ShowDialog();
+            if (new ItemSelectorWindow(new List<object>() { BookFilter.MostExpensive, BookFilter.LeastExpensive, BookFilter.HighestRated, BookFilter.LowestRated }).ShowDialog(out object? filter) == true
+            && filter != null
+            && filter is BookFilter bookFilter)
+            {
+                new BookWindow(webList.Post<Book>("Book/Select", bookFilter)).ShowDialog();
+            }
         }
-
-
-        public bool DefaultCondition() => bookList != null;
-
-        public bool NotEmptyCondition() => bookList != null && bookList.Count > 0;
     }
 }

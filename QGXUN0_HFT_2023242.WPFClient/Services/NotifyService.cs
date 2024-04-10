@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Services
 {
-    class NotifyService
+    public class NotifyService
     {
         private HubConnection connection;
 
-        public NotifyService(string url)
+        public NotifyService(string url, string hub)
         {
-            connection = new HubConnectionBuilder().WithUrl(url).Build();
+            connection = new HubConnectionBuilder().WithUrl(url + hub).Build();
 
-            connection.Closed += async (error) =>
+            connection.Closed += async _ =>
             {
                 await Task.Delay(1000);
                 await connection.StartAsync();

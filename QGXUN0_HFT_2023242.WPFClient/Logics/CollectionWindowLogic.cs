@@ -1,22 +1,25 @@
-﻿using QGXUN0_HFT_2023241.Models.Extensions;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using QGXUN0_HFT_2023241.Models.Extensions;
 using QGXUN0_HFT_2023241.Models.Models;
+using QGXUN0_HFT_2023242.WPFClient.Logics.Interfaces;
 using QGXUN0_HFT_2023242.WPFClient.Services;
 using QGXUN0_HFT_2023242.WPFClient.Windows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityWindows;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
-    public class CollectionWindowLogic
+    public class CollectionWindowLogic : ICollectionWindowLogic
     {
-        private CollectionWebList collectionList;
+        private WebList<Collection> webList;
+        private IMessenger messenger;
 
-        public CollectionWindowLogic()
+
+        public CollectionWindowLogic(IMessenger messenger)
         {
-            collectionList = new CollectionWebList();
+            this.messenger = messenger;
         }
 
 
@@ -24,125 +27,142 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         {
             var collection = new Collection();
             if (new CollectionUpdateWindow().ShowDialog(ref collection) == true)
-                collectionList?.Create(collection).GetAwaiter();
-        }
-
-        public void Read()
-        {
-            if (new NumberInputWindow().ShowDialog(out int? id) == true && id != null)
-                new CollectionWindow(collectionList.Read(id.Value)).ShowDialog();
-        }
-
-        public void Update()
-        {
-            if (new CollectionListWindow(collectionList.Items, "Select collection to update").ShowDialog(out Collection? collection) == true && collection != null)
             {
-                new CollectionUpdateWindow().ShowDialog(ref collection);
-                collectionList?.Update(collection);
+                webList.Add(collection);
+                messenger.Send("Collection added", "CollectionModification");
             }
         }
 
-        public void Delete()
+        public void Read(Collection collection)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select collection to delete").ShowDialog(out Collection? collection) == true && collection != null)
+            new CollectionWindow(webList.Get(collection.CollectionID)).ShowDialog();
+        }
+
+        public void Update(Collection collection)
+        {
+            if (new CollectionUpdateWindow().ShowDialog(ref collection) == true)
             {
-                collectionList?.Delete(collection?.CollectionID ?? int.MinValue);
+                webList.Replace(collection);
+                messenger.Send("Collection replaced", "CollectionModification");
             }
+        }
+
+        public void Delete(Collection collection)
+        {
+            webList.Remove(collection.CollectionID);
+            messenger.Send("Collection removed", "CollectionModification");
         }
 
         public void ReadAll()
         {
-            new CollectionListWindow(collectionList.Items, "Collections").ShowDialog();
+            new CollectionListWindow(webList).ShowDialog();
         }
 
 
-        public void AddBooks()
+        public void Setup(WebList<Collection> webList)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select a collection to add books").ShowDialog(out Collection? collection) == true && collection != null
-                && new BookListWindow(collectionList.GetList<Book>("Book"), "Select books to add to the collection").ShowDialog(out IEnumerable<Book> books) == true)
-                collectionList.Put<bool>("Collection/AddBooks/enum", new Tuple<Collection, IEnumerable<Book>>(collection, books));
+            this.webList = webList;
         }
 
-        public void RemoveBooks()
+
+        public void AddBooks(Collection collection)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select a collection to remove books").ShowDialog(out Collection? collection) == true && collection != null
-                && new BookListWindow(collection.Books, "Select books to remove from the collection").ShowDialog(out IEnumerable<Book> books) == true)
-                collectionList.Put<bool>("Collection/RemoveBooks/enum", new Tuple<Collection, IEnumerable<Book>>(collection, books));
+            if (new BookListWindow(webList.GetList<Book>("Book"), "Select books to add to the collection").ShowDialog(out IEnumerable<Book> books) == true)
+            {
+                webList.Put<bool>("Collection/AddBooks/enum", new Tuple<Collection, IEnumerable<Book>>(collection, books));
+                messenger.Send("Books added to collection", "CollectionModification");
+            }
         }
 
-        public void ClearBooks()
+        public void RemoveBooks(Collection collection)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select a collection to remove every book").ShowDialog(out Collection? collection) == true && collection != null)
-                collectionList.Put<bool>("Collection/ClearBooks", collection);
+            if (new BookListWindow(collection.Books, "Select books to remove from the collection").ShowDialog(out IEnumerable<Book> books) == true)
+            {
+                webList.Put<bool>("Collection/RemoveBooks/enum", new Tuple<Collection, IEnumerable<Book>>(collection, books));
+                messenger.Send("Books removed from collection", "CollectionModification");
+            }
+        }
+
+        public void ClearBooks(Collection collection)
+        {
+            webList.Put<bool>("Collection/ClearBooks", collection);
+            messenger.Send("Books removed from collection", "CollectionModification");
         }
 
         public void Series()
         {
-            new CollectionListWindow(collectionList.GetList<Collection>("Collection/Series"), "Series collections").ShowDialog();
+            new CollectionListWindow(webList.GetList<Collection>("Collection/Series"), "Series collections").ShowDialog();
         }
 
         public void NonSeries()
         {
-            new CollectionListWindow(collectionList.GetList<Collection>("Collection/NonSeries"), "Not series collections").ShowDialog();
+            new CollectionListWindow(webList.GetList<Collection>("Collection/NonSeries"), "Not series collections").ShowDialog();
         }
 
         public void InYear()
         {
-            if (new NumberInputWindow("Enter the year").ShowDialog(out int? year) == true && year != null)
-                new CollectionListWindow(collectionList.Get<IEnumerable<Collection>>($"Collection/InYear?year={year}"), $"Collections in year {year}").ShowDialog();
+            if (new NumberInputWindow("Enter the year").ShowDialog(out int? year) == true
+                && year != null)
+            {
+                new CollectionListWindow(webList.Get<IEnumerable<Collection>>($"Collection/InYear?year={year}"), $"Collections in year {year}").ShowDialog();
+            }
         }
 
         public void BetweenYears()
         {
-            if (new NumberInputWindow("Enter the minimum year").ShowDialog(out int? minYear) == true && minYear != null
-                && new NumberInputWindow("Enter the maximum year").ShowDialog(out int? maxYear) == true && maxYear != null)
-                new CollectionListWindow(collectionList.Get<IEnumerable<Collection>>($"Collection/BetweenYears?min={minYear}&max={maxYear}"), $"Collections between year {minYear} & {maxYear}").ShowDialog();
+            if (new NumberInputWindow("Enter the minimum year").ShowDialog(out int? minYear) == true
+                && new NumberInputWindow("Enter the maximum year").ShowDialog(out int? maxYear) == true
+                && minYear != null
+                && maxYear != null)
+            {
+                new CollectionListWindow(webList.Get<IEnumerable<Collection>>($"Collection/BetweenYears?min={minYear}&max={maxYear}"), $"Collections between year {minYear} & {maxYear}").ShowDialog();
+            }
         }
 
-        public void Price()
+        public void Price(Collection collection)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select a collection to get it's price").ShowDialog(out Collection? collection) == true && collection != null)
-                new SimpleOutput($"Price of the collection '{collection.CollectionName}'", collectionList.Post<double?>("Collection/Price", collection)).ShowDialog();
+            new SimpleOutput($"Price of the collection '{collection.CollectionName}'", webList.Post<double?>("Collection/Price", collection)).ShowDialog();
         }
 
-        public void Rating()
+        public void Rating(Collection collection)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select a collection to get it's average rating").ShowDialog(out Collection? collection) == true && collection != null)
-                new SimpleOutput($"Rating of the collection '{collection.CollectionName}'", collectionList.Post<double?>("Collection/Rating", collection)).ShowDialog();
+            new SimpleOutput($"Rating of the collection '{collection.CollectionName}'", webList.Post<double?>("Collection/Rating", collection)).ShowDialog();
         }
 
         public void Select()
         {
-            if (new ItemSelectorWindow(new List<object>(){
-                BookFilter.MostExpensive,
-                BookFilter.LeastExpensive,
-                BookFilter.HighestRated,
-                BookFilter.LowestRated,
-            }).ShowDialog(out object? bookFilter) == true && bookFilter != null && bookFilter is BookFilter
-            && new ItemSelectorWindow(new List<object>()
+            if (new ItemSelectorWindow(new List<object>() {
+                    BookFilter.MostExpensive,
+                    BookFilter.LeastExpensive,
+                    BookFilter.HighestRated,
+                    BookFilter.LowestRated })
+                .ShowDialog(out object? bookfilter) == true
+                && bookfilter != null
+                && bookfilter is BookFilter bookFilter
+                && new ItemSelectorWindow(new List<object>() {
+                    CollectionFilter.Collection,
+                    CollectionFilter.Series,
+                    CollectionFilter.NonSeries })
+                .ShowDialog(out object? collectionfilter) == true
+                && collectionfilter is CollectionFilter collectionFilter)
             {
-                CollectionFilter.Collection,
-                CollectionFilter.Series,
-                CollectionFilter.NonSeries,
-            }).ShowDialog(out object? collectionFilter) == true && collectionFilter is CollectionFilter)
-                new CollectionWindow(collectionList.Post<KeyValuePair<double?, Collection>>("Collection/Select", new Tuple<BookFilter, CollectionFilter>((BookFilter)bookFilter, (CollectionFilter)collectionFilter)).Value).ShowDialog();
+                new CollectionWindow(webList.Post<KeyValuePair<double?, Collection>>("Collection/Select", new Tuple<BookFilter, CollectionFilter>(bookFilter, collectionFilter)).Value).ShowDialog();
+            }
         }
 
-        public void SelectBook()
+        public void SelectBook(Collection collection)
         {
-            if (new CollectionListWindow(collectionList.Items, "Select a collection to filtering").ShowDialog(out Collection? collection) == true && collection != null
-                && new ItemSelectorWindow(new List<object>(){
-                BookFilter.MostExpensive,
-                BookFilter.LeastExpensive,
-                BookFilter.HighestRated,
-                BookFilter.LowestRated,
-            }).ShowDialog(out object? filter) == true && filter != null && filter is BookFilter)
-                new BookWindow(collectionList.Post<Book>("Collection/SelectBook", new Tuple<Collection, BookFilter>(collection, (BookFilter)filter))).ShowDialog();
+            if (new ItemSelectorWindow(new List<object>() {
+                    BookFilter.MostExpensive,
+                    BookFilter.LeastExpensive,
+                    BookFilter.HighestRated,
+                    BookFilter.LowestRated })
+                .ShowDialog(out object? filter) == true
+                && filter != null
+                && filter is BookFilter bookFilter)
+            {
+                new BookWindow(webList.Post<Book>("Collection/SelectBook", new Tuple<Collection, BookFilter>(collection, bookFilter))).ShowDialog();
+            }
         }
-
-
-        public bool DefaultCondition() => collectionList != null;
-
-        public bool NotEmptyCondition() => collectionList != null && collectionList.Count > 0;
     }
 }

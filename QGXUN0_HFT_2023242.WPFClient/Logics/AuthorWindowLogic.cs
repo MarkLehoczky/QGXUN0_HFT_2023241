@@ -1,5 +1,7 @@
-﻿using QGXUN0_HFT_2023241.Models.Extensions;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using QGXUN0_HFT_2023241.Models.Extensions;
 using QGXUN0_HFT_2023241.Models.Models;
+using QGXUN0_HFT_2023242.WPFClient.Logics.Interfaces;
 using QGXUN0_HFT_2023242.WPFClient.Services;
 using QGXUN0_HFT_2023242.WPFClient.Windows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows;
@@ -9,13 +11,15 @@ using System.Collections.Generic;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
-    public class AuthorWindowLogic
+    public class AuthorWindowLogic : IAuthorWindowLogic
     {
-        private AuthorWebList authorList;
+        private WebList<Author> webList;
+        private IMessenger messenger;
 
-        public AuthorWindowLogic()
+
+        public AuthorWindowLogic(IMessenger messenger)
         {
-            authorList = new AuthorWebList();
+            this.messenger = messenger;
         }
 
 
@@ -23,69 +27,72 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         {
             var author = new Author();
             if (new AuthorUpdateWindow().ShowDialog(ref author) == true)
-                authorList?.Create(author).GetAwaiter();
-        }
-
-        public void Read()
-        {
-            if (new NumberInputWindow().ShowDialog(out int? id) == true && id != null)
-                new AuthorWindow(authorList.Read(id.Value)).ShowDialog();
-        }
-
-        public void Update()
-        {
-            if (new AuthorListWindow(authorList.Items, "Select author to update").ShowDialog(out Author? author) == true && author != null)
             {
-                new AuthorUpdateWindow().ShowDialog(ref author);
-                authorList?.Update(author);
+                webList.Add(author);
+                messenger.Send("Author added", "AuthorModification");
             }
         }
 
-        public void Delete()
+        public void Read(Author author)
         {
-            if (new AuthorListWindow(authorList.Items, "Select author to delete").ShowDialog(out Author? author) == true && author != null)
+            new AuthorWindow(webList.Get(author.AuthorID)).ShowDialog();
+        }
+
+        public void Update(Author author)
+        {
+            if (new AuthorUpdateWindow().ShowDialog(ref author) == true)
             {
-                authorList?.Delete(author?.AuthorID ?? int.MinValue);
+                webList.Replace(author);
+                messenger.Send("Author replaced", "AuthorModification");
             }
+        }
+
+        public void Delete(Author author)
+        {
+            webList.Remove(author.AuthorID);
+            messenger.Send("Author removed", "AuthorModification");
         }
 
         public void ReadAll()
         {
-            new AuthorListWindow(authorList.Items, "Authors").ShowDialog();
+            new AuthorListWindow(webList).ShowDialog();
+        }
+
+
+        public void Setup(WebList<Author> webList)
+        {
+            this.webList = webList;
         }
 
 
         public void HighestRated()
         {
-            new AuthorWindow(authorList.Get<KeyValuePair<double?, Author>>("Author/HighestRated").Value).ShowDialog();
+            new AuthorWindow(webList.Get<KeyValuePair<double?, Author>>("Author/HighestRated").Value).ShowDialog();
         }
 
         public void LowestRated()
         {
-            new AuthorWindow(authorList.Get<KeyValuePair<double?, Author>>("Author/LowestRated").Value).ShowDialog();
+            new AuthorWindow(webList.Get<KeyValuePair<double?, Author>>("Author/LowestRated").Value).ShowDialog();
         }
 
-        public void Series()
+        public void Series(Author author)
         {
-            if (new AuthorListWindow(authorList.Items, "Select an author to list their series").ShowDialog(out Author? author) == true && author != null)
-                new CollectionListWindow(authorList.Post<IEnumerable<Collection>>("Author/Series", author), $"Series of {author.AuthorName}").ShowDialog();
+            new CollectionListWindow(webList.Post<IEnumerable<Collection>>("Author/Series", author), $"Series of {author.AuthorName}").ShowDialog();
         }
 
-        public void SelectBook()
+        public void SelectBook(Author author)
         {
-            if (new AuthorListWindow(authorList.Items, "Select an author").ShowDialog(out Author? author) == true && author != null
-                && new ItemSelectorWindow(new List<object>(){
-                BookFilter.MostExpensive,
-                BookFilter.LeastExpensive,
-                BookFilter.HighestRated,
-                BookFilter.LowestRated,
-            }).ShowDialog(out object? filter) == true && filter != null && filter is BookFilter)
-                new BookWindow(authorList.Post<Book>("Author/SelectBook", new Tuple<Author, BookFilter>(author, (BookFilter)filter))).ShowDialog();
+            if (new ItemSelectorWindow(new List<object>() {
+                    BookFilter.MostExpensive,
+                    BookFilter.LeastExpensive,
+                    BookFilter.HighestRated,
+                    BookFilter.LowestRated })
+                .ShowDialog(out object? filter) == true
+                && filter != null
+                && filter is BookFilter bookFilter)
+            {
+                new BookWindow(webList.Post<Book>("Author/SelectBook", new Tuple<Author, BookFilter>(author, bookFilter))).ShowDialog();
+            }
         }
-
-
-        public bool DefaultCondition() => authorList != null;
-
-        public bool NotEmptyCondition() => authorList != null && authorList.Count > 0;
     }
 }

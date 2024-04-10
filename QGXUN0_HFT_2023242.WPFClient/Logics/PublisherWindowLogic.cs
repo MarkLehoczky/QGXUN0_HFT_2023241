@@ -1,4 +1,6 @@
-﻿using QGXUN0_HFT_2023241.Models.Models;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using QGXUN0_HFT_2023241.Models.Models;
+using QGXUN0_HFT_2023242.WPFClient.Logics.Interfaces;
 using QGXUN0_HFT_2023242.WPFClient.Services;
 using QGXUN0_HFT_2023242.WPFClient.Windows;
 using QGXUN0_HFT_2023242.WPFClient.Windows.EntityUpdateWindows;
@@ -8,13 +10,15 @@ using System.Collections.Generic;
 
 namespace QGXUN0_HFT_2023242.WPFClient.Logics
 {
-    public class PublisherWindowLogic
+    public class PublisherWindowLogic : IPublisherWindowLogic
     {
-        private PublisherWebList publisherList;
+        private WebList<Publisher> webList;
+        private IMessenger messenger;
 
-        public PublisherWindowLogic()
+
+        public PublisherWindowLogic(IMessenger messenger)
         {
-            publisherList = new PublisherWebList();
+            this.messenger = messenger;
         }
 
 
@@ -22,84 +26,86 @@ namespace QGXUN0_HFT_2023242.WPFClient.Logics
         {
             var publisher = new Publisher();
             if (new PublisherUpdateWindow().ShowDialog(ref publisher) == true)
-                publisherList?.Create(publisher).GetAwaiter();
-        }
-
-        public void Read()
-        {
-            if (new NumberInputWindow().ShowDialog(out int? id) == true && id != null)
-                new PublisherWindow(publisherList.Read(id.Value)).ShowDialog();
-        }
-
-        public void Update()
-        {
-            if (new PublisherListWindow(publisherList.Items, "Select publisher to update").ShowDialog(out Publisher? publisher) == true && publisher != null)
             {
-                new PublisherUpdateWindow().ShowDialog(ref publisher);
-                publisherList?.Update(publisher);
+                webList.Add(publisher);
+                messenger.Send("Publisher added", "PublisherModification");
             }
         }
 
-        public void Delete()
+        public void Read(Publisher publisher)
         {
-            if (new PublisherListWindow(publisherList.Items, "Select publisher to delete").ShowDialog(out Publisher? publisher) == true && publisher != null)
+            if (new NumberInputWindow("Enter the publisher ID").ShowDialog(out int? id) == true
+                && id != null)
             {
-                publisherList?.Delete(publisher?.PublisherID ?? int.MinValue);
+                new PublisherWindow(webList.Get(id.Value)).ShowDialog();
             }
+        }
+
+        public void Update(Publisher publisher)
+        {
+            if (new PublisherUpdateWindow().ShowDialog(ref publisher) == true)
+            {
+                webList.Replace(publisher);
+                messenger.Send("Publisher replaced", "PublisherModification");
+            }
+        }
+
+        public void Delete(Publisher publisher)
+        {
+            webList.Remove(publisher.PublisherID);
+            messenger.Send("Publisher removed", "PublisherModification");
         }
 
         public void ReadAll()
         {
-            new PublisherListWindow(publisherList.Items, "Publishers").ShowDialog();
+            new PublisherListWindow(webList).ShowDialog();
+        }
+
+
+        public void Setup(WebList<Publisher> webList)
+        {
+            this.webList = webList;
         }
 
 
         public void Series()
         {
-            new PublisherListWindow(publisherList.GetList<Publisher>("Publisher/Series"), "Series publishers").ShowDialog();
+            new PublisherListWindow(webList.GetList<Publisher>("Publisher/Series"), "Series publishers").ShowDialog();
         }
 
         public void OnlySeries()
         {
-            new PublisherListWindow(publisherList.GetList<Publisher>("Publisher/OnlySeries"), "Only series publishers").ShowDialog();
+            new PublisherListWindow(webList.GetList<Publisher>("Publisher/OnlySeries"), "Only series publishers").ShowDialog();
         }
 
         public void HighestRated()
         {
-            new PublisherWindow(publisherList.Get<KeyValuePair<double?, Publisher>>("Publisher/HighestRated").Value).ShowDialog();
+            new PublisherWindow(webList.Get<KeyValuePair<double?, Publisher>>("Publisher/HighestRated").Value).ShowDialog();
         }
 
         public void LowestRated()
         {
-            new PublisherWindow(publisherList.Get<KeyValuePair<double?, Publisher>>("Publisher/LowestRated").Value).ShowDialog();
+            new PublisherWindow(webList.Get<KeyValuePair<double?, Publisher>>("Publisher/LowestRated").Value).ShowDialog();
         }
 
-        public void Rating()
+        public void Rating(Publisher publisher)
         {
-            if (new PublisherListWindow(publisherList.Items, "Select publisher to get it's rating").ShowDialog(out Publisher? publisher) == true && publisher != null)
-                new SimpleOutput($"Rating of publisher '{publisher.PublisherName}'", publisherList.Post<double?>("Publisher/Rating", publisher)).ShowDialog();
+            new SimpleOutput($"Rating of publisher '{publisher.PublisherName}'", webList.Post<double?>("Publisher/Rating", publisher)).ShowDialog();
         }
 
-        public void Authors()
+        public void Authors(Publisher publisher)
         {
-            if (new PublisherListWindow(publisherList.Items, "Select publisher to get it's authors").ShowDialog(out Publisher? publisher) == true && publisher != null)
-                new AuthorListWindow(publisherList.Post<IEnumerable<Author>>("Publisher/Authors", publisher), $"Authors of publisher '{publisher.PublisherName}'").ShowDialog();
+            new AuthorListWindow(webList.Post<IEnumerable<Author>>("Publisher/Authors", publisher), $"Authors of publisher '{publisher.PublisherName}'").ShowDialog();
         }
 
         public void PermanentAuthors()
         {
-            new AuthorListWindow(publisherList.GetList<Author>("Publisher/PermanentAuthors"), $"Permanent authors").ShowDialog();
+            new AuthorListWindow(webList.GetList<Author>("Publisher/PermanentAuthors"), $"Permanent authors").ShowDialog();
         }
 
-        public void PermanentAuthorsOfPublisher()
+        public void PermanentAuthorsOfPublisher(Publisher publisher)
         {
-            if (new PublisherListWindow(publisherList.Items, "Select publisher to get it's permanent authors").ShowDialog(out Publisher? publisher) == true && publisher != null)
-                new AuthorListWindow(publisherList.Post<IEnumerable<Author>>("Publisher/PermanentAuthors", publisher), $"Permanent authors of publisher '{publisher.PublisherName}'").ShowDialog();
+            new AuthorListWindow(webList.Post<IEnumerable<Author>>("Publisher/PermanentAuthors", publisher), $"Permanent authors of publisher '{publisher.PublisherName}'").ShowDialog();
         }
-
-
-        public bool DefaultCondition() => publisherList != null;
-
-        public bool NotEmptyCondition() => publisherList != null && publisherList.Count > 0;
     }
 }
