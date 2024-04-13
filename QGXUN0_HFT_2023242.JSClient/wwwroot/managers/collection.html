@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Collection Manager</title>
+    <link rel="stylesheet" href="managerstyle.css" />
+</head>
+<body>
+
+    <header>
+        <h1>Collection Manager</h1>
+    </header>
+
+    <main>
+
+        <form id="collection_create_form" action="javascript:;" onsubmit="createAction(this)">
+            <label for="create_name">Name</label>
+            <input name="CollectionName" id="create_name" type="text" placeholder="e.g. Ghost Fiction" />
+
+            <label for="create_series">Is it series?</label>
+            <input name="IsSeries" class="nullable" id="create_series" type="checkbox" placeholder="e.g. false" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="collection_read_selector" action="javascript:;" onsubmit="readSelected(this)">
+            <label for="collection_read_select">Select a collection to read</label>
+            <select name="Collections" id="collection_read_select" form="collection_read_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+        <form id="collection_read_form">
+            <label for="read_name">Name</label>
+            <input name="CollectionName" id="read_name" type="text" readonly />
+
+            <label for="read_books">Books</label>
+            <textarea name="Books" id="read_books" rows="10" readonly></textarea>
+
+            <label for="read_series">Is it series?</label>
+            <input name="IsSeries" class="nullable" id="read_series" type="checkbox" readonly />
+        </form>
+
+
+
+        <form id="collection_update_selector" action="javascript:;" onsubmit="updateSelected(this)">
+            <label for="collection_update_select">Select a collection to update</label>
+            <select name="Collections" id="collection_update_select" form="collection_update_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+        <form id="collection_update_form" action="javascript:;" onsubmit="updateAction(this)">
+            <label for="update_name">Name</label>
+            <input name="CollectionName" id="update_name" type="text" placeholder="e.g. Ghost Fiction" />
+
+            <label for="update_series">Is it series?</label>
+            <input name="IsSeries" class="nullable" id="update_series" type="checkbox" placeholder="e.g. false" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="collection_delete_selector" action="javascript:;" onsubmit="deleteSelected(this)">
+            <label for="collection_delete_select">Select a collection to remove</label>
+            <select name="Collections" id="collection_delete_select" form="collection_delete_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="collection_readall_form">
+            <label for="collections_list">Collections</label>
+            <textarea name="Collections" id="collections_list" rows="50" cols="150" readonly></textarea>
+        </form>
+
+    </main>
+
+    <aside>
+        <button onclick="createInit()">Create</button>
+        <button onclick="readInit()">Read</button>
+        <button onclick="updateInit()">Update</button>
+        <button onclick="deleteInit()">Delete</button>
+        <button onclick="readAllInit()">Read All</button>
+    </aside>
+
+    <script src="webscript.js"></script>
+    <script>
+        itemformat = (item) => {
+            return {
+                "CollectionName": item.CollectionName,
+                "Books": item.Books != undefined
+                    ? item.Books.map(a => a.Title).join("\n")
+                    : item.books != undefined
+                        ? item.books.map(a => a.Title).join("\n")
+                        : "",
+                "IsSeries": item.IsSeries,
+            }
+        }
+
+        setup("Collection", "CollectionID", "CollectionName", itemformat)
+    </script>
+
+</body>
+</html>

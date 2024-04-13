@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Author Manager</title>
+    <link rel="stylesheet" href="managerstyle.css" />
+</head>
+<body>
+
+    <header>
+        <h1>Author Manager</h1>
+    </header>
+
+    <main>
+
+        <form id="author_create_form" action="javascript:;" onsubmit="createAction(this)">
+            <label for="create_name">Name</label>
+            <input name="AuthorName" id="create_name" type="text" placeholder="e.g. Stephen King" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="author_read_selector" action="javascript:;" onsubmit="readSelected(this)">
+            <label for="author_read_select">Select an author to read</label>
+            <select name="Authors" id="author_read_select" form="author_read_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+        <form id="author_read_form">
+            <label for="read_name">Name</label>
+            <input name="AuthorName" id="read_name" type="text" readonly />
+        </form>
+
+
+
+        <form id="author_update_selector" action="javascript:;" onsubmit="updateSelected(this)">
+            <label for="author_update_select">Select an author to update</label>
+            <select name="Authors" id="author_update_select" form="author_update_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+        <form id="author_update_form" action="javascript:;" onsubmit="updateAction(this)">
+            <label for="update_name">Name</label>
+            <input name="AuthorName" id="update_name" type="text" placeholder="e.g. Stephen King" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="author_delete_selector" action="javascript:;" onsubmit="deleteSelected(this)">
+            <label for="author_delete_select">Select an author to remove</label>
+            <select name="Authors" id="author_delete_select" form="author_delete_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="author_readall_form">
+            <label for="authors_list">Authors</label>
+            <textarea name="Authors" id="authors_list" rows="50" cols="150" readonly></textarea>
+        </form>
+
+    </main>
+
+    <aside>
+        <button onclick="createInit()">Create</button>
+        <button onclick="readInit()">Read</button>
+        <button onclick="updateInit()">Update</button>
+        <button onclick="deleteInit()">Delete</button>
+        <button onclick="readAllInit()">Read All</button>
+    </aside>
+
+    <script src="webscript.js"></script>
+    <script>
+        itemformat = (item) => {
+            return {
+                "AuthorName": item.AuthorName,
+            }
+        }
+
+        setup("Author", "AuthorID", "AuthorName", itemformat)
+    </script>
+
+</body>
+</html>

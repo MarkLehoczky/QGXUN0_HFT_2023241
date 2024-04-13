@@ -1,0 +1,35 @@
+﻿table {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border: 2px solid black;
+}
+
+th {
+    font-family: Stencil;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: gainsboro;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid black;
+}
+
+tr:nth-child(2n) {
+    background-color: papayawhip;
+}
+
+td {
+    font-family: 'Cascadia Mono';
+    font-size: 14px;
+    text-align: left;
+    padding: 5px 10px 5px 10px;
+    border: 1px solid gray;
+}
+
+td.main {
+    font-weight: bold;
+}
+
+td.center {
+    text-align: center;
+}

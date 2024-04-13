@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Publisher Manager</title>
+    <link rel="stylesheet" href="managerstyle.css" />
+</head>
+<body>
+
+    <header>
+        <h1>Publisher Manager</h1>
+    </header>
+
+    <main>
+
+        <form id="publisher_create_form" action="javascript:;" onsubmit="createAction(this)">
+            <label for="create_name">Name</label>
+            <input name="PublisherName" id="create_name" type="text" placeholder="e.g. Gollancz" />
+
+            <label for="create_website">Website</label>
+            <input name="Website" class="nullable" id="create_website" type="url" placeholder="e.g. https://www.gollancz.co.uk" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="publisher_read_selector" action="javascript:;" onsubmit="readSelected(this)">
+            <label for="publisher_read_select">Select a publisher to read</label>
+            <select name="Publishers" id="publisher_read_select" form="publisher_read_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+        <form id="publisher_read_form">
+            <label for="read_name">Name</label>
+            <input name="PublisherName" id="read_name" type="text" readonly />
+
+            <label for="read_books">Books</label>
+            <textarea name="Books" id="read_books" rows="10" readonly></textarea>
+
+            <label for="read_website">Website</label>
+            <input name="Website" class="nullable" id="read_website" type="url" readonly />
+        </form>
+
+
+
+        <form id="publisher_update_selector" action="javascript:;" onsubmit="updateSelected(this)">
+            <label for="publisher_update_select">Select a publisher to update</label>
+            <select name="Publishers" id="publisher_update_select" form="publisher_update_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+        <form id="publisher_update_form" action="javascript:;" onsubmit="updateAction(this)">
+            <label for="update_name">Name</label>
+            <input name="PublisherName" id="update_name" type="text" placeholder="e.g. Gollancz" />
+
+            <label for="update_website">Website</label>
+            <input name="Website" class="nullable" id="update_website" type="url" placeholder="e.g. https://www.gollancz.co.uk" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="publisher_delete_selector" action="javascript:;" onsubmit="deleteSelected(this)">
+            <label for="publisher_delete_select">Select a publisher to remove</label>
+            <select name="Publishers" id="publisher_delete_select" form="publisher_delete_selector" size="25"></select>
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+
+
+        <form id="publisher_readall_form">
+            <label for="publishers_list">Publishers</label>
+            <textarea name="Publishers" id="publishers_list" rows="50" cols="150" readonly></textarea>
+        </form>
+
+    </main>
+
+    <aside>
+        <button onclick="createInit()">Create</button>
+        <button onclick="readInit()">Read</button>
+        <button onclick="updateInit()">Update</button>
+        <button onclick="deleteInit()">Delete</button>
+        <button onclick="readAllInit()">Read All</button>
+    </aside>
+
+    <script src="webscript.js"></script>
+    <script>
+        itemformat = (item) => {
+            return {
+                "PublisherName": item.PublisherName,
+                "Books": item.Books != undefined
+                    ? item.Books.map(a => a.Title).join("\n")
+                    : item.books != undefined
+                        ? item.books.map(a => a.Title).join("\n")
+                        : "",
+                "Website": item.Website,
+            }
+        }
+
+        setup("Publisher", "PublisherID", "PublisherName", itemformat)
+    </script>
+
+</body>
+</html>

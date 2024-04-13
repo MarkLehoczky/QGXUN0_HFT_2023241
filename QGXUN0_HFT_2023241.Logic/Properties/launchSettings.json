@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "QGXUN0_HFT_2023241.Logic": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:49582;http://localhost:49588"
+    }
+  }
+}

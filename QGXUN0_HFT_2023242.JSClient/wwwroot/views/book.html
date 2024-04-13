@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Book View</title>
+    <link rel="stylesheet" href="viewstyle.css" />
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Authors</th>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Publisher</th>
+                <th>Price</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody id="items"></tbody>
+    </table>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="viewscript.js"></script>
+    <script>
+        const connections = ["BookCreate", "BookUpdate", "BookDelete", "BookAuthorsUpdate", "AuthorUpdate", "AuthorDelete", "PublisherUpdate", "PublisherDelete"]
+
+        const endpoint = "Book"
+
+        const rowformat = (item) =>
+`
+<tr>
+    <td class="center">${item.Authors.map(a => a.AuthorName).join("</br>")}</td>
+    <td class="main">${item.Title}</td>
+    <td class="center">${item.Year}</td>
+    <td class="center">${item.Publisher != null ? item.Publisher.PublisherName : ""}</td>
+    <td class="center">${item.Price != null ? "$" + item.Price.toFixed(2) : ""}</td>
+    <td class="center">${item.Rating != null ? item.Rating.toFixed(1) + "/5.0" : ""}</td>
+</tr>
+`
+
+        setupSignalR(connections, endpoint, rowformat);
+    </script>
+</body>
+</html>

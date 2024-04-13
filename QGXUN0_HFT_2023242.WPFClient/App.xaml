@@ -69,7 +69,7 @@
         <!--#region Menu Buttons Styles-->
 
         <Style TargetType="Button" x:Key="ButtonMainMenuStyle">
-            <Setter Property="Background" Value="#F7EEDD"/>
+            <Setter Property="Background" Value="PapayaWhip"/>
             <Setter Property="BorderBrush" Value="DarkGray"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -98,7 +98,7 @@
         </Style>
 
         <Style TargetType="Button" x:Key="ButtonSubMenuStyle">
-            <Setter Property="Background" Value="#F7EEDD"/>
+            <Setter Property="Background" Value="PapayaWhip"/>
             <Setter Property="BorderBrush" Value="DarkGray"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Cursor" Value="Hand"/>
@@ -216,7 +216,7 @@
                                    
             <Setter Property="SelectionMode" Value="Single"/>
             <Setter Property="SelectionUnit" Value="FullRow"/>
-            <Setter Property="AlternatingRowBackground" Value="#F7EEDD"/>
+            <Setter Property="AlternatingRowBackground" Value="PapayaWhip"/>
             <Setter Property="AutoGenerateColumns" Value="False"/>
             <Setter Property="CanUserAddRows" Value="False"/>
             <Setter Property="CanUserDeleteRows" Value="False"/>

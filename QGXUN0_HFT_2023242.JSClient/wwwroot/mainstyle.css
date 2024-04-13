@@ -1,0 +1,34 @@
+﻿body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-column-gap: 25px;
+    grid-row-gap: 20px;
+    grid-auto-flow: column;
+    align-self: center;
+}
+
+h1 {
+    text-align: center;
+    font-family: Stencil;
+    font-weight: bold;
+    font-size: 35px;
+}
+
+button {
+    padding: 10px 15px 10px 15px;
+    font-family: 'Cascadia Mono';
+    font-weight: bold;
+    font-size: 25px;
+    background-color: papayawhip;
+    cursor: pointer;
+}
+    button:hover {
+        background-color: powderblue;
+    }
