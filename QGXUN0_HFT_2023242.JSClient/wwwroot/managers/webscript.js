@@ -1,344 +1,4 @@
-﻿/*
-let endpoint = ""
-let objectID = ""
-let objectHighlight = ""
-let itemformat = null
-
-function setup(target, id, highlight, format) {
-    endpoint = target
-    objectID = id
-    objectHighlight = highlight
-    itemformat = format
-}
-
-
-function createInit() {
-    let id = ['create', 'form']
-    let form = loadForm(id)
-    customCreateInit();
-    form.style.display = 'flex'
-
-
-
-
-
-    // Sets al form to invisible
-    for (let form of document.forms) {
-        form.style.display = "none"
-    }
-
-    // Selects the form and clears the values
-    for (let form of document.forms) {
-        if (form.id.includes('create') && form.id.includes('form')) {
-            for (let child of form) {
-                if (child.type != 'submit') {
-                    child.value = ""
-                }
-            }
-
-            return f;
-        }
-    }
-}
-
-function readInit() {
-    let init = null
-
-    for (let f of document.forms) {
-        f.style.display = "none"
-    }
-
-    for (let f of document.forms) {
-        if (f.id.toLowerCase().includes('read') && f.id.toLowerCase().includes('selector')) {
-            for (let c of f) {
-                if (c.type.toLowerCase().includes('select')) {
-                    c.innerHTML = '<option selected disabled hidden value="">None</option>';
-                    fetch("http://localhost:43016/" + endpoint)
-                        .then(response => response.json())
-                        .then(response => response.forEach(item => c.innerHTML += `<option value="${item[objectID]}">${item[objectHighlight]}</option>`))
-                }
-            }
-
-            init = f
-            break
-        }
-    }
-
-    customDeleteInit();
-
-    init.style.display = "flex"
-}
-
-function updateInit() {
-    let init = null
-
-    for (let f of document.forms) {
-        f.style.display = "none"
-    }
-
-    for (let f of document.forms) {
-        if (f.id.toLowerCase().includes('update') && f.id.toLowerCase().includes('selector')) {
-            for (let c of f) {
-                if (c.type.toLowerCase().includes('select')) {
-                    c.innerHTML = '<option selected disabled hidden value="">None</option>';
-                    fetch("http://localhost:43016/" + endpoint)
-                        .then(response => response.json())
-                        .then(response => response.forEach(item => c.innerHTML += `<option value="${item[objectID]}">${item[objectHighlight]}</option>`))
-                }
-            }
-
-            init = f
-            break
-        }
-    }
-
-    customDeleteInit();
-
-    init.style.display = "flex"
-}
-
-function deleteInit() {
-    let init = null
-
-    for (let f of document.forms) {
-        f.style.display = "none"
-    }
-
-    for (let f of document.forms) {
-        if (f.id.toLowerCase().includes('delete') && f.id.toLowerCase().includes('selector')) {
-            for (let c of f) {
-                if (c.type.toLowerCase().includes('select')) {
-                    c.innerHTML = '<option selected disabled hidden value="">None</option>';
-                    fetch("http://localhost:43016/" + endpoint)
-                        .then(response => response.json())
-                        .then(response => response.forEach(item => c.innerHTML += `<option value="${item[objectID]}">${item[objectHighlight]}</option>`))
-                }
-            }
-
-            init = f
-            break
-        }
-    }
-
-    customDeleteInit();
-
-    init.style.display = "flex"
-}
-
-function readAllInit() {
-    readAllAction(null)
-}
-
-
-function readSelected(event) {
-    readAction(event)
-}
-
-function updateSelected(event) {
-    let id = JSON.parse(JSON.stringify(event[0].value));
-
-    for (let f of document.forms) {
-        f.style.display = "none"
-    }
-
-    fetch("http://localhost:43016/" + endpoint + '/' + id)
-        .then(response => response.json())
-        .then(response => JSON.parse(JSON.stringify(response)))
-        .then(item => {
-            for (let f of document.forms) {
-                if (f.id.toLowerCase().includes('update') && f.id.toLowerCase().includes('form')) {
-                    for (let c of f) {
-                        if (c.type != 'submit') {
-                            c.value = item[c.name]
-                        }
-                    }
-
-                    return f
-                }
-            }
-        })
-        .then(form => {
-            customUpdateInit(id)
-            return form
-        })
-        .then(form => form.style.display = "flex")
-}
-
-function deleteSelected(event) {
-    deleteAction(event)
-}
-
-
-function createAction(event) {
-    let jsonInput = {}
-
-    for (let i of event) {
-        let val = JSON.parse(JSON.stringify(i.value))
-
-        if (i.type !== 'submit') {
-            if (i.type === 'text') {
-                if (val == '') {
-                    jsonInput[i.name] = !i.className.includes('nullable') ? "" : null
-                }
-                else {
-                    jsonInput[i.name] = val
-                }
-            }
-            else if (i.type === 'number') {
-                if (val == '') {
-                    jsonInput[i.name] = !i.className.includes('nullable') ? "0" : null
-                }
-                else {
-                    jsonInput[i.name] = val
-                }
-            }
-            else if (i.type === 'select-one') {
-                if (val == '') {
-                    jsonInput[i.name] = !i.className.includes('nullable') ? "0" : null
-                }
-                else {
-                    jsonInput[i.name] = val
-                }
-            }
-        }
-    }
-
-    console.log('Create: ' + jsonInput)
-
-    fetch("http://localhost:43016/" + endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', },
-        body: JSON.stringify(jsonInput)
-    })
-        .then(_ => {
-            for (let f of document.forms) {
-                f.style.display = "none"
-            }
-        })
-}
-
-function readAction(event) {
-    let id = JSON.parse(JSON.stringify(event[0].value));
-
-    for (let f of document.forms) {
-        f.style.display = "none"
-    }
-
-    fetch("http://localhost:43016/" + endpoint + '/' + id)
-        .then(response => response.json())
-        .then(response => JSON.parse(JSON.stringify(response)))
-        .then(item => {
-            document.getElementById('single').innerHTML = ''
-            for (let k in item) {
-            }
-
-            for (let k in itemformat(item)) {
-                document.getElementById('single').innerHTML += `<p class="description">${k}</p>`
-                document.getElementById('single').innerHTML += `<p class="value">${item[k]}</p>`
-            }
-        })
-        .then(_ => {
-            for (let f of document.forms) {
-                if (f.id.toLowerCase().includes("single")) {
-                    f.style.display = "flex"
-                    return
-                }
-            }
-        })
-}
-
-function updateAction(event) {
-    let jsonInput = jsonTemplate
-
-    for (let i of event) {
-        let val = JSON.parse(JSON.stringify(i.value))
-
-        if (i.type !== 'submit') {
-            if (i.type === 'text') {
-                if (val == '') {
-                    jsonInput[i.name] = !i.className.includes('nullable') ? "" : null
-                }
-                else {
-                    jsonInput[i.name] = val
-                }
-            }
-            else if (i.type === 'number') {
-                if (val == '') {
-                    jsonInput[i.name] = !i.className.includes('nullable') ? "0" : null
-                }
-                else {
-                    jsonInput[i.name] = val
-                }
-            }
-            else if (i.type === 'select-one') {
-                if (val == '') {
-                    jsonInput[i.name] = !i.className.includes('nullable') ? "0" : null
-                }
-                else {
-                    jsonInput[i.name] = val
-                }
-            }
-        }
-    }
-
-    console.log(jsonInput)
-
-    fetch("http://localhost:43016/" + endpoint, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(jsonInput)
-    })
-        .then(_ => {
-            for (let f of document.forms) {
-                f.style.display = "none"
-            }
-        })
-}
-
-function deleteAction(event) {
-    let id = JSON.parse(JSON.stringify(event[0].value));
-
-    fetch("http://localhost:43016/" + endpoint + '/' + id, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: null
-    })
-        .then(_ => {
-            for (let f of document.forms) {
-                f.style.display = "none"
-            }
-        })
-}
-
-function readAllAction(event) {
-    for (let f of document.forms) {
-        f.style.display = "none"
-    }
-
-    fetch("http://localhost:43016/" + endpoint)
-        .then(response => response.json())
-        .then(response => JSON.parse(JSON.stringify(response)))
-        .then(items => {
-            document.getElementById("multiple").innerHTML = ""
-            items.forEach(item => {
-
-                document.getElementById('multiple').innerHTML += tableformat(item)
-            })
-        })
-        .then(_ => {
-            for (let f of document.forms) {
-                if (f.id.toLowerCase().includes("list")) {
-                    f.style.display = "flex"
-                    return
-                }
-            }
-        })
-}
-*/
-
-
-
-const url = "http://localhost:43016/";
+﻿const url = "http://localhost:43016/";
 
 let endpoint = "";
 let objectID = "";
@@ -355,8 +15,7 @@ function setup(target, id, highlight, format) {
 
 
 function createInit() {
-    let ids = ['create', 'form'];
-    let form = getForm(ids);
+    let form = getForm(['create', 'form']);
     emptyForm(form)
     try { customCreateInit(); }
     catch (error) { console.warn(error); }
@@ -364,8 +23,7 @@ function createInit() {
 }
 
 function readInit() {
-    let ids = ['read', 'selector'];
-    let form = getForm(ids);
+    let form = getForm(['read', 'selector']);
     for (let child of form) {
         if (child.id.includes('select')) {
             loadSelection(child);
@@ -377,8 +35,7 @@ function readInit() {
 }
 
 function updateInit() {
-    let ids = ['update', 'selector'];
-    let form = getForm(ids);
+    let form = getForm(['update', 'selector']);
     for (let child of form) {
         if (child.id.includes('select')) {
             loadSelection(child);
@@ -390,8 +47,7 @@ function updateInit() {
 }
 
 function deleteInit() {
-    let ids = ['delete', 'selector'];
-    let form = getForm(ids);
+    let form = getForm(['delete', 'selector']);
     for (let child of form) {
         if (child.id.includes('select')) {
             loadSelection(child);
@@ -420,12 +76,8 @@ function updateSelected(info) {
 
     fetch(url + endpoint + '/' + id, HTTPRequestFormat('GET'))
         .then(response => response.json())
-        .then(response => {
-            return fillForm(getForm(['update', 'form']), JSON.parse(JSON.stringify(response)))
-        })
-        .then(form => {
-            form.style.display = 'flex'
-        });
+        .then(response => fillForm(getForm(['update', 'form']), JSON.parse(JSON.stringify(response))))
+        .then(form => form.style.display = 'flex');
 }
 
 function deleteSelected(info) {
@@ -477,12 +129,10 @@ function createSend(info) {
 function readSend(info) {
     fetch(url + endpoint + '/' + info, HTTPRequestFormat('GET'))
         .then(response => response.json())
-        //.then(response => JSON.parse(JSON.stringify(response)))
-        //.then(item => { /* TODO */ })
         .then(item => {
             let form = getForm(['read', 'form']);
             fillForm(form, itemformat(item))
-                form.style.display = 'flex'
+            form.style.display = 'flex'
         });
 }
 
@@ -501,13 +151,6 @@ function readAllSend(info) {
         .then(response => response.json())
         .then(response => response.forEach(item => info.value += item[objectHighlight] + '\n'));
 }
-
-
-
-
-
-
-
 
 
 
@@ -545,7 +188,7 @@ function fillForm(form, values) {
             }
         }
     }
-	
+
     return form;
 }
 
@@ -583,6 +226,7 @@ function loadSelection(selectObject) {
         .then(response => response.json())
         .then(response => response.forEach(item => selectObject.innerHTML += `<option value="${item[objectID]}">${item[objectHighlight]}</option>`));
 }
+
 function loadSelection(selectObject, selectedID) {
     selectObject.innerHTML = `<option ${selectedID == undefined || selectedID == null || selectedID == '' ? 'selected' : ''} disabled hidden value="">None</option>`;
     fetch(url + endpoint)
@@ -598,6 +242,7 @@ function HTTPRequestFormat(httpMethod) {
         body: null
     }
 }
+
 function HTTPRequestFormat(httpMethod, httpBody) {
     return {
         method: httpMethod.toUpperCase(),
