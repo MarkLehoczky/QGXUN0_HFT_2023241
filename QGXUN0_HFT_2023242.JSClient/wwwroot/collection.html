@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection Manager</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <header>
+        <h1>Collection Manager</h1>
+    </header>
+
+    <main>
+        <form id="display" action="javascript:;">
+            <input name="CollectionID" type="number" hidden />
+
+            <label for="name">Name</label>
+            <input name="CollectionName" id="name" type="text" placeholder="e.g. Ghost Fiction" size="30" required />
+
+            <label for="books">Books</label>
+            <textarea name="Books" id="books" rows="10" cols="100" disabled></textarea>
+
+            <label for="series">Is it series?</label>
+            <input name="IsSeries" class="nullable" id="series" type="checkbox" placeholder="e.g. false" />
+        </form>
+
+        <form id="selector" action="javascript:;">
+            <label for="collections">Select a collection</label>
+            <select name="Collections" id="collections" form="selector" size="15"></select>
+
+            <input class="send" type="submit" value="Confirm" />
+        </form>
+
+        <form id="generic">
+            <textarea id="generic-display" placeholder="" cols="50" rows="25" readonly></textarea>
+        </form>
+    </main>
+
+    <aside>
+        <button onclick="collection.createInit()">Create new collection</button>
+        <button onclick="collection.readInit()">View a collection</button>
+        <button onclick="collection.readAllInit()">View all collections</button>
+        <button onclick="collection.updateInit()">Update a collection</button>
+        <button onclick="collection.deleteInit()">Delete a collection</button>
+
+        <hr />
+
+        <button>Add books to a collection</button>
+        <button>Remove books from a collection</button>
+        <button>Remove all books from a collection</button>
+        <button>View series collections</button>
+        <button>View non-series collections</button>
+        <button>View collections in a year</button>
+        <button>View collections between years</button>
+        <button>View the price of a collection</button>
+        <button>View the rating of a collection</button>
+        <button>View a collection by filters</button>
+        <button>View a book by filter from a collection</button>
+    </aside>
+
+    <section>
+        <table id="list">
+        </table>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="manager.js"></script>
+    <script src="connector.js"></script>
+    <script>
+        formatManager = (item) => {
+            return {
+                "CollectionID": item.CollectionID,
+                "CollectionName": item.CollectionName,
+                "Books": item.Books != undefined
+                    ? item.Books.map(a => a.Title).join("\n")
+                    : item.books != undefined
+                        ? item.books.map(a => a.Title).join("\n")
+                        : "",
+                "IsSeries": item.IsSeries,
+            }
+        }
+
+        formatConnector = (item) => {
+            return {
+                "CollectionName": item.CollectionName,
+                "Books": item.Books != undefined
+                    ? item.Books.map(a => a.Title).join("<br/>")
+                    : item.books != undefined
+                        ? item.books.map(a => a.Title).join("<br/>")
+                        : "",
+                "IsSeries": item.IsSeries,
+            }
+        }
+
+        
+        let collection = new Manager(
+            "Collection",
+            "CollectionID",
+            "CollectionName",
+            formatManager
+        );
+
+        let connector = new Connector(
+            ["CollectionCreate", "CollectionUpdate", "CollectionDelete", "CollectionBooksUpdate", "BookUpdate", "BookDelete"],
+            "Collection",
+            "CollectionName",
+            formatConnector
+        );
+    </script>
+
+</body>
+</html>

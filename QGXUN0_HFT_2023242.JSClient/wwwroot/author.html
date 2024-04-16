@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Manager</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <header>
+        <h1>Author Manager</h1>
+    </header>
+
+    <main>
+        <form id="display" action="javascript:;">
+            <input name="AuthorID" type="number" hidden />
+
+            <label for="create_name">Name</label>
+            <input name="AuthorName" id="create_name" type="text" placeholder="e.g. Stephen King" size="30" required />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+        <form id="selector" action="javascript:;">
+            <label for="authors">Select an author</label>
+            <select name="Authors" id="authors" form="selector" size="15"></select>
+
+            <input class="send" type="submit" value="Confirm" />
+        </form>
+
+        <form id="generic">
+            <textarea id="generic-display" placeholder="" cols="50" rows="25" readonly></textarea>
+        </form>
+    </main>
+
+    <aside>
+        <button onclick="author.createInit()">Create new author</button>
+        <button onclick="author.readInit()">View an author</button>
+        <button onclick="author.readAllInit()">View all authors</button>
+        <button onclick="author.updateInit()">Update an author</button>
+        <button onclick="author.deleteInit()">Delete an author</button>
+
+        <hr />
+
+        <button>View the highest rated author</button>
+        <button>View the lowest rated author</button>
+        <button>View the series of an author</button>
+        <button>View a book by filter from an author</button>
+    </aside>
+
+    <section>
+        <table id="list">
+        </table>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="manager.js"></script>
+    <script src="connector.js"></script>
+    <script>
+        formatManager = (item) => {
+            return {
+                "AuthorID": item.AuthorID,
+                "AuthorName": item.AuthorName,
+            }
+        }
+
+        formatConnector = (item) => {
+            return {
+                "AuthorName": item.AuthorName,
+            }
+        }
+
+
+        let author = new Manager(
+            "Author",
+            "AuthorID",
+            "AuthorName",
+            formatManager
+        );
+
+        let connector = new Connector(
+            ["AuthorCreate", "AuthorUpdate", "AuthorDelete"],
+            "Author",
+            "AuthorName",
+            formatConnector
+        );
+    </script>
+
+</body>
+</html>

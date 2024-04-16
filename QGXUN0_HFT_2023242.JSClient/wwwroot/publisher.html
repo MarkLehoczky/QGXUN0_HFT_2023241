@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publisher Manager</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <header>
+        <h1>Publisher Manager</h1>
+    </header>
+
+    <main>
+        <form id="display" action="javascript:;">
+            <label for="name">Name</label>
+            <input name="PublisherName" id="name" type="text" placeholder="e.g. Gollancz" size="30" required />
+
+            <label for="website">Website</label>
+            <input name="Website" class="nullable" id="website" type="url" placeholder="e.g. https://www.gollancz.co.uk" />
+
+
+            <input class="send" type="submit" value="Send" />
+        </form>
+
+        <form id="selector" action="javascript:;">
+            <label for="publishers">Select a publisher</label>
+            <select name="Publishers" id="publishers" form="selector" size="25"></select>
+
+            <input class="send" type="submit" value="Confirm" />
+        </form>
+
+        <form id="generic">
+            <textarea id="generic-display" placeholder="" cols="50" rows="25" readonly></textarea>
+        </form>
+    </main>
+
+    <aside>
+        <button onclick="publisher.createInit()">Create new publisher</button>
+        <button onclick="publisher.readInit()">View a publisher</button>
+        <button onclick="publisher.readAllInit()">View all publishers</button>
+        <button onclick="publisher.updateInit()">Update a publisher</button>
+        <button onclick="publisher.deleteInit()">Delete a publisher</button>
+
+        <hr />
+
+        <button>View series publishers</button>
+        <button>View only series publishers</button>
+        <button>View the highest rated publisher</button>
+        <button>View the lowest rated publisher</button>
+        <button>View the rating of a publisher</button>
+        <button>"View the authors of a publisher</button>
+        <button>View the permanent authors</button>
+        <button>View the permanent authors of a publisher</button>
+    </aside>
+
+    <section>
+        <table id="list">
+        </table>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
+    <script src="manager.js"></script>
+    <script src="connector.js"></script>
+    <script>
+        formatManager = (item) => {
+            return {
+                "PublisherID": item.PublisherID,
+                "PublisherName": item.PublisherName,
+                "Books": item.Books != undefined
+                    ? item.Books.map(a => a.Title).join("\n")
+                    : item.books != undefined
+                        ? item.books.map(a => a.Title).join("\n")
+                        : "",
+                "Website": item.Website,
+            }
+        }
+
+        formatConnector = (item) => {
+            return {
+                "PublisherName": item.PublisherName,
+                "Books": item.Books != undefined
+                    ? item.Books.map(a => a.Title).join("<br/>")
+                    : item.books != undefined
+                        ? item.books.map(a => a.Title).join("<br/>")
+                        : "",
+                "Website": item.Website,
+            }
+        }
+
+
+        let publisher = new Manager(
+            "Publisher",
+            "PublisherID",
+            "PublisherName",
+            
+        );
+
+        let connector = new Connector(
+            ["PublisherCreate", "PublisherUpdate", "PublisherDelete"],
+            "Publisher",
+            "PublisherName",
+            formatConnector
+        );
+    </script>
+
+</body>
+</html>

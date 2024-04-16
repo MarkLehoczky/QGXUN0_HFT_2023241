@@ -1,25 +1,44 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOOK DATABASE MANAGER</title>
-    <link rel="stylesheet" href="mainstyle.css" />
+    <style>
+        body {
+            display: grid;
+            flex-direction: column;
+            justify-content: center;
+            justify-self: center;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: Stencil;
+            font-weight: bold;
+            font-size: 35px;
+        }
+
+        button {
+            margin: 10px;
+            padding: 10px 15px 10px 15px;
+            font-family: 'Cascadia Mono';
+            font-weight: bold;
+            font-size: 25px;
+            background-color: papayawhip;
+            cursor: pointer;
+        } button:hover {
+            background-color: powderblue;
+        }
+    </style>
 </head>
+
 <body>
     <h1>BOOK DATABASE MANAGER</h1>
 
-    <main>
-        <button onclick="openAuthorManager()">AUTHOR MANAGER</button>
-        <button onclick="openBookManager()">BOOK MANAGER</button>
-        <button onclick="openCollectionManager()">COLLECTION MANAGER</button>
-        <button onclick="openPublisherManager()">PUBLISHER MANAGER</button>
-
-        <button onclick="openAuthorView()">AUTHOR VIEW</button>
-        <button onclick="openBookView()">BOOK VIEW</button>
-        <button onclick="openCollectionView()">COLLECTION VIEW</button>
-        <button onclick="openPublisherView()">PUBLISHER VIEW</button>
-    </main>
-
-    <script src="mainscript.js"></script>
+    <button onclick="window.open('./author.html')">AUTHOR MANAGER</button>
+    <button onclick="window.open('./book.html')">BOOK MANAGER</button>
+    <button onclick="window.open('./collection.html')">COLLECTION MANAGER</button>
+    <button onclick="window.open('./publisher.html')">PUBLISHER MANAGER</button>
 </body>
 </html>
