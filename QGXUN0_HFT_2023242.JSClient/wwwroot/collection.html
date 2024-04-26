@@ -27,37 +27,39 @@
         </form>
 
         <form id="selector" action="javascript:;">
-            <label for="collections">Select a collection</label>
+            <label for="collections">Select</label>
             <select name="Collections" id="collections" form="selector" size="15"></select>
 
             <input class="send" type="submit" value="Confirm" />
         </form>
 
-        <form id="generic">
-            <textarea id="generic-display" placeholder="" cols="50" rows="25" readonly></textarea>
+        <form id="generic" action="javascript:;">
+            <textarea id="generic-display" placeholder="" cols="50" rows="25"></textarea>
+
+            <input class="send" type="submit" value="Send" />
         </form>
     </main>
 
     <aside>
-        <button onclick="collection.createInit()">Create new collection</button>
-        <button onclick="collection.readInit()">View a collection</button>
-        <button onclick="collection.readAllInit()">View all collections</button>
-        <button onclick="collection.updateInit()">Update a collection</button>
-        <button onclick="collection.deleteInit()">Delete a collection</button>
+        <button onclick="collection.create()">Create new collection</button>
+        <button onclick="collection.read()">View a collection</button>
+        <button onclick="collection.readAll()">View all collections</button>
+        <button onclick="collection.update()">Update a collection</button>
+        <button onclick="collection.delete()">Delete a collection</button>
 
         <hr />
 
-        <button>Add books to a collection</button>
-        <button>Remove books from a collection</button>
-        <button>Remove all books from a collection</button>
-        <button>View series collections</button>
-        <button>View non-series collections</button>
-        <button>View collections in a year</button>
-        <button>View collections between years</button>
-        <button>View the price of a collection</button>
-        <button>View the rating of a collection</button>
-        <button>View a collection by filters</button>
-        <button>View a book by filter from a collection</button>
+        <button onclick="collection.addBooks()">Add books to a collection</button>
+        <button onclick="collection.removeBooks()">Remove books from a collection</button>
+        <button onclick="collection.clearBooks()">Remove all books from a collection</button>
+        <button onclick="collection.series()">View series collections</button>
+        <button onclick="collection.nonSeries()">View non-series collections</button>
+        <button onclick="collection.inYear()">View collections in a year</button>
+        <button onclick="collection.betweenYears()">View collections between years</button>
+        <button onclick="collection.price()">View the price of a collection</button>
+        <button onclick="collection.rating()">View the rating of a collection</button>
+        <button onclick="collection.select()">View a collection by filters</button>
+        <button onclick="collection.selectBook()">View a book by filter from a collection</button>
     </aside>
 
     <section>
@@ -94,8 +96,8 @@
             }
         }
 
-        
-        let collection = new Manager(
+
+        let collection = new CollectionManager(
             "Collection",
             "CollectionID",
             "CollectionName",

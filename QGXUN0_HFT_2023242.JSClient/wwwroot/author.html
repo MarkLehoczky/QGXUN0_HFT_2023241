@@ -24,30 +24,32 @@
         </form>
 
         <form id="selector" action="javascript:;">
-            <label for="authors">Select an author</label>
+            <label for="authors">Select</label>
             <select name="Authors" id="authors" form="selector" size="15"></select>
 
             <input class="send" type="submit" value="Confirm" />
         </form>
 
-        <form id="generic">
-            <textarea id="generic-display" placeholder="" cols="50" rows="25" readonly></textarea>
+        <form id="generic" action="javascript:;">
+            <textarea id="generic-display" placeholder="" cols="50" rows="25"></textarea>
+
+            <input class="send" type="submit" value="Send" />
         </form>
     </main>
 
     <aside>
-        <button onclick="author.createInit()">Create new author</button>
-        <button onclick="author.readInit()">View an author</button>
-        <button onclick="author.readAllInit()">View all authors</button>
-        <button onclick="author.updateInit()">Update an author</button>
-        <button onclick="author.deleteInit()">Delete an author</button>
+        <button onclick="author.create()">Create new author</button>
+        <button onclick="author.read()">View an author</button>
+        <button onclick="author.readAll()">View all authors</button>
+        <button onclick="author.update()">Update an author</button>
+        <button onclick="author.delete()">Delete an author</button>
 
         <hr />
 
-        <button>View the highest rated author</button>
-        <button>View the lowest rated author</button>
-        <button>View the series of an author</button>
-        <button>View a book by filter from an author</button>
+        <button onclick="author.highestRated()">View the highest rated author</button>
+        <button onclick="author.lowestRated()">View the lowest rated author</button>
+        <button onclick="author.series()">View the series of an author</button>
+        <button onclick="author.selectBook()">View a book by filter from an author</button>
     </aside>
 
     <section>
@@ -73,7 +75,7 @@
         }
 
 
-        let author = new Manager(
+        let author = new AuthorManager(
             "Author",
             "AuthorID",
             "AuthorName",

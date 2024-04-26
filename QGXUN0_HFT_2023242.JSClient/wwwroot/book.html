@@ -38,32 +38,34 @@
         </form>
 
         <form id="selector" action="javascript:;">
-            <label for="books">Select a book</label>
+            <label for="books">Select</label>
             <select name="Books" id="books" form="selector" size="15"></select>
 
             <input class="send" type="submit" value="Confirm" />
         </form>
 
-        <form id="generic">
-            <textarea id="generic-display" placeholder="" cols="50" rows="25" readonly></textarea>
+        <form id="generic" action="javascript:;">
+            <textarea id="generic-display" placeholder="" cols="50" rows="25"></textarea>
+
+            <input class="send" type="submit" value="Send" />
         </form>
     </main>
 
     <aside>
-        <button onclick="book.createInit()">Create new book</button>
-        <button onclick="book.readInit()">View a book</button>
-        <button onclick="book.readAllInit()">View all books</button>
-        <button onclick="book.updateInit()">Update a book</button>
-        <button onclick="book.deleteInit()">Delete a book</button>
+        <button onclick="book.create()">Create new book</button>
+        <button onclick="book.read()">View a book</button>
+        <button onclick="book.readAll()">View all books</button>
+        <button onclick="book.update()">Update a book</button>
+        <button onclick="book.delete()">Delete a book</button>
 
         <hr>
 
-        <button>Add authors to a book</button>
-        <button>Remove authors from a book</button>
-        <button>View books in a year</button>
-        <button>View books between years</button>
-        <button>View a book by filter</button>
-        <button>View books by titles</button>
+        <button onclick="book.addAuthors()">Add authors to a book</button>
+        <button onclick="book.removeAuthors()">Remove authors from a book</button>
+        <button onclick="book.inYear()">View books in a year</button>
+        <button onclick="book.betweenYears()">View books between years</button>
+        <button onclick="book.select()">View a book by filter</button>
+        <button onclick="book.titleContains()">View books by titles</button>
     </aside>
 
     <section>
@@ -119,7 +121,7 @@
         }
 
 
-        let book = new Manager(
+        let book = new BookManager(
             "Book",
             "BookID",
             "Title",
@@ -134,7 +136,7 @@
         );
     </script>
     <script>
-        function customCreateInit() {
+        function customCreate() {
             document.getElementById('publisher-selector').innerHTML = `<option selected hidden value=""></option>`;
 
             fetch(book.url + 'Publisher')
@@ -143,11 +145,11 @@
                     item => document.getElementById('publisher-selector').innerHTML += `<option value="${item.PublisherID}">${item.PublisherName}</option>`
                 ))
         }
-        function customReadInit() {
-            customCreateInit();
+        function customRead() {
+            customCreate();
         }
-        function customUpdateInit() {
-            customCreateInit();
+        function customUpdate() {
+            customCreate();
         }
     </script>
 
