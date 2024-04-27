@@ -233,7 +233,7 @@ class AuthorManager extends Manager {
 
         fetch(this.url + this.endpoint + "/HighestRated", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(item => this._fillGeneric(JSON.stringify(this.formatObject(item.value), null, 2)));
+            .then(item => this._fillGeneric(`Author: ${item.value.AuthorName}\n\nRating: ${item.key}`));
     }
 
     lowestRated() {
@@ -243,7 +243,7 @@ class AuthorManager extends Manager {
 
         fetch(this.url + this.endpoint + "/LowestRated", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(item => this._fillGeneric(JSON.stringify(this.formatObject(item.value), null, 2)));
+            .then(item => this._fillGeneric(`Author: ${item.value.AuthorName}\n\nRating: ${item.key}`));
     }
 
     series() {
@@ -270,7 +270,7 @@ class AuthorManager extends Manager {
             .then(response => response.json())
             .then(author => fetch(this.url + this.endpoint + "/Series", this._HTTPRequestFormat('POST', author))
                 .then(response => response.json())
-                .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => i.CollectionName), null, 2))));
+                .then(items => this._fillGeneric(Array.from(items).map(i => i.CollectionName).join('\n'))));
     }
 
     #selectBook_AuthorSelected() {
@@ -297,7 +297,7 @@ class AuthorManager extends Manager {
             .then(response => response.json())
             .then(author => fetch(this.url + this.endpoint + "/SelectBook", this._HTTPRequestFormat('POST', { "Item1": author, "Item2": parseInt(this.selectorForm[0].value) }))
                 .then(response => response.json())
-                .then(item => this._fillGeneric(JSON.stringify(item.Title, null, 2))));
+                .then(item => this._fillGeneric(`${item.Title}\n\nPrice: ${item.Price}\nRating: ${item.Rating}`)));
     }
 }
 
@@ -432,7 +432,7 @@ class BookManager extends Manager {
 
         fetch(this.url + this.endpoint + `/InYear?year=${value}`, this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => `(${i.Year}) ${i.Title}`).join('\n')));
     }
 
     #betweenYearsSelected() {
@@ -443,7 +443,7 @@ class BookManager extends Manager {
 
         fetch(this.url + this.endpoint + `/BetweenYears?min=${values[0]}&max=${values[1]}`, this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => `(${i.Year}) ${i.Title}`).join('\n')));
     }
 
     #titleContainsSelected() {
@@ -454,7 +454,7 @@ class BookManager extends Manager {
 
         fetch(this.url + this.endpoint + "/TitleContains/array", this._HTTPRequestFormat('POST', value))
             .then(response => response.json())
-            .then(titles => this._fillGeneric(JSON.stringify(titles, null, 2)));
+            .then(titles => this._fillGeneric(Object.keys(titles).map(key => `    ${key}:\n${Array.from(titles[key]).map(i => `\n- ${i.Title}`).join('')}`).join('\n\n\n')));
     }
 
     #selectSelected() {
@@ -464,7 +464,7 @@ class BookManager extends Manager {
 
         fetch(this.url + this.endpoint + "/Select", this._HTTPRequestFormat('POST', parseInt(this.selectorForm[0].value)))
             .then(response => response.json())
-            .then(item => this._fillGeneric(JSON.stringify(this.formatObject(item), null, 2)));
+            .then(item => this._fillGeneric(`${item.Title}\n\nPrice: ${item.Price}\nRating: ${item.Rating}`));
     }
 }
 
@@ -504,7 +504,7 @@ class CollectionManager extends Manager {
 
         fetch(this.url + this.endpoint + "/Series", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.CollectionName).join('\n')));
     }
 
     nonSeries() {
@@ -514,7 +514,7 @@ class CollectionManager extends Manager {
 
         fetch(this.url + this.endpoint + "/NonSeries", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.CollectionName).join('\n')));
     }
 
     inYear() {
@@ -649,7 +649,7 @@ class CollectionManager extends Manager {
 
         fetch(this.url + this.endpoint + `/InYear?year=${value}`, this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.CollectionName).join('\n')));
     }
 
     #betweenYearsSelected() {
@@ -660,7 +660,7 @@ class CollectionManager extends Manager {
 
         fetch(this.url + this.endpoint + `/BetweenYears?min=${values[0]}&max=${values[1]}`, this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.CollectionName).join('\n')));
     }
 
     #priceSelected() {
@@ -672,7 +672,7 @@ class CollectionManager extends Manager {
             .then(response => response.json())
             .then(item =>
                 fetch(this.url + this.endpoint + "/Price", this._HTTPRequestFormat('POST', item))
-                    .then(response => response.json())
+                    .then(response => response.text())
                     .then(v => this._fillGeneric(v)));
     }
 
@@ -685,7 +685,7 @@ class CollectionManager extends Manager {
             .then(response => response.json())
             .then(item =>
                 fetch(this.url + this.endpoint + "/Rating", this._HTTPRequestFormat('POST', item))
-                    .then(response => response.json())
+                    .then(response => response.text())
                     .then(v => this._fillGeneric(v)));
     }
 
@@ -714,7 +714,7 @@ class CollectionManager extends Manager {
                 "Item2": parseInt(collectionFilter)
             }))
             .then(response => response.json())
-            .then(item => this._fillGeneric(JSON.stringify(this.formatObject(item.value), null, 2)));
+            .then(item => this._fillGeneric(`${item.value.CollectionName}\n\nValue: ${item.key}`));
     }
 
     #selectBook_CollectionSelected() {
@@ -745,7 +745,7 @@ class CollectionManager extends Manager {
                         "Item2": parseInt(bookFilter)
                     }))
                     .then(response => response.json())
-                    .then(item => this._fillGeneric(JSON.stringify(item, null, 2))));
+                    .then(item => this._fillGeneric(`${item.Title}\n\nPrice: ${item.Price}\nRating: ${item.Rating}`)));
     }
 }
 
@@ -764,7 +764,7 @@ class PublisherManager extends Manager {
 
         fetch(this.url + this.endpoint + "/Series", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.PublisherName).join('\n')));
     }
 
     onlySeries() {
@@ -774,7 +774,7 @@ class PublisherManager extends Manager {
 
         fetch(this.url + this.endpoint + "/OnlySeries", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => this.formatObject(i)), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.PublisherName).join('\n')));
     }
 
     highestRated() {
@@ -784,7 +784,7 @@ class PublisherManager extends Manager {
 
         fetch(this.url + this.endpoint + "/HighestRated", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(item => this._fillGeneric(JSON.stringify(this.formatObject(item.value), null, 2)));
+            .then(item => this._fillGeneric(`${item.value.PublisherName}\n\nRating: ${item.key}`));
     }
 
     lowestRated() {
@@ -794,7 +794,7 @@ class PublisherManager extends Manager {
 
         fetch(this.url + this.endpoint + "/LowestRated", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(item => this._fillGeneric(JSON.stringify(this.formatObject(item.value), null, 2)));
+            .then(item => this._fillGeneric(`${item.value.PublisherName}\n\nRating: ${item.key}`));
     }
 
     rating() {
@@ -818,7 +818,7 @@ class PublisherManager extends Manager {
 
         fetch(this.url + this.endpoint + "/PermanentAuthors", this._HTTPRequestFormat('GET'))
             .then(response => response.json())
-            .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => i.AuthorName), null, 2)));
+            .then(items => this._fillGeneric(Array.from(items).map(i => i.AuthorName).join('\n')));
     }
 
     permanentAuthorsOfPublisher() {
@@ -837,8 +837,8 @@ class PublisherManager extends Manager {
         fetch(this.url + this.endpoint + "/" + this.selectorForm[0].value, this._HTTPRequestFormat('GET'))
             .then(response => response.json())
             .then(publisher => fetch(this.url + this.endpoint + "/Rating", this._HTTPRequestFormat('POST', publisher))
-                .then(response => response.json())
-                .then(item => this._fillGeneric(JSON.stringify(item, null, 2))));
+                .then(response => response.text())
+                .then(v => this._fillGeneric(v)));
     }
 
     #authorsSelected() {
@@ -850,7 +850,7 @@ class PublisherManager extends Manager {
             .then(response => response.json())
             .then(publisher => fetch(this.url + this.endpoint + "/Authors", this._HTTPRequestFormat('POST', publisher))
                 .then(response => response.json())
-                .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => i.AuthorName), null, 2))));
+                .then(items => this._fillGeneric(Array.from(items).map(i => i.AuthorName).join('\n'))));
     }
 
     #permanentAuthorsOfPublisher_PublisherSelected() {
@@ -862,6 +862,6 @@ class PublisherManager extends Manager {
             .then(response => response.json())
             .then(publisher => fetch(this.url + this.endpoint + "/PermanentAuthors", this._HTTPRequestFormat('POST', publisher))
                 .then(response => response.json())
-                .then(items => this._fillGeneric(JSON.stringify(Array.from(items).map(i => i.AuthorName), null, 2))));
+                .then(items => this._fillGeneric(Array.from(items).map(i => i.AuthorName).join('\n'))));
     }
 }
