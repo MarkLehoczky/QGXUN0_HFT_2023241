@@ -64,7 +64,7 @@ It is a database-driven application with a C# backend, designed using a layered 
 ### Step 1: Start the Backend
 1. In Visual Studio, set the backend project (ASP.NET Core API) as the startup project.
 2. Run the backend predefined profile.
-3. Ensure the API endpoint is running and accessible (default=http://localhost:43016).
+3. Ensure the API endpoint is running and accessible.
 
 ### Step 2: Launch the User Interfaces
 - **WPF Application**:
