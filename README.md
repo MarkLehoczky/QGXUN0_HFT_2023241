@@ -28,15 +28,15 @@ It is a database-driven application with a C# backend, designed using a layered 
    - Offers a browser-based interface for users who prefer web access.
    - Communicates with the backend API to perform CRUD operations.
 
+3. Console Interface
+   - A console interface for interacting with the application.
+   - Provides all the functionality of the application with a stylized user interface.
+  
 ### Testing
 - **Frameworks**: Includes *NUnit* and *Moq* for unit testing.
 - **Coverage**: Tests cover both CRUD and non-CRUD operations, ensuring the reliability of backend logic.
 - **Mocking**: Uses *Moq* to simulate database interactions for isolated testing.
-- **Test Data**: Provides predefined test cases for models like `Book`, `Author`, and `Publisher`.
-
-### Console Interface
-- A command-line interface for interacting with the application.
-- Useful for debugging and performing quick operations without a graphical interface.
+- **Test Data**: Provides predefined test cases for models like `Book`, `Author`, and `Collection`.
 
 ## Development History
 - **Advanced Development Techniques**: The initial phase of the project focused on backend development, database design, and implementing the REST API.
@@ -48,7 +48,6 @@ It is a database-driven application with a C# backend, designed using a layered 
 - **Visual Studio** (recommended version: 2022 or later) with the following workloads installed:
   - **ASP.NET and web development**
   - **.NET desktop development**
-- **SQL Server** (or a compatible database engine) for hosting the database.
 
 ### Steps
 1. Clone the repository:
